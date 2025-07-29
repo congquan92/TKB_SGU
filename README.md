@@ -162,8 +162,8 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 ## 👨‍💻 Tác giả
 
-- **Developer**: [Quan]
-- **Contact**: [Your Contact Info]
+- **Developer**: [`Quan`](https://www.facebook.com/cucngau.quan)
+
 
 ## 🙏 Acknowledgments
 

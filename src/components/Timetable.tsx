@@ -93,8 +93,29 @@ export default function Timetable({ subjects }: TimetableProps) {
     };
   };
 
+  // Tính tổng tín chỉ
+  const totalCredits = subjects.reduce((sum, subject) => sum + parseInt(subject.so_tc), 0);
+
   return (
     <div className="table-container">
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <h4 className="text-dark fw-bold mb-0">
+          <i className="fa-solid fa-calendar-days text-primary me-2"></i>
+          Thời Khóa Biểu
+        </h4>
+        {subjects.length > 0 && (
+          <div className="d-flex gap-2">
+            <span className="badge bg-success fs-6 px-3 py-2">
+              <i className="fa-solid fa-book me-1"></i>
+              {subjects.length} môn học
+            </span>
+            <span className="badge bg-info fs-6 px-3 py-2">
+              <i className="fa-solid fa-credit-card me-1"></i>
+              {totalCredits} tín chỉ
+            </span>
+          </div>
+        )}
+      </div>
       <table className="table table-bordered text-center timetable-custom">
         <thead className="table-dark">
           <tr>
@@ -129,21 +150,20 @@ export default function Timetable({ subjects }: TimetableProps) {
                   {cell.subject && (
                     <div className="h-100 d-flex flex-column justify-content-center">
                       <div className="fw-bold mb-1" 
-                           style={{ fontSize: '1rem', lineHeight: '1' }}
+                           style={{ fontSize: '1rem', lineHeight: '1.2' }}
                            title={cell.subject}>
-                        {cell.subject.length > 20 ? cell.subject.substring(0, 20) + '...' : cell.subject}
+                        {cell.subject.length > 25 ? cell.subject.substring(0, 25) + '...' : cell.subject}
                       </div>
                       {cell.room && (
-                        <div className="text-muted mb-1" style={{ fontSize: '1rem', lineHeight: '1' }}>
+                        <div className="text-muted mb-1" style={{ fontSize: '1rem', lineHeight: '1.2', fontWeight: '500' }}>
                           Phòng : {cell.room.replace('Ph ', '')}
                         </div>
                       )}
                       {cell.instructor && (
                         <div className="text-muted" 
-                             style={{ fontSize: '1rem', lineHeight: '1' }}
+                             style={{ fontSize: '1rem', lineHeight: '1.2', fontWeight: '500' }}
                              title={cell.instructor}>
-                          {/* Giảng viên: {cell.instructor.replace('GV ', '').split(' ').pop()} */}
-                          Giảng viên: {cell.instructor.replace('GV ', '')}     
+                           {cell.instructor}     
                         </div>
                       )}
                     </div>
@@ -156,9 +176,13 @@ export default function Timetable({ subjects }: TimetableProps) {
       </table>
       
       {subjects.length > 0 && (
-        <div className="mt-3">
-          <h6><i className="fa-solid fa-bookmark"></i> Danh sách môn học:</h6>
-          <div className="d-flex flex-wrap gap-2">
+        <div className="mt-4">
+          <h5 className="d-flex align-items-center gap-2 mb-3" style={{ color: '#2c3e50', fontWeight: '700' }}>
+            <i className="fa-solid fa-bookmark text-primary"></i> 
+            Danh sách môn học đã chọn 
+            <span className="badge bg-primary ms-2">{subjects.length} môn</span>
+          </h5>
+          <div className="d-flex flex-wrap gap-3">
             {subjects.map((subject) => (
               <span
                 key={subject.ma_mon}
