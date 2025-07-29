@@ -48,7 +48,35 @@
 
 .btn-success {
   background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-  border-color: #11998e;
+}
+
+/* Subject Selector Scroll Styles */
+.list-container {
+  position: relative;
+}
+
+.list-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.list-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 8px;
+}
+
+.list-container::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 8px;
+}
+
+.list-container::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+}
+
+/* Firefox scrollbar */
+.list-container {
+  scrollbar-width: thin;
+  scrollbar-color: #667eea #f1f1f1;
 }
 
 .btn-danger {

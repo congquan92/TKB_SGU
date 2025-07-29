@@ -38,8 +38,8 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
           <div 
             className="list-container" 
             style={{ 
-              maxHeight: results.length > 4 ? '350px' : 'auto', 
-              overflowY: results.length > 4 ? 'auto' : 'visible' 
+              maxHeight: '350px',
+              overflowY: 'auto'
             }}
           >
             <ul className="list-group list-group-flush">
@@ -70,11 +70,17 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
               )}
             </ul>
           </div>
-          {results.length > 4 && (
+          {results.length > 0 && (
             <div className="card-footer text-center py-2">
               <small className="text-muted">
-                <i className="fa-solid fa-scroll me-1"></i>
-                Cuộn để xem thêm {results.length - 4} môn học khác
+                <i className="fa-solid fa-list me-1"></i>
+                Tìm thấy {results.length} môn học
+                {results.length > 4 && (
+                  <span>
+                    <i className="fa-solid fa-scroll ms-2 me-1"></i>
+                    Cuộn để xem thêm
+                  </span>
+                )}
               </small>
             </div>
           )}
