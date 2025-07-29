@@ -44,10 +44,14 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
                 style={{ cursor: 'pointer' }}
               >
                 <div>
-                  <strong>{mon.ma_mon}</strong> – {mon.ten_mon}
+                  <strong>{mon.ma_mon}</strong> – {mon.ten_mon} - <small className="text-muted fst-italic">{mon.so_tc} TC</small>
                   <br />
-                  <small className="text-muted">
-                    Nhóm {mon.nhom_to} {mon.to ? `- Tổ ${mon.to}` : ""} • {mon.tkb[0]?.giang_vien || "Chưa có GV"} • {mon.so_tc} tín chỉ
+                  <small className="text-muted ">
+                    - Nhóm {mon.nhom_to} {mon.to ? `- Tổ ${mon.to}` : ""} - {mon.tkb[0]?.giang_vien || "Chưa có GV"}
+                  </small>
+                  <br />
+                   <small className="text-muted">
+                    - {mon.tkb.length > 0 ? `${mon.tkb.map(item => `${item.thu} ${item.thoi_gian}`).join(", ")}` : "Chưa có lịch"}
                   </small>
                 </div>
               </li>
