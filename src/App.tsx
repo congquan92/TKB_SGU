@@ -270,7 +270,8 @@ export default function App() {
         useCORS: true,
         allowTaint: true,
         width: el.scrollWidth,
-        height: el.scrollHeight
+        height: el.scrollHeight,
+        logging: false
       });
       
       // Remove screenshot mode class
@@ -299,7 +300,7 @@ export default function App() {
           });
         }
         setIsCapturing(false);
-      }, 'image/png', 0.95);
+      }, 'image/png', 1.0); // Tăng quality lên 100%
       
     } catch (error) {
       // Remove screenshot mode class in case of error
