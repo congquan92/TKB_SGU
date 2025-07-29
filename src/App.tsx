@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import SubjectSelector from "./components/SubjectSelector";
 import Timetable from "./components/Timetable";
+import DonateModal from "./components/DonateModal";
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
 import { toast, ToastContainer } from "react-toastify";
@@ -11,6 +12,7 @@ import type { Subject } from "./types";
 export default function App() {
   const [selected, setSelected] = useState<Subject[]>([]);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [showDonateModal, setShowDonateModal] = useState(false);
 
   const addSubject = (mon: Subject) => {
     if (selected.some((m) => m.ma_mon === mon.ma_mon)) {
@@ -319,7 +321,7 @@ export default function App() {
     const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 30/7/2025. Vui lòng kiểm tra xác thực lại thông tin trước khi sử dụng.!!!";
     toast.info(toastMessage, {
       position: "top-center",
-      autoClose: false,
+      autoClose: 6000,
       hideProgressBar: false,
       closeOnClick: true,
       draggable: true,  
@@ -341,14 +343,26 @@ export default function App() {
     <div className="container-fluid px-2 py-3">
       <div className="row">
         <div className="col-12">
-          <div className="d-flex align-items-center mb-4">
-            <h1 className="mb-0 me-3 text-dark"><i className="fa-solid fa-calendar-days"></i> Thời Khóa Biểu</h1>
-            <span className="badge bg-info fs-6 me-2">
-              {selected.length} môn học
-            </span>
-            <span className="badge bg-success fs-6">
-              {totalCredits} tín chỉ
-            </span>
+          <div className="d-flex align-items-center justify-content-between mb-4">
+            <div className="d-flex align-items-center">
+              <h1 className="mb-0 me-3 text-dark"><i className="fa-solid fa-calendar-days"></i> Thời Khóa Biểu</h1>
+              <span className="badge bg-info fs-6 me-2">
+                {selected.length} môn học
+              </span>
+              <span className="badge bg-success fs-6">
+                {totalCredits} tín chỉ
+              </span>
+            </div>
+            <div className="d-flex gap-2">
+              <button 
+                className="btn btn-danger btn-sm"
+                onClick={() => setShowDonateModal(true)}
+                title="Ủng hộ dự án"
+              >
+                <i className="fa-solid fa-heart me-1"></i>
+                Donate
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -474,6 +488,12 @@ export default function App() {
           </div>
         </div>
       </div>
+      
+      {/* Donate Modal */}
+      <DonateModal 
+        show={showDonateModal} 
+        onHide={() => setShowDonateModal(false)} 
+      />
       
       {/* Toast Container */}
       <ToastContainer
