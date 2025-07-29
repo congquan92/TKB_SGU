@@ -34,9 +34,16 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
         autoComplete="off"
       />
       {keyword && (
-        <div className="card">
-          <ul className="list-group list-group-flush">
-            {results.slice(0, 10).map((mon) => (
+        <div className="card shadow-sm">
+          <div 
+            className="list-container" 
+            style={{ 
+              maxHeight: results.length > 4 ? '350px' : 'auto', 
+              overflowY: results.length > 4 ? 'auto' : 'visible' 
+            }}
+          >
+            <ul className="list-group list-group-flush">
+              {results.map((mon) => (
               <li
                 key={mon.ma_mon}
                 className="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
@@ -44,24 +51,33 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
                 style={{ cursor: 'pointer' }}
               >
                 <div>
-                  <strong>{mon.ma_mon}</strong> – {mon.ten_mon} - <small className="text-muted fst-italic">{mon.so_tc} TC</small>
+                  <strong>{mon.ma_mon}</strong> – {mon.ten_mon} - <small className="text-primary fst-italic">{mon.so_tc} tín chỉ</small>
                   <br />
-                  <small className="text-muted ">
+                  <small className="text-muted">
                     - Nhóm {mon.nhom_to} {mon.to ? `- Tổ ${mon.to}` : ""} - {mon.tkb[0]?.giang_vien || "Chưa có GV"}
                   </small>
                   <br />
                    <small className="text-muted">
-                    - {mon.tkb.length > 0 ? `${mon.tkb.map(item => `${item.thu} ${item.thoi_gian}`).join(", ")}` : "Chưa có lịch"}
+                    - {mon.tkb.length > 0 ? `${mon.tkb.map(session => `${session.thu} ${session.thoi_gian}`).join(', ')}` : "Chưa có lịch"}
                   </small>
                 </div>
               </li>
-            ))}
-            {results.length === 0 && (
-              <li className="list-group-item text-muted text-center">
-                Không tìm thấy môn học nào
-              </li>
-            )}
-          </ul>
+              ))}
+              {results.length === 0 && (
+                <li className="list-group-item text-muted text-center">
+                  Không tìm thấy môn học nào
+                </li>
+              )}
+            </ul>
+          </div>
+          {results.length > 4 && (
+            <div className="card-footer text-center py-2">
+              <small className="text-muted">
+                <i className="fa-solid fa-scroll me-1"></i>
+                Cuộn để xem thêm {results.length - 4} môn học khác
+              </small>
+            </div>
+          )}
         </div>
       )}
     </div>

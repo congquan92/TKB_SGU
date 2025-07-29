@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SubjectSelector from "./components/SubjectSelector";
 import Timetable from "./components/Timetable";
 import html2canvas from "html2canvas";
@@ -314,6 +314,23 @@ export default function App() {
       });
     }
   };
+  // Thông báo mới dô
+  useEffect(() => {
+    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 30/7/2025. Vui lòng kiểm tra xác thực lại thông tin trước khi sử dụng.!!!";
+    toast.info(toastMessage, {
+      position: "top-center",
+      autoClose: false,
+      hideProgressBar: false,
+      closeOnClick: true,
+      draggable: true,  
+       style: {
+              fontSize: '16px',
+              fontWeight: 'bold',
+              color: 'red',
+            }
+    });
+    
+  }, []);
 
   // Tính tổng tín chỉ
   const totalCredits = selected.reduce((total, subject) => {

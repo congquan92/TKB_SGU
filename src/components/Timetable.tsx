@@ -155,12 +155,12 @@ export default function Timetable({ subjects }: TimetableProps) {
                         {cell.subject.length > 25 ? cell.subject.substring(0, 25) + '...' : cell.subject}
                       </div>
                       {cell.room && (
-                        <div className="text-muted mb-1" style={{ fontSize: '1rem', lineHeight: '1.2', fontWeight: '500' }}>
+                        <div className="text-muted mb-1 fst-italic" style={{ fontSize: '1rem', lineHeight: '1.2', fontWeight: '500' }}>
                           Phòng : {cell.room.replace('Ph ', '')}
                         </div>
                       )}
                       {cell.instructor && (
-                        <div className="text-muted" 
+                        <div className="text-muted fst-italic mb-1" 
                              style={{ fontSize: '1rem', lineHeight: '1.2', fontWeight: '500' }}
                              title={cell.instructor}>
                            {cell.instructor}     
