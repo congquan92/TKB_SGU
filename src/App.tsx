@@ -17,9 +17,7 @@ export default function App() {
   const { theme, toggleTheme } = useTheme();
 
   const addSubject = (mon: Subject) => {
-    console.log('addSubject called with:', mon.ma_mon, mon.ten_mon);
-    console.log('Current selected subjects:', selected.map(s => s.ma_mon));
-    
+
     if (selected.some((m) => m.ma_mon === mon.ma_mon)) {
       toast.error(`Môn ${mon.ma_mon} đã được chọn!`, {
         position: "top-right",
@@ -50,7 +48,6 @@ export default function App() {
     }
 
     setSelected([...selected, mon]);
-    console.log('Subject added successfully, new selected list:', [...selected, mon].map(s => s.ma_mon));
     toast.success(`Đã thêm môn ${mon.ma_mon} - ${mon.ten_mon}`, {
       position: "top-right",
       autoClose: 2000,
@@ -124,6 +121,14 @@ export default function App() {
     return conflicts;
   };
 
+  const clearAll = () => {
+    setSelected([]);
+    toast.info("Đã xóa tất cả môn học", {
+      position: "top-right",
+      autoClose: 2000,
+    });
+  };
+
   const removeSubject = (ma_mon: string) => {
     const removedSubject = selected.find(m => m.ma_mon === ma_mon);
     setSelected(selected.filter((m) => m.ma_mon !== ma_mon));
@@ -133,14 +138,6 @@ export default function App() {
         autoClose: 2000,
       });
     }
-  };
-
-  const clearAll = () => {
-    setSelected([]);
-    toast.info("Đã xóa tất cả môn học", {
-      position: "top-right",
-      autoClose: 2000,
-    });
   };
 
   const exportJson = () => {
@@ -348,66 +345,93 @@ export default function App() {
   return (
     <div className="container-fluid px-2 py-3">
       {/* Header */}
-      <div className="gc-card mb-4">
-        <div className="gc-header">
-          <div className="d-flex justify-content-between align-items-center">
-            <div className="d-flex align-items-center gap-3">
-              <h1 className="mb-0 d-flex align-items-center gap-2">
-                <i className="fa-solid fa-graduation-cap" style={{ color: 'var(--primary-color)' }}></i>
-                <span style={{ color: 'var(--text-primary)' }}>Thời Khóa Biểu SGU</span>
-              </h1>
-              <span className="badge" style={{ 
-                background: 'var(--info-color)', 
-                color: 'white',
-                borderRadius: '16px',
-                padding: '6px 12px'
-              }}>
-                {selected.length} môn học
-              </span>
-              <span className="badge" style={{ 
-                background: 'var(--success-color)', 
-                color: 'white',
-                borderRadius: '16px',
-                padding: '6px 12px'
-              }}>
-                {totalCredits} tín chỉ
-              </span>
+      <div className="mb-4" style={{
+        backgroundColor: 'var(--surface-color)',
+        border: '1px solid var(--border-color)',
+        borderRadius: '12px',
+        padding: '16px 20px'
+      }}>
+        <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center gap-3">
+            <h1 className="mb-0 d-flex align-items-center gap-2">
+              <i className="fa-solid fa-graduation-cap" style={{ color: 'var(--text-primary)' }}></i>
+              <span style={{ color: 'var(--text-primary)' }}>Thời Khóa Biểu SGU</span>
+            </h1>
+            <span className="badge" style={{ 
+              background: 'var(--text-primary)', 
+              color: 'var(--background-color)',
+              borderRadius: '16px',
+              padding: '6px 12px'
+            }}>
+              {selected.length} môn học
+            </span>
+            <span className="badge" style={{ 
+              background: 'var(--text-primary)', 
+              color: 'var(--background-color)',
+              borderRadius: '16px',
+              padding: '6px 12px'
+            }}>
+              {totalCredits} tín chỉ
+            </span>
+          </div>
+          <div className="d-flex align-items-center gap-3">
+            {/* Theme Toggle */}
+            <div 
+              onClick={toggleTheme}
+              title={theme === 'light' ? 'Chuyển sang dark mode' : 'Chuyển sang light mode'}
+              style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                backgroundColor: 'var(--text-primary)',
+                color: 'var(--background-color)',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              {theme === 'light' ? (
+                <i className="fa-solid fa-moon" style={{ fontSize: '16px', color: 'var(--background-color)' }}></i>
+              ) : (
+                <i className="fa-solid fa-sun" style={{ fontSize: '16px', color: 'var(--background-color)' }}></i>
+              )}
             </div>
-            <div className="d-flex align-items-center gap-3">
-              {/* Theme Toggle */}
-              <div 
-                className="gc-theme-toggle"
-                onClick={toggleTheme}
-                title={theme === 'light' ? 'Chuyển sang dark mode' : 'Chuyển sang light mode'}
-              >
-                <div className="gc-theme-toggle-indicator">
-                  {theme === 'light' ? (
-                    <i className="fa-solid fa-sun" style={{ fontSize: '12px', color: 'white' }}></i>
-                  ) : (
-                    <i className="fa-solid fa-moon" style={{ fontSize: '12px', color: 'white' }}></i>
-                  )}
-                </div>
-              </div>
-              
-              {/* Donate Button */}
-              <button 
-                className="gc-btn"
-                onClick={() => setShowDonateModal(true)}
-                title="Ủng hộ dự án"
-              >
-                <i className="fa-solid fa-heart"></i>
-                Donate
-              </button>
-            </div>
+            
+            {/* Donate Button */}
+            <button 
+              onClick={() => setShowDonateModal(true)}
+              title="Ủng hộ dự án"
+              style={{
+                backgroundColor: 'var(--text-primary)',
+                color: 'var(--background-color)',
+                border: 'none',
+                borderRadius: '24px',
+                padding: '8px 20px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+            >
+              <i className="fa-solid fa-heart"></i> Donate
+            </button>
           </div>
         </div>
       </div>
 
       <div className="row">
-        <div className="col-lg-2 col-md-4 mb-4">
-          <div className="card shadow-sm">
-            <div className="card-header bg-warning text-white py-2">
-              <h6 className="mb-0 text-dark"><i className="fa-solid fa-magnifying-glass"></i> Tìm kiếm môn học</h6>
+        <div className="col-lg-3 col-md-4 mb-4">
+          <div className="card shadow-sm" style={{
+            backgroundColor: 'var(--surface-color)',
+            borderColor: 'var(--border-color)',
+            color: 'var(--text-primary)'
+          }}>
+            <div className="card-header py-2" style={{
+              backgroundColor: 'var(--surface-color)',
+              borderBottomColor: 'var(--border-color)',
+              color: 'var(--text-primary)'
+            }}>
+              <h6 className="mb-0"><i className="fa-solid fa-magnifying-glass"></i> Tìm kiếm môn học</h6>
             </div>
             <div className="card-body p-3">
               <SubjectSelector data={data as Subject[]} onSelect={addSubject} />
@@ -415,57 +439,79 @@ export default function App() {
           </div>
 
           {selected.length > 0 && (
-            <div className="card shadow-sm mt-3">
-              <div className="card-header bg-dark text-white py-2">
-                <h6 className="mb-0 text-light"><i className="fa-solid fa-book"></i> Môn học đã chọn</h6>
-                <small className="d-block mt-1 mx-4">
-                  {selected.length} môn - {totalCredits} tín chỉ
-                </small>
+            <div className="card shadow-sm mt-3" style={{
+              backgroundColor: 'var(--surface-color)',
+              borderColor: 'var(--border-color)',
+              color: 'var(--text-primary)'
+            }}>
+              <div className="card-header py-2" style={{
+                backgroundColor: 'var(--surface-color)',
+                borderBottomColor: 'var(--border-color)',
+                color: 'var(--text-primary)'
+              }}>
+                <h6 className="mb-0"><i className="fa-solid fa-book"></i> Môn học đã chọn ({selected.length})</h6>
               </div>
               <div className="card-body p-3">
-                <div className="d-flex flex-column gap-2 mb-3">
+                <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
                   {selected.map((mon) => (
-                    <div key={mon.ma_mon} className="d-flex align-items-center justify-content-between">
-                      <div className="flex-grow-1">
-                        <button
-                          className="btn btn-outline-danger btn-sm w-100"
-                          onClick={() => removeSubject(mon.ma_mon)}
-                          title={`Xóa ${mon.ten_mon}`}
-                        >
-                          <i className="fa-solid fa-xmark"></i> {mon.ma_mon} - {mon.ten_mon} - {mon.so_tc} tín chỉ
-                        </button>
+                    <button
+                      key={mon.ma_mon}
+                      className="btn btn-sm text-start"
+                      onClick={() => removeSubject(mon.ma_mon)}
+                      title={`Click để xóa ${mon.ten_mon}`}
+                      style={{
+                        backgroundColor: 'var(--background-color)',
+                        borderColor: 'var(--border-color)',
+                        color: 'var(--text-primary)',
+                        padding: '8px 12px',
+                        borderRadius: '6px',
+                        transition: 'all 0.2s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.backgroundColor = 'var(--error-color)';
+                        e.currentTarget.style.color = 'white';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.backgroundColor = 'var(--background-color)';
+                        e.currentTarget.style.color = 'var(--text-primary)';
+                      }}
+                    >
+                      <div style={{ fontSize: '13px', fontWeight: '600' }}>
+                        <i className="fa-solid fa-xmark me-2"></i>
+                        {mon.ma_mon} - {mon.ten_mon}
                       </div>
-                    </div>
+                      <small style={{ opacity: 0.8 }}>
+                        {mon.so_tc} TC - Nhóm {mon.nhom_to}
+                      </small>
+                    </button>
                   ))}
                 </div>
-                <button 
-                  className="btn btn-danger btn-sm w-100" 
-                  onClick={clearAll}
-                >
-                  <i className="fa-solid fa-trash"></i> Xóa tất cả
-                </button>
               </div>
             </div>
           )}
 
-          <div className="card shadow-sm mt-3">
-            <div className="card-header bg-warning text-dark py-2">
+          <div className="card shadow-sm mt-3" style={{
+            backgroundColor: 'var(--surface-color)',
+            borderColor: 'var(--border-color)',
+            color: 'var(--text-primary)'
+          }}>
+            <div className="card-header py-2" style={{
+              backgroundColor: 'var(--surface-color)',
+              borderBottomColor: 'var(--border-color)',
+              color: 'var(--text-primary)'
+            }}>
               <h6 className="mb-0"><i className="fa-solid fa-gear"></i> Công cụ</h6>
             </div>
             <div className="card-body p-3">
               <div className="d-grid gap-2">
                 <button 
-                  className="btn btn-success btn-sm position-relative" 
+                  className="btn btn-success btn-sm" 
                   onClick={captureImage}
                   disabled={selected.length === 0 || isCapturing}
                   style={{ 
-                    background: isCapturing 
-                      ? 'linear-gradient(135deg, #6c757d 0%, #495057 100%)'
-                      : 'linear-gradient(135deg, #28a745 0%, #20c997 100%)',
-                    border: 'none',
-                    fontWeight: '600',
-                    boxShadow: '0 4px 8px rgba(40, 167, 69, 0.3)',
-                    opacity: isCapturing ? 0.7 : 1
+                    backgroundColor: selected.length === 0 || isCapturing ? 'var(--text-disabled)' : 'var(--success-color)',
+                    borderColor: selected.length === 0 || isCapturing ? 'var(--text-disabled)' : 'var(--success-color)',
+                    color: 'white'
                   }}
                 >
                   {isCapturing ? (
@@ -476,28 +522,47 @@ export default function App() {
                   ) : (
                     <>
                       <i className="fa-regular fa-camera"></i> Chụp ảnh TKB
-                      {selected.length > 0 && (
-                        <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark">
-                          {selected.length}
-                        </span>
-                      )}
                     </>
                   )}
                 </button>
                 <button 
-                  className="btn btn-warning btn-sm" 
+                  className="btn btn-sm" 
                   onClick={exportJson}
                   disabled={selected.length === 0}
+                  style={{ 
+                    backgroundColor: selected.length === 0 ? 'var(--text-disabled)' : 'var(--warning-color)',
+                    borderColor: selected.length === 0 ? 'var(--text-disabled)' : 'var(--warning-color)',
+                    color: selected.length === 0 ? 'var(--text-secondary)' : 'var(--background-color)'
+                  }}
                 >
                   <i className="fa-solid fa-file-export"></i> Xuất JSON
                 </button>
+                <button 
+                  className="btn btn-sm" 
+                  onClick={clearAll}
+                  disabled={selected.length === 0}
+                  style={{ 
+                    backgroundColor: selected.length === 0 ? 'var(--text-disabled)' : 'var(--error-color)',
+                    borderColor: selected.length === 0 ? 'var(--text-disabled)' : 'var(--error-color)',
+                    color: 'white'
+                  }}
+                >
+                  <i className="fa-solid fa-trash"></i> Xóa tất cả ({selected.length})
+                </button>
                 <div>
-                  <label className="form-label small"><i className="fa-solid fa-file-import"></i> Nhập JSON:</label>
+                  <label className="form-label small" style={{ color: 'var(--text-primary)' }}>
+                    <i className="fa-solid fa-file-import"></i> Nhập JSON:
+                  </label>
                   <input
                     type="file"
                     accept=".json"
                     className="form-control form-control-sm"
                     onChange={importJson}
+                    style={{
+                      backgroundColor: 'var(--background-color)',
+                      borderColor: 'var(--border-color)',
+                      color: 'var(--text-primary)'
+                    }}
                   />
                 </div>
               </div>
@@ -505,17 +570,25 @@ export default function App() {
           </div>
         </div>
 
-        <div className="col-lg-10 col-md-8">
-          <div className="card shadow-sm">
-            <div className="card-header bg-info text-white py-2">
-              <h6 className="mb-0"><i className="fa-solid fa-calendar"></i> Thời khóa biểu</h6>
+        <div className="col-lg-9 col-md-8">
+          <div className="card shadow-sm" style={{
+            backgroundColor: 'var(--surface-color)',
+            borderColor: 'var(--border-color)',
+            color: 'var(--text-primary)'
+          }}>
+            <div className="card-header py-2" style={{
+              backgroundColor: 'var(--surface-color)',
+              borderBottomColor: 'var(--border-color)',
+              color: 'var(--text-primary)'
+            }}>
+              <h6 className="mb-0"><i className="fa-solid fa-calendar"></i> Thời khóa biểu ({selected.length} môn - {totalCredits} tín chỉ)</h6>
             </div>
             <div className="card-body p-2">
               <div id="timetable" className="table-container">
                 <Timetable subjects={selected} />
               </div>
               {selected.length === 0 && (
-                <div className="text-center py-5 text-muted">
+                <div className="text-center py-5" style={{ color: 'var(--text-secondary)' }}>
                   <h5><i className="fa-solid fa-bookmark"></i> Chưa có môn học nào</h5>
                   <p>Hãy tìm kiếm và chọn môn học từ danh sách bên trái</p>
                 </div>
@@ -524,6 +597,7 @@ export default function App() {
           </div>
         </div>
       </div>
+    
       
       {/* Donate Modal */}
       <DonateModal 
@@ -542,7 +616,7 @@ export default function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme={theme === 'dark' ? 'dark' : 'light'}
       />
     </div>
   );

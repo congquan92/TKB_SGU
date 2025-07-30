@@ -62,8 +62,8 @@ const getTimeSlotIndex = (time: string): number => {
 };
 
 export default function Timetable({ subjects }: TimetableProps) {
-  console.log('Timetable received subjects:', subjects);
-  console.log('Number of subjects:', subjects.length);
+  // console.log('Timetable received subjects:', subjects);
+  // console.log('Number of subjects:', subjects.length);
   
   // Initialize empty timetable grid
   const grid: TimetableCell[][] = Array.from({ length: 12 }, () =>
@@ -93,7 +93,7 @@ export default function Timetable({ subjects }: TimetableProps) {
       }
 
       const timeMatch = session.thoi_gian.match(/từ (\d{2}:\d{2}) đến (\d{2}:\d{2})/);
-      console.log('Time match:', timeMatch, 'for time:', session.thoi_gian);
+      // console.log('Time match:', timeMatch, 'for time:', session.thoi_gian);
       
       if (!timeMatch) {
         console.log('Time format not matched:', session.thoi_gian);
@@ -117,6 +117,8 @@ export default function Timetable({ subjects }: TimetableProps) {
           cell.subject = subject.ten_mon;
           cell.room = session.phong;
           cell.instructor = session.giang_vien;
+          cell.nhom_to = subject.nhom_to;
+          cell.to = subject.to;
           cell.isConflict = false;
           cell.subjectCode = subject.ma_mon; // Thêm mã môn để dễ tìm màu
         }
@@ -125,14 +127,25 @@ export default function Timetable({ subjects }: TimetableProps) {
   });
 
   const getCellStyle = (cell: TimetableCell) => {
-    if (!cell.subject) return {};
+    if (!cell.subject) {
+      return {
+        backgroundColor: 'var(--background-color)', // Nền thuần theo theme
+        border: '1px solid var(--border-color)',
+        color: 'var(--text-primary)',
+        minHeight: '80px',
+      };
+    }
     
-    const backgroundColor = cell.subjectCode ? subjectColors.get(cell.subjectCode) : '#F0F0F0';
+    const color = cell.subjectCode ? subjectColors.get(cell.subjectCode) : '#6366f1';
     
     return {
-      backgroundColor,
-      border: cell.isConflict ? '2px solid #dc3545' : '1px solid #dee2e6',
+      backgroundColor: 'var(--surface-color)', // Nền tối cho cell có content
+      borderLeft: `4px solid ${color}`, // Chỉ đường line màu ở bên trái
+      border: cell.isConflict ? '2px solid var(--error-color)' : '1px solid var(--border-color)',
       fontWeight: cell.isConflict ? 'bold' : 'normal',
+      position: 'relative' as const,
+      color: 'var(--text-primary)', // Text theo theme
+      minHeight: '80px',
     };
   };
 
@@ -159,13 +172,36 @@ export default function Timetable({ subjects }: TimetableProps) {
           </div>
         )}
       </div>
-      <table className="table table-bordered text-center timetable-custom">
+      <table className="table table-bordered text-center timetable-custom" style={{
+        borderCollapse: 'collapse',
+        border: '2px solid var(--border-color)',
+        backgroundColor: 'var(--background-color)',
+        color: 'var(--text-primary)'
+      }}>
         <thead className="table-dark">
           <tr>
-            <th style={{ width: '40px', minWidth: '40px' }}>Tiết</th>
-            <th style={{ width: '70px', minWidth: '70px' }}>Giờ</th>
+            <th style={{ 
+              width: '40px', 
+              minWidth: '40px',
+              border: '1px solid var(--border-color)',
+              backgroundColor: 'var(--surface-color)', /* Nền tối */
+              color: 'var(--text-primary)' /* Text trắng */
+            }}>Tiết</th>
+            <th style={{ 
+              width: '70px', 
+              minWidth: '70px',
+              border: '1px solid var(--border-color)',
+              backgroundColor: 'var(--surface-color)',
+              color: 'var(--text-primary)'
+            }}>Giờ</th>
             {WEEKDAYS.map((day) => (
-              <th key={day} style={{ width: '140px', minWidth: '140px' }}>
+              <th key={day} style={{ 
+                width: '140px', 
+                minWidth: '140px',
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--surface-color)',
+                color: 'var(--text-primary)'
+              }}>
                 {day.replace('Thứ ', 'T')}
               </th>
             ))}
@@ -174,10 +210,18 @@ export default function Timetable({ subjects }: TimetableProps) {
         <tbody>
           {grid.map((row, slotIndex) => (
             <tr key={slotIndex}>
-              <td className="align-middle fw-bold">
+              <td className="align-middle fw-bold" style={{
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--surface-color)', /* Nền tối */
+                color: 'var(--text-primary)' /* Text trắng */
+              }}>
                 {slotIndex + 1}
               </td>
-              <td className="align-middle">
+              <td className="align-middle" style={{
+                border: '1px solid var(--border-color)',
+                backgroundColor: 'var(--surface-color)',
+                color: 'var(--text-primary)'
+              }}>
                 <small>{TIME_SLOTS[slotIndex]}</small>
               </td>
               {row.map((cell, dayIndex) => (
@@ -187,26 +231,34 @@ export default function Timetable({ subjects }: TimetableProps) {
                   style={{
                     ...getCellStyle(cell),
                     wordWrap: 'break-word',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    border: '1px solid var(--border-color)',
+                    minHeight: '60px',
+                    padding: '8px'
                   }}
                 >
                   {cell.subject && (
                     <div className="h-100 d-flex flex-column justify-content-center">
                       <div className="fw-bold mb-1" 
-                           style={{ fontSize: '1rem', lineHeight: '1.2' }}
+                           style={{ fontSize: '0.9rem', lineHeight: '1.2', color: 'var(--text-primary)' }}
                            title={cell.subject}>
                         {cell.subject.length > 25 ? cell.subject.substring(0, 25) + '...' : cell.subject}
                       </div>
                       {cell.room && (
-                        <div className="text-muted mb-1 fst-italic" style={{ fontSize: '1rem', lineHeight: '1.2', fontWeight: '500' }}>
-                          Phòng : {cell.room.replace('Ph ', '')}
+                        <div className="mb-1 fst-italic" style={{ fontSize: '0.8rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}>
+                          📍 {cell.room.replace('Ph ', '')}
+                        </div>
+                      )}
+                      {cell.nhom_to && (
+                        <div className="mb-1 fst-italic" style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}>
+                          👥 Nhóm: {cell.nhom_to}{cell.to ? ` - Tổ: ${cell.to}` : ''}
                         </div>
                       )}
                       {cell.instructor && (
-                        <div className="text-muted fst-italic mb-1" 
-                             style={{ fontSize: '1rem', lineHeight: '1.2', fontWeight: '500' }}
+                        <div className="fst-italic mb-1" 
+                             style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}
                              title={cell.instructor}>
-                           {cell.instructor}     
+                           👨‍🏫 {cell.instructor.replace('GV ', '')}     
                         </div>
                       )}
                     </div>
@@ -217,31 +269,6 @@ export default function Timetable({ subjects }: TimetableProps) {
           ))}
         </tbody>
       </table>
-      
-      {subjects.length > 0 && (
-        <div className="mt-4">
-          <h5 className="d-flex align-items-center gap-2 mb-3" style={{ color: '#2c3e50', fontWeight: '700' }}>
-            <i className="fa-solid fa-bookmark text-primary"></i> 
-            Danh sách môn học đã chọn 
-            <span className="badge bg-primary ms-2">{subjects.length} môn</span>
-          </h5>
-          <div className="d-flex flex-wrap gap-3">
-            {subjects.map((subject) => (
-              <span
-                key={subject.ma_mon}
-                className="badge fs-6 px-3 py-2"
-                style={{ 
-                  backgroundColor: subjectColors.get(subject.ma_mon),
-                  color: '#000',
-                  border: '1px solid #ddd'
-                }}
-              >
-                {subject.ma_mon} - {subject.ten_mon}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }

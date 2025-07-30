@@ -66,13 +66,19 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
         style={{
           borderRadius: '24px',
           padding: '12px 20px',
-          border: '1px solid #dee2e6',
-          fontSize: '14px'
+          border: '1px solid var(--border-color)',
+          fontSize: '14px',
+          backgroundColor: 'var(--background-color)',
+          color: 'var(--text-primary)'
         }}
       />
       
       {keyword && (
-        <div className="card shadow-sm">
+        <div className="card shadow-sm" style={{
+          backgroundColor: 'var(--surface-color)',
+          borderColor: 'var(--border-color)',
+          color: 'var(--text-primary)'
+        }}>
           <div 
             className="list-container" 
             style={{ 
@@ -97,29 +103,30 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
                       cursor: 'pointer',
                       borderRadius: '8px',
                       padding: '12px 16px',
-                      border: '1px solid #dee2e6',
+                      border: '1px solid var(--border-color)',
                       marginBottom: '6px',
                       transition: 'all 0.2s ease',
-                      backgroundColor: '#ffffff'
+                      backgroundColor: 'var(--background-color)',
+                      color: 'var(--text-primary)'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = '#f8f9fa';
+                      e.currentTarget.style.backgroundColor = 'var(--surface-color)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = '#ffffff';
+                      e.currentTarget.style.backgroundColor = 'var(--background-color)';
                     }}
                   >
-                    <div style={{ fontWeight: '600', color: '#212529', fontSize: '14px', marginBottom: '4px' }}>
+                    <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '14px', marginBottom: '4px' }}>
                       <strong>{mon.ma_mon}</strong> – {mon.ten_mon}
                       <span className="badge ms-2" style={{ 
-                        background: '#1a73e8', 
-                        color: 'white',
+                        background: 'var(--text-primary)', 
+                        color: 'var(--background-color)',
                         fontSize: '11px'
                       }}>
                         {mon.so_tc} TC
                       </span>
                     </div>
-                    <div style={{ color: '#6c757d', fontSize: '12px', lineHeight: '1.3' }}>
+                    <div style={{ color: 'var(--text-secondary)', fontSize: '12px', lineHeight: '1.3' }}>
                       <div>📚 Nhóm {mon.nhom_to} {mon.to ? `- Tổ ${mon.to}` : ""}</div>
                       <div>👨‍🏫 {mon.tkb[0]?.giang_vien || "Chưa có GV"}</div>
                       <div>📅 {mon.tkb.length > 0 ? 
@@ -135,7 +142,7 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
                 ))}
               </div>
             ) : (
-              <div className="text-center py-4 text-muted">
+              <div className="text-center py-4" style={{ color: 'var(--text-secondary)' }}>
                 <i className="fa-solid fa-search-minus fa-2x mb-2"></i>
                 <div>Không tìm thấy môn học nào</div>
                 <small>Thử tìm kiếm với từ khóa khác</small>
@@ -144,16 +151,14 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
           </div>
           
           {results.length > 0 && (
-            <div className="card-footer text-center py-2">
-              <small className="text-muted">
+            <div className="card-footer text-center py-2" style={{ 
+              backgroundColor: 'var(--surface-color)',
+              borderTopColor: 'var(--border-color)'
+            }}>
+              <small style={{ color: 'var(--text-secondary)' }}>
                 <i className="fa-solid fa-list me-1"></i>
                 Tìm thấy {results.length} môn học
-                {results.length === 50 && (
-                  <span className="ms-2">
-                    <i className="fa-solid fa-info-circle me-1"></i>
-                    Hiển thị tối đa 50 kết quả
-                  </span>
-                )}
+                
               </small>
             </div>
           )}
@@ -161,7 +166,7 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
       )}
       
       {!keyword && (
-        <div className="text-center py-3 text-muted">
+        <div className="text-center py-3" style={{ color: 'var(--text-secondary)' }}>
           <i className="fa-solid fa-graduation-cap fa-2x mb-2"></i>
           <div>Nhập từ khóa để tìm kiếm</div>
           <small>Hỗ trợ tìm theo mã môn, tên môn, giảng viên, phòng học</small>

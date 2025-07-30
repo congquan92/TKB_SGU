@@ -1,21 +1,21 @@
 /* Google Calendar Inspired Theme System */
 
 :root[data-theme="light"] {
-  /* Light Theme Colors */
-  --primary-color: #1a73e8;
+  /* Light Theme Colors - Simple & Clean */
+  --primary-color: #1a73e8; /* Chỉ cho đường line */
   --primary-hover: #1557b0;
   --secondary-color: #34a853;
-  --background-color: #ffffff;
-  --surface-color: #f8f9fa;
-  --border-color: #dadce0;
-  --text-primary: #202124;
-  --text-secondary: #5f6368;
-  --text-disabled: #9aa0a6;
+  --background-color: #ffffff; /* Trắng thuần */
+  --surface-color: #f8f8f8; /* Xám rất nhạt */
+  --border-color: #e0e0e0; /* Xám nhạt cho border */
+  --text-primary: #000000; /* Đen thuần */
+  --text-secondary: #666666; /* Xám đậm */
+  --text-disabled: #999999;
   --shadow-light: rgba(0, 0, 0, 0.1);
   --shadow-medium: rgba(0, 0, 0, 0.15);
   --shadow-heavy: rgba(0, 0, 0, 0.2);
-  --calendar-grid: #e8eaed;
-  --calendar-today: #e8f0fe;
+  --calendar-grid: #e0e0e0;
+  --calendar-today: #f0f0f0;
   --calendar-weekend: #fafafa;
   --success-color: #137333;
   --warning-color: #f9ab00;
@@ -24,37 +24,46 @@
 }
 
 :root[data-theme="dark"] {
-  /* Dark Theme Colors */
-  --primary-color: #8ab4f8;
-  --primary-hover: #aecbfa;
-  --secondary-color: #81c995;
-  --background-color: #202124;
-  --surface-color: #303134;
-  --border-color: #5f6368;
-  --text-primary: #e8eaed;
-  --text-secondary: #9aa0a6;
-  --text-disabled: #5f6368;
-  --shadow-light: rgba(0, 0, 0, 0.3);
-  --shadow-medium: rgba(0, 0, 0, 0.4);
-  --shadow-heavy: rgba(0, 0, 0, 0.5);
-  --calendar-grid: #5f6368;
-  --calendar-today: #1a3e72;
-  --calendar-weekend: #282a2d;
-  --success-color: #81c995;
-  --warning-color: #fdd663;
-  --error-color: #f28b82;
-  --info-color: #8ab4f8;
+  /* Dark Theme Colors - High Contrast White on Black */
+  --primary-color: #ffffff; /* Trắng thuần cho primary */
+  --primary-hover: #f0f0f0; /* Trắng nhạt khi hover */
+  --secondary-color: #cccccc; /* Xám nhạt */
+  --background-color: #000000; /* Đen thuần */
+  --surface-color: #111111; /* Đen tối hơn */
+  --surface-hover: #222222; /* Màu hover cho surface */
+  --border-color: #444444; /* Xám sáng hơn cho border */
+  --text-primary: #ffffff; /* Trắng thuần */
+  --text-secondary: #cccccc; /* Xám sáng để đọc được */
+  --text-muted: #999999; /* Xám trung bình sáng hơn */
+  --text-disabled: #666666; /* Xám đậm hơn */
+  --shadow-light: rgba(255, 255, 255, 0.1);
+  --shadow-medium: rgba(255, 255, 255, 0.15);
+  --shadow-heavy: rgba(255, 255, 255, 0.2);
+  --calendar-grid: #444444;
+  --calendar-today: #222222;
+  --calendar-weekend: #0a0a0a;
+  --success-color: #22c55e; /* Xanh lá sáng */
+  --warning-color: #f59e0b; /* Vàng sáng */
+  --error-color: #ef4444; /* Đỏ sáng */
+  --info-color: #3b82f6; /* Xanh dương sáng */
+  /* Input và form */
+  --input-bg: #222222;
+  --input-border: #555555;
+  --input-text: #ffffff;
+  --placeholder-color: #aaaaaa;
 }
 
 /* Global Theme Styles */
 body.light-theme {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: #ffffff; /* Nền trắng thuần */
   color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 body.dark-theme {
-  background: linear-gradient(135deg, #202124 0%, #303134 100%);
+  background: #000000; /* Nền đen thuần */
   color: var(--text-primary);
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* Google Calendar Style Components */
@@ -345,6 +354,274 @@ body.dark-theme {
     padding: 6px 16px;
     font-size: 13px;
   }
+}
+
+/* Dark Theme Bootstrap Overrides */
+[data-theme="dark"] .card {
+  background-color: var(--surface-color) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-header {
+  background-color: var(--primary-color) !important;
+  border-bottom-color: var(--border-color) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .form-control {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+[data-theme="dark"] .form-control:focus {
+  background-color: var(--input-bg) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--input-text) !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25) !important;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+  color: var(--placeholder-color) !important;
+  opacity: 1 !important;
+}
+
+[data-theme="dark"] .btn-primary {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--background-color) !important;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background-color: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  color: var(--background-color) !important;
+}
+
+[data-theme="dark"] .btn-success {
+  background-color: var(--success-color) !important;
+  border-color: var(--success-color) !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+[data-theme="dark"] .btn-warning {
+  background-color: var(--warning-color) !important;
+  border-color: var(--warning-color) !important;
+  color: #000000 !important;
+  font-weight: 500 !important;
+}
+
+[data-theme="dark"] .btn-danger {
+  background-color: var(--error-color) !important;
+  border-color: var(--error-color) !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+[data-theme="dark"] .btn-info {
+  background-color: var(--info-color) !important;
+  border-color: var(--info-color) !important;
+  color: #ffffff !important;
+  font-weight: 500 !important;
+}
+
+[data-theme="dark"] .btn-outline-primary {
+  color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+}
+
+[data-theme="dark"] .btn-outline-primary:hover {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--background-color) !important;
+}
+
+[data-theme="dark"] .btn-outline-danger {
+  color: var(--error-color) !important;
+  border-color: var(--error-color) !important;
+}
+
+[data-theme="dark"] .btn-outline-danger:hover {
+  background-color: var(--error-color) !important;
+  border-color: var(--error-color) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .table {
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .table-dark {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .table-dark th {
+  background-color: var(--primary-color) !important;
+  border-color: var(--primary-hover) !important;
+}
+
+[data-theme="dark"] .text-muted {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .badge {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+[data-theme="dark"] .list-group-item {
+  background-color: var(--surface-color) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .list-group-item:hover {
+  background-color: var(--calendar-today) !important;
+}
+
+[data-theme="dark"] .toast {
+  background-color: var(--surface-color) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark Theme Table Improvements */
+[data-theme="dark"] .table {
+  color: var(--text-primary) !important;
+  background-color: var(--background-color) !important;
+}
+
+[data-theme="dark"] .table th {
+  background-color: var(--surface-color) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .table td {
+  background-color: var(--background-color) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+  background-color: var(--surface-color) !important;
+}
+
+[data-theme="dark"] .table-hover tbody tr:hover {
+  background-color: var(--surface-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark Theme Timetable Specific Improvements */
+[data-theme="dark"] .gc-timetable-cell {
+  background-color: var(--background-color) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .gc-timetable-header {
+  background-color: var(--surface-color) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .gc-event {
+  background-color: var(--primary-color) !important;
+  color: var(--background-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .gc-event-title {
+  color: var(--background-color) !important;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .gc-event-time {
+  color: var(--background-color) !important;
+  opacity: 0.9;
+}
+
+/* Dark Theme Text Improvements */
+[data-theme="dark"] .text-muted {
+  color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] small {
+  color: var(--text-secondary) !important;
+}
+
+/* Dark Theme Card Improvements */
+[data-theme="dark"] .card {
+  background-color: var(--surface-color) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-header {
+  background-color: var(--surface-color) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-body {
+  color: var(--text-primary) !important;
+}
+
+/* Đảm bảo tất cả text có contrast tốt */
+[data-theme="dark"] * {
+  color: inherit;
+}
+
+[data-theme="dark"] h1, 
+[data-theme="dark"] h2, 
+[data-theme="dark"] h3, 
+[data-theme="dark"] h4, 
+[data-theme="dark"] h5, 
+[data-theme="dark"] h6 {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .badge {
+  background-color: var(--text-primary) !important;
+  color: var(--background-color) !important;
+  font-weight: 600 !important;
+}
+
+[data-theme="dark"] .btn {
+  color: inherit !important;
+  font-weight: 500 !important;
+}
+
+/* Override cho các element có thể bị mờ */
+[data-theme="dark"] .text-muted {
+  color: var(--text-secondary) !important;
+  opacity: 0.8;
+}
+
+[data-theme="dark"] small {
+  color: var(--text-secondary) !important;
+  opacity: 0.9;
 }
 
 /* Animation classes */

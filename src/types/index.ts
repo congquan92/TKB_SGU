@@ -21,6 +21,8 @@ export interface TimetableCell {
   subject?: string;
   room?: string;
   instructor?: string;
+  nhom_to?: string;
+  to?: string;
   isConflict?: boolean;
   subjectCode?: string;
 }
