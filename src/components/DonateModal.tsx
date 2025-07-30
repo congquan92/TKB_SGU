@@ -20,10 +20,18 @@ export default function DonateModal({ show, onHide }: DonateModalProps) {
 
   // Main Donate Screen
   return (
-    <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.6)' }}>
+    <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
       <div className="modal-dialog modal-dialog-centered modal-lg">
-        <div className="modal-content">
-          <div className="modal-header bg-gradient text-white" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+        <div className="modal-content" style={{
+          backgroundColor: 'var(--surface-color)',
+          border: '1px solid var(--border-color)',
+          borderRadius: '16px'
+        }}>
+          <div className="modal-header text-white" style={{ 
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            borderRadius: '16px 16px 0 0',
+            border: 'none'
+          }}>
             <h4 className="modal-title">
               <i className="fa-solid fa-heart text-danger me-2 fa-beat"></i>
               Ủng hộ phát triển dự án
@@ -35,35 +43,44 @@ export default function DonateModal({ show, onHide }: DonateModalProps) {
               title="Đóng"
             ></button>
           </div>
-          <div className="modal-body p-4">
+          <div className="modal-body p-4" style={{
+            backgroundColor: 'var(--surface-color)',
+            color: 'var(--text-primary)'
+          }}>
             
             <div className="row justify-content-center">
               {/* VietQR Code */}
               <div className="col-md-8 col-lg-6 text-center mb-4">
                 <div className="qr-container">
-                  <div className="qr-code-wrapper vietqr p-4 border border-3 border-success rounded-4 d-inline-block bg-white shadow-lg">
+                  <div className="qr-code-wrapper vietqr p-4 border border-3 rounded-4 d-inline-block shadow-lg" style={{
+                    backgroundColor: 'var(--background-color)',
+                    borderColor: 'var(--success-color) !important'
+                  }}>
                     <img 
                       src={vietQRUrl}
                       alt="VietQR Code Donate"
                       className="img-fluid rounded-2"
-                      style={{ width: '250px', height: '250px' }}
+                      style={{ width: '450px', height: '300px' }}
                       onError={(e) => {
                         // Fallback to manual QR if VietQR fails
-                        e.currentTarget.src = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(`Bank: VietinBank\nAccount: ${accountNumber}\nName: ${accountName}\nContent: ${description}`)}&bgcolor=ffffff&color=000000`;
+                        e.currentTarget.src = `https://api.qrserver.com/v1/create-qr-code/?size=450x300&data=${encodeURIComponent(`Bank: VietinBank\nAccount: ${accountNumber}\nName: ${accountName}\nContent: ${description}`)}&bgcolor=ffffff&color=000000`;
                       }}
                     />
                   </div>
                   <div className="mt-3">
-                    <span className="badge bg-success fs-6 px-3 py-2">
+                    <span className="badge fs-6 px-3 py-2" style={{
+                      backgroundColor: 'var(--success-color)',
+                      color: 'var(--background-color)'
+                    }}>
                       <i className="fa-solid fa-qrcode me-1"></i>
                       QR Banking
                     </span>
                   </div>
                   <div className="mt-2">
-                    <small className="text-muted d-block">
+                    <small className="d-block" style={{ color: 'var(--text-secondary)' }}>
                       <strong>VietinBank:</strong> {accountNumber}
                     </small>
-                    <small className="text-muted d-block">
+                    <small className="d-block" style={{ color: 'var(--text-secondary)' }}>
                       <strong>Chủ TK:</strong> {accountName}
                     </small>
                   </div>
@@ -85,20 +102,34 @@ export default function DonateModal({ show, onHide }: DonateModalProps) {
 
         
           </div>
-          <div className="modal-footer text-center py-3" style={{ background: 'linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%)', borderRadius: '0 0 20px 20px' }}>
+          <div className="modal-footer text-center py-3" style={{ 
+            background: 'var(--surface-color)', 
+            borderTop: '1px solid var(--border-color)',
+            borderRadius: '0 0 16px 16px',
+            color: 'var(--text-primary)'
+          }}>
             <div className="w-100">
               <div className="mb-3">
-                <p className="text-muted mb-2">
+                <p className="mb-2" style={{ color: 'var(--text-primary)' }}>
                   <i className="fa-solid fa-heart text-danger me-1 fa-beat"></i>
                   <strong>Cảm ơn những người đã ủng hộ dự án</strong>
                 </p>
-                <small className="text-muted">
+                <small style={{ color: 'var(--text-secondary)' }}>
                   Sự hỗ trợ của mọi người là động lực để mình tiếp tục phát triển
                 </small>
               </div>
               
               <div className="d-flex justify-content-center gap-2">
-                <button type="button" className="btn btn-outline-secondary" onClick={onHide}>
+                <button 
+                  type="button" 
+                  className="btn" 
+                  onClick={onHide}
+                  style={{
+                    backgroundColor: 'var(--border-color)',
+                    borderColor: 'var(--border-color)',
+                    color: 'var(--text-primary)'
+                  }}
+                >
                   <i className="fa-solid fa-times me-1"></i>
                   Đóng
                 </button>

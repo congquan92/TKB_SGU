@@ -45,7 +45,7 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
   const handleSubjectClick = (mon: Subject) => {
     console.log('Subject clicked:', mon.ma_mon, mon.ten_mon);
     onSelect(mon);
-    setKeyword(""); // Clear search after selection
+    // Không xóa search để user có thể chọn tiếp các môn khác
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -56,22 +56,44 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
 
   return (
     <div className="mb-4">
-      <input
-        className="form-control mb-3"
-        placeholder="🔍 Tìm môn học, giảng viên, phòng học..."
-        value={keyword}
-        onChange={handleKeywordChange}
-        onKeyPress={handleKeyPress}
-        autoComplete="off"
-        style={{
-          borderRadius: '24px',
-          padding: '12px 20px',
-          border: '1px solid var(--border-color)',
-          fontSize: '14px',
-          backgroundColor: 'var(--background-color)',
-          color: 'var(--text-primary)'
-        }}
-      />
+      <div className="position-relative">
+        <input
+          className="form-control mb-3"
+          placeholder="Tìm môn học, giảng viên, phòng học..."
+          value={keyword}
+          onChange={handleKeywordChange}
+          onKeyPress={handleKeyPress}
+          autoComplete="off"
+          style={{
+            borderRadius: '24px',
+            padding: '12px 20px',
+            paddingRight: keyword ? '50px' : '20px',
+            border: '1px solid var(--border-color)',
+            fontSize: '14px',
+            backgroundColor: 'var(--background-color)',
+            color: 'var(--text-primary)'
+          }}
+        />
+        {keyword && (
+          <button
+            onClick={() => setKeyword("")}
+            className="btn btn-sm position-absolute"
+            title="Xóa tìm kiếm"
+            style={{
+              right: '8px',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              border: 'none',
+              backgroundColor: 'transparent',
+              color: 'var(--text-secondary)',
+              padding: '4px 8px',
+              marginBottom: '12px'
+            }}
+          >
+            <i className="fa-solid fa-xmark"></i>
+          </button>
+        )}
+      </div>
       
       {keyword && (
         <div className="card shadow-sm" style={{

@@ -242,23 +242,29 @@ export default function Timetable({ subjects }: TimetableProps) {
                       <div className="fw-bold mb-1" 
                            style={{ fontSize: '0.9rem', lineHeight: '1.2', color: 'var(--text-primary)' }}
                            title={cell.subject}>
-                        {cell.subject.length > 25 ? cell.subject.substring(0, 25) + '...' : cell.subject}
+                        {cell.subject}
                       </div>
-                      {cell.room && (
-                        <div className="mb-1 fst-italic" style={{ fontSize: '0.8rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}>
-                          📍 {cell.room.replace('Ph ', '')}
+                       {cell.subjectCode && (
+                        <div className="mb-1 fst-italic" style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}>
+                         Mã môn : {cell.subjectCode}
                         </div>
                       )}
+                         
+                      {cell.room && (
+                        <div className="mb-1 fst-italic" style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}>
+                          Phòng : {cell.room.replace('Ph ', '')}
+                        </div>
+                      )}    
                       {cell.nhom_to && (
                         <div className="mb-1 fst-italic" style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}>
-                          👥 Nhóm: {cell.nhom_to}{cell.to ? ` - Tổ: ${cell.to}` : ''}
+                          Nhóm : {cell.nhom_to}{cell.to ? ` - Tổ: ${cell.to}` : ''}
                         </div>
                       )}
                       {cell.instructor && (
                         <div className="fst-italic mb-1" 
                              style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}
                              title={cell.instructor}>
-                           👨‍🏫 {cell.instructor.replace('GV ', '')}     
+                            GV : {cell.instructor.replace('GV ', '')}     
                         </div>
                       )}
                     </div>

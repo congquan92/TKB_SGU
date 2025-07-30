@@ -624,6 +624,27 @@ body.dark-theme {
   opacity: 0.9;
 }
 
+/* Dark Theme Modal Styles */
+[data-theme="dark"] .modal-content {
+  background-color: var(--surface-color) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .modal-header {
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .modal-footer {
+  border-color: var(--border-color) !important;
+  background-color: var(--surface-color) !important;
+}
+
+[data-theme="dark"] .modal-body {
+  background-color: var(--surface-color) !important;
+  color: var(--text-primary) !important;
+}
+
 /* Animation classes */
 .gc-fade-in {
   animation: gcFadeIn 0.3s ease;

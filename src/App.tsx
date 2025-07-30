@@ -454,36 +454,54 @@ export default function App() {
               <div className="card-body p-3">
                 <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
                   {selected.map((mon) => (
-                    <button
+                    <div
                       key={mon.ma_mon}
-                      className="btn btn-sm text-start"
-                      onClick={() => removeSubject(mon.ma_mon)}
-                      title={`Click để xóa ${mon.ten_mon}`}
+                      className="btn btn-sm text-start d-flex justify-content-between align-items-center"
                       style={{
                         backgroundColor: 'var(--background-color)',
                         borderColor: 'var(--border-color)',
                         color: 'var(--text-primary)',
                         padding: '8px 12px',
                         borderRadius: '6px',
-                        transition: 'all 0.2s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = 'var(--error-color)';
-                        e.currentTarget.style.color = 'white';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'var(--background-color)';
-                        e.currentTarget.style.color = 'var(--text-primary)';
+                        border: '1px solid var(--border-color)'
                       }}
                     >
-                      <div style={{ fontSize: '13px', fontWeight: '600' }}>
-                        <i className="fa-solid fa-xmark me-2"></i>
-                        {mon.ma_mon} - {mon.ten_mon}
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: '13px', fontWeight: '600' }}>
+                          {mon.ma_mon} - {mon.ten_mon}
+                        </div>
+                        <small style={{ opacity: 0.8 }}>
+                          {mon.so_tc} TC - Nhóm {mon.nhom_to} {mon.to ? `- Tổ ${mon.to}` : ""}
+                        </small>
+                        
                       </div>
-                      <small style={{ opacity: 0.8 }}>
-                        {mon.so_tc} TC - Nhóm {mon.nhom_to}
-                      </small>
-                    </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeSubject(mon.ma_mon);
+                        }}
+                        className="btn btn-sm ms-2"
+                        title={`Click để xóa ${mon.ten_mon}`}
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: 'none',
+                          color: 'var(--error-color)',
+                          padding: '2px 6px',
+                          borderRadius: '4px',
+                          transition: 'all 0.2s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = 'var(--error-color)';
+                          e.currentTarget.style.color = 'white';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'transparent';
+                          e.currentTarget.style.color = 'var(--error-color)';
+                        }}
+                      >
+                        <i className="fa-solid fa-xmark"></i>
+                      </button>
+                    </div>
                   ))}
                 </div>
               </div>
