@@ -83,12 +83,12 @@ export default function Timetable({ subjects }: TimetableProps) {
     }
 
     subject.tkb.forEach((session) => {
-      console.log('Processing session:', session);
+      // console.log('Processing session:', session);
       const dayIndex = WEEKDAYS.indexOf(session.thu);
-      console.log('Day index:', dayIndex, 'for day:', session.thu);
+      // console.log('Day index:', dayIndex, 'for day:', session.thu);
       
       if (dayIndex === -1) {
-        console.log('Day not found:', session.thu);
+        // console.log('Day not found:', session.thu);
         return;
       }
 
@@ -96,16 +96,16 @@ export default function Timetable({ subjects }: TimetableProps) {
       // console.log('Time match:', timeMatch, 'for time:', session.thoi_gian);
       
       if (!timeMatch) {
-        console.log('Time format not matched:', session.thoi_gian);
+        // console.log('Time format not matched:', session.thoi_gian);
         return;
       }
 
       const startSlot = getTimeSlotIndex(timeMatch[1]);
       const endSlot = getTimeSlotIndex(timeMatch[2]);
-      console.log('Start slot:', startSlot, 'End slot:', endSlot, 'Start time:', timeMatch[1], 'End time:', timeMatch[2]);
+      // console.log('Start slot:', startSlot, 'End slot:', endSlot, 'Start time:', timeMatch[1], 'End time:', timeMatch[2]);
 
       if (startSlot === -1 || endSlot === -1) {
-        console.log('Invalid slots - Start:', startSlot, 'End:', endSlot);
+        // console.log('Invalid slots - Start:', startSlot, 'End:', endSlot);
         return;
       }
 

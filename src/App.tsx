@@ -11,10 +11,58 @@ import data from "./data/dsCustom.json";
 import type { Subject } from "./types";
 
 export default function App() {
-  const [selected, setSelected] = useState<Subject[]>([]);
+  // Khôi phục dữ liệu từ localStorage khi khởi tạo
+  const [selected, setSelected] = useState<Subject[]>(() => {
+    try {
+      const savedSubjects = localStorage.getItem('tkb-selected-subjects');
+      if (savedSubjects) {
+        const parsed = JSON.parse(savedSubjects);
+        // console.log('Khôi phục thời khóa biểu từ localStorage:', parsed.length, 'môn học');
+        return parsed;
+      }
+    } catch (error) {
+      console.error('Lỗi khi khôi phục dữ liệu từ localStorage:', error);
+    }
+    return [];
+  });
+  
   const [isCapturing, setIsCapturing] = useState(false);
   const [showDonateModal, setShowDonateModal] = useState(false);
   const { theme, toggleTheme } = useTheme();
+
+  // Lưu dữ liệu vào localStorage mỗi khi selected thay đổi
+  useEffect(() => {
+    try {
+      localStorage.setItem('tkb-selected-subjects', JSON.stringify(selected));
+      // if (selected.length > 0) {
+      //   console.log('Đã lưu thời khóa biểu vào localStorage:', selected.length, 'môn học');
+      // }
+    } catch (error) {
+      console.error('Lỗi khi lưu dữ liệu vào localStorage:', error);
+    }
+  }, [selected]);
+
+  // Hiển thị thông báo khi khôi phục dữ liệu thành công
+  useEffect(() => {
+    const savedSubjects = localStorage.getItem('tkb-selected-subjects');
+    if (savedSubjects) {
+      try {
+        const parsed = JSON.parse(savedSubjects);
+        if (parsed.length > 0) {
+          toast.success(`Đã khôi phục ${parsed.length} môn học từ lần trước`, {
+            position: "bottom-right",
+            autoClose: 2000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
+        }
+      } catch (error) {
+        console.error('Lỗi khi kiểm tra dữ liệu saved:', error);
+      }
+    }
+  }, []); // Chỉ chạy một lần khi component mount
 
   const addSubject = (mon: Subject) => {
 
@@ -123,7 +171,9 @@ export default function App() {
 
   const clearAll = () => {
     setSelected([]);
-    toast.info("Đã xóa tất cả môn học", {
+    // Xóa luôn dữ liệu trong localStorage
+    localStorage.removeItem('tkb-selected-subjects');
+    toast.info("Đã xóa tất cả môn học và dữ liệu lưu trữ", {
       position: "top-right",
       autoClose: 2000,
     });
@@ -206,8 +256,9 @@ export default function App() {
             }
             
             setSelected(importedSubjects);
+            // localStorage sẽ được cập nhật tự động qua useEffect
             toast.success(
-              `✅ Đã nhập file JSON thành công! ${importedSubjects.length} môn học`,
+              `✅ Đã nhập file JSON thành công! ${importedSubjects.length} môn học đã được lưu`,
               {
                 position: "top-right",
                 autoClose: 3000,
@@ -321,7 +372,7 @@ export default function App() {
   };
   // Thông báo mới dô
   useEffect(() => {
-    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 30/7/2025. Vui lòng kiểm tra xác thực lại thông tin trước khi sử dụng.!!!";
+    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 30/7/2025.";
     toast.info(toastMessage, {
       position: "top-center",
       autoClose: 6000,
@@ -583,6 +634,8 @@ export default function App() {
                     }}
                   />
                 </div>
+                
+              
               </div>
             </div>
           </div>

@@ -43,7 +43,7 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
   };
 
   const handleSubjectClick = (mon: Subject) => {
-    console.log('Subject clicked:', mon.ma_mon, mon.ten_mon);
+    // console.log('Subject clicked:', mon.ma_mon, mon.ten_mon);
     onSelect(mon);
     // Không xóa search để user có thể chọn tiếp các môn khác
   };
@@ -116,7 +116,7 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
                     key={`${mon.ma_mon}-${mon.nhom_to}-${mon.to}`}
                     className="list-group-item"
                     onClick={(e) => {
-                      console.log('Click event triggered', e);
+                      // console.log('Click event triggered', e);
                       e.preventDefault();
                       e.stopPropagation();
                       handleSubjectClick(mon);
