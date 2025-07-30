@@ -117,6 +117,10 @@ export default function DonateModal({ show, onHide }: DonateModalProps) {
                 <small style={{ color: 'var(--text-secondary)' }}>
                   Sự hỗ trợ của mọi người là động lực để mình tiếp tục phát triển
                 </small>
+                <br />
+                <small style={{ color: 'var(--text-secondary)' }}>
+                  Liên hệ: <a href="http://facebook.com/cucngau.quan" target="_blank" rel="noopener noreferrer">Quân</a>
+                </small>
               </div>
               
               <div className="d-flex justify-content-center gap-2">
