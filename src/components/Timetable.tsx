@@ -11,30 +11,6 @@ const COLORS = [
   '#ef4444', '#84cc16', '#f97316', '#8b5cf6', '#14b8a6', '#f472b6'
 ];
 
-// Function to brighten colors for dark theme
-const brightenColor = (color: string, factor: number = 0.3): string => {
-  // Convert hex to RGB
-  const hex = color.replace('#', '');
-  const r = parseInt(hex.substr(0, 2), 16);
-  const g = parseInt(hex.substr(2, 2), 16);
-  const b = parseInt(hex.substr(4, 2), 16);
-  
-  // Brighten each component
-  const newR = Math.min(255, Math.round(r + (255 - r) * factor));
-  const newG = Math.min(255, Math.round(g + (255 - g) * factor));
-  const newB = Math.min(255, Math.round(b + (255 - b) * factor));
-  
-  // Convert back to hex
-  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
-};
-
-// Function to get color based on theme
-const getThemeAwareColor = (color: string): string => {
-  // Check if dark theme is active
-  const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
-  return isDarkTheme ? brightenColor(color) : color;
-};
-
 const WEEKDAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
 
 const TIME_SLOTS = [
@@ -255,11 +231,10 @@ export default function Timetable({ subjects }: TimetableProps) {
               </td>
               {row.map((cell, dayIndex) => {
                 const cellColor = cell.subjectCode ? subjectColors.get(cell.subjectCode) : '#6366f1';
-                const displayColor = getThemeAwareColor(cellColor || '#6366f1');
                 return (
                 <td 
                   key={dayIndex} 
-                  className="align-middle"
+                  className="align-middle subject-cell"
                   data-has-subject={cell.subject ? "true" : "false"}
                   style={{
                     ...getCellStyle(cell),
@@ -268,16 +243,16 @@ export default function Timetable({ subjects }: TimetableProps) {
                     border: '1px solid var(--border-color)',
                     minHeight: '60px',
                     padding: '8px',
-                    '--subject-border-color': displayColor
-                  } as React.CSSProperties & { '--subject-border-color': string }}
+                    '--subject-border-color': cellColor,
+                    '--subject-text-color': cellColor
+                  } as React.CSSProperties & { '--subject-border-color': string; '--subject-text-color': string }}
                 >
                   {cell.subject && (
                     <div className="h-100 d-flex flex-column justify-content-center">
-                      <div className="fw-bold mb-1" 
+                      <div className="fw-bold mb-1 subject-name" 
                            style={{ 
                              fontSize: '0.9rem', 
-                             lineHeight: '1.2', 
-                             color: cell.subjectCode ? displayColor : 'var(--text-primary)'
+                             lineHeight: '1.2'
                            }}
                            title={cell.subject}>
                         {cell.subject}

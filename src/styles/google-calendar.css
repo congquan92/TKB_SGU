@@ -758,3 +758,13 @@ body.dark-theme {
 [data-theme="light"] .table td[data-has-subject="true"] {
   border-left: 4px solid var(--subject-border-color, #6366f1) !important;
 }
+
+/* Subject name color - matches border color */
+.subject-cell .subject-name {
+  color: var(--subject-text-color, var(--text-primary)) !important;
+}
+
+/* In dark theme, brighten the subject text color for better readability */
+[data-theme="dark"] .subject-cell .subject-name {
+  filter: brightness(1.4) saturate(0.9) !important;
+}
