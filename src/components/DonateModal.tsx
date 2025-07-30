@@ -92,7 +92,7 @@ export default function DonateModal({ show, onHide }: DonateModalProps) {
             <div className="text-center">
               <div>
                 <img 
-                  src="/g.gif" // Adjust path as needed
+                  src="/g.gif." // Adjust path as needed
                   alt="Coffee Support"
                   className="img-fluid rounded-3 shadow-sm"
                   style={{ width: '600px', height: '200px', objectFit: 'cover' }}

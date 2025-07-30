@@ -31,7 +31,7 @@
   --background-color: #000000; /* Đen thuần */
   --surface-color: #111111; /* Đen tối hơn */
   --surface-hover: #222222; /* Màu hover cho surface */
-  --border-color: #444444; /* Xám sáng hơn cho border */
+  --border-color: #888888; /* Xám sáng hơn nữa cho border rõ ràng */
   --text-primary: #ffffff; /* Trắng thuần */
   --text-secondary: #cccccc; /* Xám sáng để đọc được */
   --text-muted: #999999; /* Xám trung bình sáng hơn */
@@ -39,7 +39,7 @@
   --shadow-light: rgba(255, 255, 255, 0.1);
   --shadow-medium: rgba(255, 255, 255, 0.15);
   --shadow-heavy: rgba(255, 255, 255, 0.2);
-  --calendar-grid: #444444;
+  --calendar-grid: #888888; /* Xám sáng hơn nữa cho table grid */
   --calendar-today: #222222;
   --calendar-weekend: #0a0a0a;
   --success-color: #22c55e; /* Xanh lá sáng */
@@ -474,8 +474,29 @@ body.dark-theme {
 }
 
 [data-theme="dark"] .badge {
-  background-color: var(--primary-color) !important;
-  color: white !important;
+  background-color: var(--text-primary) !important;
+  color: var(--background-color) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .bg-success {
+  background-color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .bg-info {
+  background-color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .badge.bg-success {
+  background-color: var(--text-primary) !important;
+  color: var(--background-color) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .badge.bg-info {
+  background-color: var(--text-primary) !important;
+  color: var(--background-color) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 [data-theme="dark"] .list-group-item {
@@ -498,6 +519,16 @@ body.dark-theme {
 [data-theme="dark"] .table {
   color: var(--text-primary) !important;
   background-color: var(--background-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .table-bordered {
+  border: 2px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .table-bordered th,
+[data-theme="dark"] .table-bordered td {
+  border: 1px solid var(--border-color) !important;
 }
 
 [data-theme="dark"] .table th {
@@ -523,10 +554,40 @@ body.dark-theme {
 }
 
 /* Dark Theme Timetable Specific Improvements */
+[data-theme="dark"] .timetable-custom {
+  border: 2px solid var(--border-color) !important;
+  border-collapse: collapse !important;
+}
+
+[data-theme="dark"] .timetable-custom th,
+[data-theme="dark"] .timetable-custom td {
+  border: 1px solid var(--border-color) !important;
+  border-color: var(--border-color) !important;
+}
+
+[data-theme="dark"] .timetable-custom thead th {
+  border: 1px solid var(--border-color) !important;
+  background-color: var(--surface-color) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .timetable-custom tbody td {
+  border: 1px solid var(--border-color) !important;
+  background-color: var(--background-color) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Force borders on all table elements */
+[data-theme="dark"] .table.table-bordered,
+[data-theme="dark"] .table.table-bordered th,
+[data-theme="dark"] .table.table-bordered td {
+  border: 1px solid var(--border-color) !important;
+}
+
 [data-theme="dark"] .gc-timetable-cell {
   background-color: var(--background-color) !important;
   color: var(--text-primary) !important;
-  border-color: var(--border-color) !important;
+  border: 1px solid var(--border-color) !important;
 }
 
 [data-theme="dark"] .gc-timetable-header {
@@ -559,6 +620,14 @@ body.dark-theme {
 
 [data-theme="dark"] .text-secondary {
   color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .text-primary {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-dark {
+  color: var(--text-primary) !important;
 }
 
 [data-theme="dark"] small {
@@ -674,4 +743,18 @@ body.dark-theme {
     opacity: 1;
     transform: translateX(0);
   }
+}
+
+/* Ensure colored border-left works in dark theme */
+[data-theme="dark"] .table td {
+  border-left: initial !important;
+}
+
+[data-theme="dark"] .table td[data-has-subject="true"] {
+  border-left: 4px solid var(--subject-border-color, #6366f1) !important;
+}
+
+/* Also ensure it works in light theme */
+[data-theme="light"] .table td[data-has-subject="true"] {
+  border-left: 4px solid var(--subject-border-color, #6366f1) !important;
 }

@@ -11,6 +11,30 @@ const COLORS = [
   '#ef4444', '#84cc16', '#f97316', '#8b5cf6', '#14b8a6', '#f472b6'
 ];
 
+// Function to brighten colors for dark theme
+const brightenColor = (color: string, factor: number = 0.3): string => {
+  // Convert hex to RGB
+  const hex = color.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+  
+  // Brighten each component
+  const newR = Math.min(255, Math.round(r + (255 - r) * factor));
+  const newG = Math.min(255, Math.round(g + (255 - g) * factor));
+  const newB = Math.min(255, Math.round(b + (255 - b) * factor));
+  
+  // Convert back to hex
+  return `#${newR.toString(16).padStart(2, '0')}${newG.toString(16).padStart(2, '0')}${newB.toString(16).padStart(2, '0')}`;
+};
+
+// Function to get color based on theme
+const getThemeAwareColor = (color: string): string => {
+  // Check if dark theme is active
+  const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+  return isDarkTheme ? brightenColor(color) : color;
+};
+
 const WEEKDAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
 
 const TIME_SLOTS = [
@@ -136,12 +160,12 @@ export default function Timetable({ subjects }: TimetableProps) {
       };
     }
     
-    const color = cell.subjectCode ? subjectColors.get(cell.subjectCode) : '#6366f1';
-    
     return {
       backgroundColor: 'var(--surface-color)', // Nền tối cho cell có content
-      borderLeft: `4px solid ${color}`, // Chỉ đường line màu ở bên trái
-      border: cell.isConflict ? '2px solid var(--error-color)' : '1px solid var(--border-color)',
+      // borderLeft được xử lý bởi CSS với data attribute
+      borderTop: '1px solid var(--border-color)', // Đảm bảo có border top
+      borderRight: '1px solid var(--border-color)', // Đảm bảo có border right  
+      borderBottom: '1px solid var(--border-color)', // Đảm bảo có border bottom
       fontWeight: cell.isConflict ? 'bold' : 'normal',
       position: 'relative' as const,
       color: 'var(--text-primary)', // Text theo theme
@@ -155,8 +179,8 @@ export default function Timetable({ subjects }: TimetableProps) {
   return (
     <div className="table-container">
       <div className="d-flex justify-content-between align-items-center mb-3">
-        <h4 className="text-dark fw-bold mb-0">
-          <i className="fa-solid fa-calendar-days text-primary me-2"></i>
+        <h4 className="fw-bold mb-0" style={{ color: 'var(--text-primary)' }}>
+          <i className="fa-solid fa-calendar-days me-2" style={{ color: 'var(--primary-color)' }}></i>
           Thời Khóa Biểu
         </h4>
         {subjects.length > 0 && (
@@ -178,21 +202,23 @@ export default function Timetable({ subjects }: TimetableProps) {
         backgroundColor: 'var(--background-color)',
         color: 'var(--text-primary)'
       }}>
-        <thead className="table-dark">
+        <thead>
           <tr>
             <th style={{ 
               width: '40px', 
               minWidth: '40px',
               border: '1px solid var(--border-color)',
-              backgroundColor: 'var(--surface-color)', /* Nền tối */
-              color: 'var(--text-primary)' /* Text trắng */
+              backgroundColor: 'var(--surface-color)',
+              color: 'var(--text-primary)',
+              borderColor: 'var(--border-color)'
             }}>Tiết</th>
             <th style={{ 
               width: '70px', 
               minWidth: '70px',
               border: '1px solid var(--border-color)',
               backgroundColor: 'var(--surface-color)',
-              color: 'var(--text-primary)'
+              color: 'var(--text-primary)',
+              borderColor: 'var(--border-color)'
             }}>Giờ</th>
             {WEEKDAYS.map((day) => (
               <th key={day} style={{ 
@@ -200,7 +226,8 @@ export default function Timetable({ subjects }: TimetableProps) {
                 minWidth: '140px',
                 border: '1px solid var(--border-color)',
                 backgroundColor: 'var(--surface-color)',
-                color: 'var(--text-primary)'
+                color: 'var(--text-primary)',
+                borderColor: 'var(--border-color)'
               }}>
                 {day.replace('Thứ ', 'T')}
               </th>
@@ -212,35 +239,46 @@ export default function Timetable({ subjects }: TimetableProps) {
             <tr key={slotIndex}>
               <td className="align-middle fw-bold" style={{
                 border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--surface-color)', /* Nền tối */
-                color: 'var(--text-primary)' /* Text trắng */
+                backgroundColor: 'var(--surface-color)',
+                color: 'var(--text-primary)',
+                borderColor: 'var(--border-color)'
               }}>
                 {slotIndex + 1}
               </td>
               <td className="align-middle" style={{
                 border: '1px solid var(--border-color)',
                 backgroundColor: 'var(--surface-color)',
-                color: 'var(--text-primary)'
+                color: 'var(--text-primary)',
+                borderColor: 'var(--border-color)'
               }}>
                 <small>{TIME_SLOTS[slotIndex]}</small>
               </td>
-              {row.map((cell, dayIndex) => (
+              {row.map((cell, dayIndex) => {
+                const cellColor = cell.subjectCode ? subjectColors.get(cell.subjectCode) : '#6366f1';
+                const displayColor = getThemeAwareColor(cellColor || '#6366f1');
+                return (
                 <td 
                   key={dayIndex} 
                   className="align-middle"
+                  data-has-subject={cell.subject ? "true" : "false"}
                   style={{
                     ...getCellStyle(cell),
                     wordWrap: 'break-word',
                     overflow: 'hidden',
                     border: '1px solid var(--border-color)',
                     minHeight: '60px',
-                    padding: '8px'
-                  }}
+                    padding: '8px',
+                    '--subject-border-color': displayColor
+                  } as React.CSSProperties & { '--subject-border-color': string }}
                 >
                   {cell.subject && (
                     <div className="h-100 d-flex flex-column justify-content-center">
                       <div className="fw-bold mb-1" 
-                           style={{ fontSize: '0.9rem', lineHeight: '1.2', color: 'var(--text-primary)' }}
+                           style={{ 
+                             fontSize: '0.9rem', 
+                             lineHeight: '1.2', 
+                             color: cell.subjectCode ? displayColor : 'var(--text-primary)'
+                           }}
                            title={cell.subject}>
                         {cell.subject}
                       </div>
@@ -270,7 +308,8 @@ export default function Timetable({ subjects }: TimetableProps) {
                     </div>
                   )}
                 </td>
-              ))}
+                )
+              })}
             </tr>
           ))}
         </tbody>
