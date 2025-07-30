@@ -1,42 +1,70 @@
 import type { Subject, TimetableCell } from "../types";
 
-const TIME_SLOTS = [
-  "07:00", "07:50", "09:00", "09:50", "10:40",
-  "13:00", "13:50", "15:00", "15:50", "16:40", "17:40", "18:30"
-];
-
-const TIME_SLOTS2 = [
-  "07:00 - 07:50", "07:50 - 09:00", "09:00 - 09:50", "09:50 - 10:40",
-  "10:40 - 13:00", "13:00 - 13:50", "13:50 - 15:00", "15:00 - 15:50",
-  "15:50 - 16:40", "16:40 - 17:40", "17:40 - 18:30", "18:30 - 19:20"
-];
-
-
-const WEEKDAYS = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
-
-const COLORS = [
-  '#FFE5E5', '#E5F3FF', '#E5FFE5', '#FFF5E5', '#F5E5FF', 
-  '#E5FFFF', '#FFE5F5', '#F0F0F0', '#E5E5FF', '#FFFFE5'
-];
-
-function parseTime(timeStr: string): number {
-  const [hours, minutes] = timeStr.split(":").map(Number);
-  return hours * 60 + minutes;
-}
-
-function getTimeSlotIndex(timeStr: string): number {
-  const targetTime = parseTime(timeStr);
-  return TIME_SLOTS.findIndex((slot) => {
-    const slotTime = parseTime(slot);
-    return targetTime <= slotTime;
-  });
-}
-
 interface TimetableProps {
   subjects: Subject[];
 }
 
+// Google Calendar inspired colors
+const COLORS = [
+  '#1a73e8', '#ea4335', '#fbbc04', '#34a853', '#9aa0a6', '#ff6d01',
+  '#7c3aed', '#06b6d4', '#ec4899', '#f59e0b', '#10b981', '#6366f1',
+  '#ef4444', '#84cc16', '#f97316', '#8b5cf6', '#14b8a6', '#f472b6'
+];
+
+const WEEKDAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+
+const TIME_SLOTS = [
+  '07:00-07:50', '07:50-08:40', '08:50-09:40', '09:40-10:30', 
+  '10:40-11:30', '11:30-12:20', '13:00-13:50', '13:50-14:40',
+  '14:50-15:40', '15:40-16:30', '16:40-17:30', '17:30-18:20'
+];
+
+const getTimeSlotIndex = (time: string): number => {
+  const timeSlotMap: { [key: string]: number } = {
+    '07:00': 0, '07:50': 1, '08:50': 2, '09:40': 3,
+    '10:40': 4, '11:30': 5, '13:00': 6, '13:50': 7,
+    '14:50': 8, '15:40': 9, '16:40': 10, '17:30': 11
+  };
+  
+  // Nếu thời gian chính xác có trong map
+  if (timeSlotMap[time] !== undefined) {
+    return timeSlotMap[time];
+  }
+  
+  // Nếu không có, tìm slot gần nhất
+  const [hours, minutes] = time.split(':').map(Number);
+  const totalMinutes = hours * 60 + minutes;
+  
+  // Danh sách thời gian bắt đầu các slot (tính bằng phút)
+  const slotTimes = [
+    7*60,      // 07:00
+    7*60+50,   // 07:50
+    8*60+50,   // 08:50
+    9*60+40,   // 09:40
+    10*60+40,  // 10:40
+    11*60+30,  // 11:30
+    13*60,     // 13:00
+    13*60+50,  // 13:50
+    14*60+50,  // 14:50
+    15*60+40,  // 15:40
+    16*60+40,  // 16:40
+    17*60+30   // 17:30
+  ];
+  
+  // Tìm slot phù hợp nhất
+  for (let i = 0; i < slotTimes.length; i++) {
+    if (totalMinutes <= slotTimes[i] + 25) { // Cho phép sai lệch 25 phút
+      return i;
+    }
+  }
+  
+  return -1;
+};
+
 export default function Timetable({ subjects }: TimetableProps) {
+  console.log('Timetable received subjects:', subjects);
+  console.log('Number of subjects:', subjects.length);
+  
   // Initialize empty timetable grid
   const grid: TimetableCell[][] = Array.from({ length: 12 }, () =>
     Array.from({ length: 6 }, () => ({}))
@@ -55,16 +83,31 @@ export default function Timetable({ subjects }: TimetableProps) {
     }
 
     subject.tkb.forEach((session) => {
+      console.log('Processing session:', session);
       const dayIndex = WEEKDAYS.indexOf(session.thu);
-      if (dayIndex === -1) return;
+      console.log('Day index:', dayIndex, 'for day:', session.thu);
+      
+      if (dayIndex === -1) {
+        console.log('Day not found:', session.thu);
+        return;
+      }
 
       const timeMatch = session.thoi_gian.match(/từ (\d{2}:\d{2}) đến (\d{2}:\d{2})/);
-      if (!timeMatch) return;
+      console.log('Time match:', timeMatch, 'for time:', session.thoi_gian);
+      
+      if (!timeMatch) {
+        console.log('Time format not matched:', session.thoi_gian);
+        return;
+      }
 
       const startSlot = getTimeSlotIndex(timeMatch[1]);
       const endSlot = getTimeSlotIndex(timeMatch[2]);
+      console.log('Start slot:', startSlot, 'End slot:', endSlot, 'Start time:', timeMatch[1], 'End time:', timeMatch[2]);
 
-      if (startSlot === -1 || endSlot === -1) return;
+      if (startSlot === -1 || endSlot === -1) {
+        console.log('Invalid slots - Start:', startSlot, 'End:', endSlot);
+        return;
+      }
 
       for (let slot = startSlot; slot < endSlot && slot < 12; slot++) {
         const cell = grid[slot][dayIndex];
@@ -135,7 +178,7 @@ export default function Timetable({ subjects }: TimetableProps) {
                 {slotIndex + 1}
               </td>
               <td className="align-middle">
-                <small>{TIME_SLOTS2[slotIndex]}</small>
+                <small>{TIME_SLOTS[slotIndex]}</small>
               </td>
               {row.map((cell, dayIndex) => (
                 <td 

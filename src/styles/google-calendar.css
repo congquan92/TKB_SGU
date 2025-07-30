@@ -1,0 +1,379 @@
+/* Google Calendar Inspired Theme System */
+
+:root[data-theme="light"] {
+  /* Light Theme Colors */
+  --primary-color: #1a73e8;
+  --primary-hover: #1557b0;
+  --secondary-color: #34a853;
+  --background-color: #ffffff;
+  --surface-color: #f8f9fa;
+  --border-color: #dadce0;
+  --text-primary: #202124;
+  --text-secondary: #5f6368;
+  --text-disabled: #9aa0a6;
+  --shadow-light: rgba(0, 0, 0, 0.1);
+  --shadow-medium: rgba(0, 0, 0, 0.15);
+  --shadow-heavy: rgba(0, 0, 0, 0.2);
+  --calendar-grid: #e8eaed;
+  --calendar-today: #e8f0fe;
+  --calendar-weekend: #fafafa;
+  --success-color: #137333;
+  --warning-color: #f9ab00;
+  --error-color: #d93025;
+  --info-color: #1a73e8;
+}
+
+:root[data-theme="dark"] {
+  /* Dark Theme Colors */
+  --primary-color: #8ab4f8;
+  --primary-hover: #aecbfa;
+  --secondary-color: #81c995;
+  --background-color: #202124;
+  --surface-color: #303134;
+  --border-color: #5f6368;
+  --text-primary: #e8eaed;
+  --text-secondary: #9aa0a6;
+  --text-disabled: #5f6368;
+  --shadow-light: rgba(0, 0, 0, 0.3);
+  --shadow-medium: rgba(0, 0, 0, 0.4);
+  --shadow-heavy: rgba(0, 0, 0, 0.5);
+  --calendar-grid: #5f6368;
+  --calendar-today: #1a3e72;
+  --calendar-weekend: #282a2d;
+  --success-color: #81c995;
+  --warning-color: #fdd663;
+  --error-color: #f28b82;
+  --info-color: #8ab4f8;
+}
+
+/* Global Theme Styles */
+body.light-theme {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  color: var(--text-primary);
+}
+
+body.dark-theme {
+  background: linear-gradient(135deg, #202124 0%, #303134 100%);
+  color: var(--text-primary);
+}
+
+/* Google Calendar Style Components */
+.gc-card {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px var(--shadow-light);
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.gc-card:hover {
+  box-shadow: 0 4px 12px var(--shadow-medium);
+  transform: translateY(-1px);
+}
+
+.gc-header {
+  background: var(--surface-color);
+  border-bottom: 1px solid var(--border-color);
+  padding: 16px 20px;
+  border-radius: 12px 12px 0 0;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.gc-header h1, .gc-header h2, .gc-header h3, 
+.gc-header h4, .gc-header h5, .gc-header h6 {
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.gc-body {
+  padding: 20px;
+  background: var(--background-color);
+}
+
+/* Google Calendar Timetable */
+.gc-timetable {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+.gc-timetable-header {
+  background: var(--primary-color);
+  color: white;
+  font-weight: 500;
+  padding: 12px 16px;
+  text-align: center;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.gc-timetable-cell {
+  border: 1px solid var(--calendar-grid);
+  padding: 8px 12px;
+  vertical-align: top;
+  background: var(--background-color);
+  transition: all 0.2s ease;
+  min-height: 80px;
+  position: relative;
+}
+
+.gc-timetable-cell:hover {
+  background: var(--calendar-today);
+}
+
+.gc-event {
+  background: var(--primary-color);
+  color: white;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: 2px 0;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border-left: 3px solid var(--primary-hover);
+}
+
+.gc-event:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px var(--shadow-medium);
+}
+
+.gc-event-title {
+  font-weight: 600;
+  margin-bottom: 2px;
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.gc-event-details {
+  font-size: 11px;
+  opacity: 0.9;
+  line-height: 1.1;
+}
+
+/* Modern Buttons */
+.gc-btn {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 24px;
+  padding: 8px 20px;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.gc-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px var(--shadow-medium);
+  color: white;
+}
+
+.gc-btn-outline {
+  background: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.gc-btn-outline:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.gc-btn-success {
+  background: var(--success-color);
+}
+
+.gc-btn-success:hover {
+  background: var(--secondary-color);
+}
+
+.gc-btn-danger {
+  background: var(--error-color);
+}
+
+.gc-btn-warning {
+  background: var(--warning-color);
+  color: var(--text-primary);
+}
+
+/* Search Input Google Style */
+.gc-search {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 24px;
+  padding: 12px 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px var(--shadow-light);
+}
+
+.gc-search:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 2px 8px var(--shadow-medium);
+  background: var(--background-color);
+}
+
+.gc-search::placeholder {
+  color: var(--text-secondary);
+}
+
+/* Subject List Google Style */
+.gc-subject-item {
+  background: var(--background-color);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin: 6px 0;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.gc-subject-item:hover {
+  background: var(--calendar-today);
+  border-color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.gc-subject-item:active {
+  transform: translateX(2px);
+}
+
+.gc-subject-title {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.gc-subject-meta {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.3;
+}
+
+/* Theme Toggle */
+.gc-theme-toggle {
+  background: var(--surface-color);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  width: 56px;
+  height: 28px;
+}
+
+.gc-theme-toggle-indicator {
+  width: 20px;
+  height: 20px;
+  background: var(--primary-color);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  position: absolute;
+  top: 4px;
+  left: 4px;
+}
+
+[data-theme="dark"] .gc-theme-toggle-indicator {
+  transform: translateX(28px);
+}
+
+/* Scrollbars */
+.gc-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-color) transparent;
+}
+
+.gc-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.gc-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.gc-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+.gc-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .gc-card {
+    border-radius: 8px;
+    margin: 8px;
+  }
+  
+  .gc-header {
+    padding: 12px 16px;
+  }
+  
+  .gc-body {
+    padding: 16px;
+  }
+  
+  .gc-timetable-cell {
+    padding: 6px 8px;
+    min-height: 60px;
+    font-size: 12px;
+  }
+  
+  .gc-btn {
+    padding: 6px 16px;
+    font-size: 13px;
+  }
+}
+
+/* Animation classes */
+.gc-fade-in {
+  animation: gcFadeIn 0.3s ease;
+}
+
+@keyframes gcFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.gc-slide-in {
+  animation: gcSlideIn 0.3s ease;
+}
+
+@keyframes gcSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}

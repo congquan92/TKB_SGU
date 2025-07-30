@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import type { Subject } from "../types";
 
 interface SubjectSelectorProps {
@@ -9,81 +9,162 @@ interface SubjectSelectorProps {
 export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps) {
   const [keyword, setKeyword] = useState("");
 
-  const results = data.filter(
-    (mon) =>
-      mon.ma_mon.toLowerCase().includes(keyword.toLowerCase()) ||
-      mon.ten_mon.toLowerCase().includes(keyword.toLowerCase())
-  );
+  // Improved search with better matching
+  const results = useMemo(() => {
+    if (!keyword.trim()) return [];
+    
+    const searchTerm = keyword.toLowerCase().trim();
+    
+    return data.filter((mon) => {
+      // Search in subject code
+      if (mon.ma_mon.toLowerCase().includes(searchTerm)) return true;
+      
+      // Search in subject name
+      if (mon.ten_mon.toLowerCase().includes(searchTerm)) return true;
+      
+      // Search in instructor name
+      const hasInstructor = mon.tkb.some(session => 
+        session.giang_vien && session.giang_vien.toLowerCase().includes(searchTerm)
+      );
+      if (hasInstructor) return true;
+      
+      // Search in room
+      const hasRoom = mon.tkb.some(session => 
+        session.phong && session.phong.toLowerCase().includes(searchTerm)
+      );
+      if (hasRoom) return true;
+      
+      return false;
+    }).slice(0, 50); // Limit results for performance
+  }, [data, keyword]);
 
   const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKeyword(e.target.value);
   };
 
   const handleSubjectClick = (mon: Subject) => {
+    console.log('Subject clicked:', mon.ma_mon, mon.ten_mon);
     onSelect(mon);
     setKeyword(""); // Clear search after selection
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && results.length > 0) {
+      handleSubjectClick(results[0]);
+    }
   };
 
   return (
     <div className="mb-4">
       <input
-        className="form-control mb-2"
-        placeholder="Nhập mã hoặc tên môn học"
+        className="form-control mb-3"
+        placeholder="🔍 Tìm môn học, giảng viên, phòng học..."
         value={keyword}
         onChange={handleKeywordChange}
+        onKeyPress={handleKeyPress}
         autoComplete="off"
+        style={{
+          borderRadius: '24px',
+          padding: '12px 20px',
+          border: '1px solid #dee2e6',
+          fontSize: '14px'
+        }}
       />
+      
       {keyword && (
         <div className="card shadow-sm">
           <div 
             className="list-container" 
             style={{ 
-              maxHeight: '350px',
-              overflowY: 'auto'
+              maxHeight: '400px',
+              overflowY: 'auto',
+              padding: '8px'
             }}
           >
-            <ul className="list-group list-group-flush">
-              {results.map((mon) => (
-              <li
-                key={mon.ma_mon}
-                className="list-group-item list-group-item-action d-flex justify-content-between align-items-start"
-                onClick={() => handleSubjectClick(mon)}
-                style={{ cursor: 'pointer' }}
-              >
-                <div>
-                  <strong>{mon.ma_mon}</strong> – {mon.ten_mon} - <small className="text-primary fst-italic">{mon.so_tc} tín chỉ</small>
-                  <br />
-                  <small className="text-muted">
-                    - Nhóm {mon.nhom_to} {mon.to ? `- Tổ ${mon.to}` : ""} - {mon.tkb[0]?.giang_vien || "Chưa có GV"}
-                  </small>
-                  <br />
-                   <small className="text-muted">
-                    - {mon.tkb.length > 0 ? `${mon.tkb.map(session => `${session.thu} ${session.thoi_gian}`).join(', ')}` : "Chưa có lịch"}
-                  </small>
-                </div>
-              </li>
-              ))}
-              {results.length === 0 && (
-                <li className="list-group-item text-muted text-center">
-                  Không tìm thấy môn học nào
-                </li>
-              )}
-            </ul>
+            {results.length > 0 ? (
+              <div className="d-flex flex-column gap-2">
+                {results.map((mon) => (
+                  <div
+                    key={`${mon.ma_mon}-${mon.nhom_to}-${mon.to}`}
+                    className="list-group-item"
+                    onClick={(e) => {
+                      console.log('Click event triggered', e);
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleSubjectClick(mon);
+                    }}
+                    style={{ 
+                      cursor: 'pointer',
+                      borderRadius: '8px',
+                      padding: '12px 16px',
+                      border: '1px solid #dee2e6',
+                      marginBottom: '6px',
+                      transition: 'all 0.2s ease',
+                      backgroundColor: '#ffffff'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.backgroundColor = '#f8f9fa';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.backgroundColor = '#ffffff';
+                    }}
+                  >
+                    <div style={{ fontWeight: '600', color: '#212529', fontSize: '14px', marginBottom: '4px' }}>
+                      <strong>{mon.ma_mon}</strong> – {mon.ten_mon}
+                      <span className="badge ms-2" style={{ 
+                        background: '#1a73e8', 
+                        color: 'white',
+                        fontSize: '11px'
+                      }}>
+                        {mon.so_tc} TC
+                      </span>
+                    </div>
+                    <div style={{ color: '#6c757d', fontSize: '12px', lineHeight: '1.3' }}>
+                      <div>📚 Nhóm {mon.nhom_to} {mon.to ? `- Tổ ${mon.to}` : ""}</div>
+                      <div>👨‍🏫 {mon.tkb[0]?.giang_vien || "Chưa có GV"}</div>
+                      <div>📅 {mon.tkb.length > 0 ? 
+                        mon.tkb.map(session => `${session.thu} ${session.thoi_gian}`).join(', ') : 
+                        "Chưa có lịch"
+                      }</div>
+                      <div>🏫 {mon.tkb.length > 0 ? 
+                        [...new Set(mon.tkb.map(session => session.phong))].join(', ') : 
+                        "Chưa có phòng"
+                      }</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-4 text-muted">
+                <i className="fa-solid fa-search-minus fa-2x mb-2"></i>
+                <div>Không tìm thấy môn học nào</div>
+                <small>Thử tìm kiếm với từ khóa khác</small>
+              </div>
+            )}
           </div>
+          
           {results.length > 0 && (
             <div className="card-footer text-center py-2">
               <small className="text-muted">
                 <i className="fa-solid fa-list me-1"></i>
                 Tìm thấy {results.length} môn học
-                {results.length > 4 && (
-                  <span>
-                    <i className="fa-solid fa-scroll ms-2 me-1"></i>
-                    Cuộn để xem thêm
+                {results.length === 50 && (
+                  <span className="ms-2">
+                    <i className="fa-solid fa-info-circle me-1"></i>
+                    Hiển thị tối đa 50 kết quả
                   </span>
                 )}
               </small>
             </div>
           )}
+        </div>
+      )}
+      
+      {!keyword && (
+        <div className="text-center py-3 text-muted">
+          <i className="fa-solid fa-graduation-cap fa-2x mb-2"></i>
+          <div>Nhập từ khóa để tìm kiếm</div>
+          <small>Hỗ trợ tìm theo mã môn, tên môn, giảng viên, phòng học</small>
         </div>
       )}
     </div>

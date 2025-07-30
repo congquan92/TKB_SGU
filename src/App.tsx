@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SubjectSelector from "./components/SubjectSelector";
 import Timetable from "./components/Timetable";
 import DonateModal from "./components/DonateModal";
+import { useTheme } from "./hooks/useTheme";
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
 import { toast, ToastContainer } from "react-toastify";
@@ -13,8 +14,12 @@ export default function App() {
   const [selected, setSelected] = useState<Subject[]>([]);
   const [isCapturing, setIsCapturing] = useState(false);
   const [showDonateModal, setShowDonateModal] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   const addSubject = (mon: Subject) => {
+    console.log('addSubject called with:', mon.ma_mon, mon.ten_mon);
+    console.log('Current selected subjects:', selected.map(s => s.ma_mon));
+    
     if (selected.some((m) => m.ma_mon === mon.ma_mon)) {
       toast.error(`Môn ${mon.ma_mon} đã được chọn!`, {
         position: "top-right",
@@ -45,6 +50,7 @@ export default function App() {
     }
 
     setSelected([...selected, mon]);
+    console.log('Subject added successfully, new selected list:', [...selected, mon].map(s => s.ma_mon));
     toast.success(`Đã thêm môn ${mon.ma_mon} - ${mon.ten_mon}`, {
       position: "top-right",
       autoClose: 2000,
@@ -341,25 +347,55 @@ export default function App() {
 
   return (
     <div className="container-fluid px-2 py-3">
-      <div className="row">
-        <div className="col-12">
-          <div className="d-flex align-items-center justify-content-between mb-4">
-            <div className="d-flex align-items-center">
-              <h1 className="mb-0 me-3 text-dark"><i className="fa-solid fa-calendar-days"></i> Thời Khóa Biểu</h1>
-              <span className="badge bg-info fs-6 me-2">
+      {/* Header */}
+      <div className="gc-card mb-4">
+        <div className="gc-header">
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex align-items-center gap-3">
+              <h1 className="mb-0 d-flex align-items-center gap-2">
+                <i className="fa-solid fa-graduation-cap" style={{ color: 'var(--primary-color)' }}></i>
+                <span style={{ color: 'var(--text-primary)' }}>Thời Khóa Biểu SGU</span>
+              </h1>
+              <span className="badge" style={{ 
+                background: 'var(--info-color)', 
+                color: 'white',
+                borderRadius: '16px',
+                padding: '6px 12px'
+              }}>
                 {selected.length} môn học
               </span>
-              <span className="badge bg-success fs-6">
+              <span className="badge" style={{ 
+                background: 'var(--success-color)', 
+                color: 'white',
+                borderRadius: '16px',
+                padding: '6px 12px'
+              }}>
                 {totalCredits} tín chỉ
               </span>
             </div>
-            <div className="d-flex gap-2">
+            <div className="d-flex align-items-center gap-3">
+              {/* Theme Toggle */}
+              <div 
+                className="gc-theme-toggle"
+                onClick={toggleTheme}
+                title={theme === 'light' ? 'Chuyển sang dark mode' : 'Chuyển sang light mode'}
+              >
+                <div className="gc-theme-toggle-indicator">
+                  {theme === 'light' ? (
+                    <i className="fa-solid fa-sun" style={{ fontSize: '12px', color: 'white' }}></i>
+                  ) : (
+                    <i className="fa-solid fa-moon" style={{ fontSize: '12px', color: 'white' }}></i>
+                  )}
+                </div>
+              </div>
+              
+              {/* Donate Button */}
               <button 
-                className="btn btn-danger btn-sm"
+                className="gc-btn"
                 onClick={() => setShowDonateModal(true)}
                 title="Ủng hộ dự án"
               >
-                <i className="fa-solid fa-heart me-1"></i>
+                <i className="fa-solid fa-heart"></i>
                 Donate
               </button>
             </div>
