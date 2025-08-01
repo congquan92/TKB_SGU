@@ -1,3 +1,5 @@
+import { VercelRequest, VercelResponse } from '@vercel/node';
+
 // API thật để đếm lượt truy cập sử dụng storage persistent
 // Sử dụng simple file-based storage hoặc external API
 
@@ -56,7 +58,7 @@ async function incrementVisitorCount(): Promise<{ count: number; lastUpdate: num
   return newData;
 }
 
-export default async function handler(req: any, res: any) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');

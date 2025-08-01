@@ -5,10 +5,6 @@ interface VisitorCounterProps {
   style?: React.CSSProperties;
 }
 
-interface CountResponse {
-  value: number;
-}
-
 export default function VisitorCounter({ className = '', style = {} }: VisitorCounterProps) {
   const [visitorCount, setVisitorCount] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
