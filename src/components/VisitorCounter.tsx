@@ -14,8 +14,20 @@ export default function VisitorCounter({ className = '', style = {} }: VisitorCo
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // API endpoint cho CountAPI.xyz
-  const API_URL = 'https://api.countapi.xyz/hit/tkb-sgu.vercel.app/visits';
+  // API endpoint cho CountAPI.xyz - sử dụng domain của bạn
+  const getDomain = () => {
+    if (typeof window !== 'undefined') {
+      // Nếu đang ở production (vercel), dùng domain thật
+      if (window.location.hostname === 'tkb-sgu.vercel.app') {
+        return 'tkb-sgu.vercel.app';
+      }
+      // Nếu đang dev local, dùng namespace riêng
+      return 'tkb-sgu-dev';
+    }
+    return 'tkb-sgu.vercel.app'; // fallback
+  };
+  
+  const API_URL = `https://api.countapi.xyz/hit/${getDomain()}/visits`;
 
   useEffect(() => {
     const fetchVisitorCount = async () => {
@@ -67,7 +79,7 @@ export default function VisitorCounter({ className = '', style = {} }: VisitorCo
 
     // Fetch mới nếu không có cache hoặc cache đã cũ
     fetchVisitorCount();
-  }, []);
+  }, [API_URL]);
 
   const formatVisitorCount = (count: number): string => {
     if (count >= 1000000) {
