@@ -292,7 +292,7 @@ export default function Timetable({ subjects }: TimetableProps) {
                         </div>
                       )}
                       {(cell.sl_cp !== undefined || cell.sl_cl !== undefined) && (
-                        <div className="fst-italic" 
+                        <div className="fst-italic print-hide" 
                              style={{ 
                                fontSize: '0.75rem', 
                                lineHeight: '1.2', 

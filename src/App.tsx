@@ -400,16 +400,33 @@ export default function App() {
       autoClose: 1000,
     });
     
+    // Prepare variables for hiding slot info
+    let slotInfoElements: NodeListOf<Element> | null = null;
+    let originalDisplayValues: string[] = [];
+    
     try {
       // Add screenshot mode class for better quality and hide count info
       el.classList.add('screenshot-mode');
       document.body.classList.add('capturing');
       
+      // Hide all slot info elements directly
+      slotInfoElements = document.querySelectorAll('.print-hide, .subject-count-badge, .subject-count-header');
+      originalDisplayValues = [];
+      
+      slotInfoElements.forEach((element, index) => {
+        const htmlElement = element as HTMLElement;
+        originalDisplayValues[index] = htmlElement.style.display;
+        htmlElement.style.display = 'none';
+      });
+      
+      // Wait for DOM update to apply capturing class
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       // Scroll to table and ensure it's visible
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
       
       // Wait for scroll and rendering to complete
-      await new Promise(resolve => setTimeout(resolve, 800));
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
       toast.info(" Đang chụp ảnh...", {
         position: "top-right",
@@ -425,9 +442,17 @@ export default function App() {
         logging: false
       });
       
-      // Remove screenshot mode class
+      // Remove screenshot mode class and restore slot info
       el.classList.remove('screenshot-mode');
       document.body.classList.remove('capturing');
+      
+      // Restore original display values
+      if (slotInfoElements) {
+        slotInfoElements.forEach((element, index) => {
+          const htmlElement = element as HTMLElement;
+          htmlElement.style.display = originalDisplayValues[index] || '';
+        });
+      }
       
       canvas.toBlob((blob: Blob | null) => {
         if (blob) {
@@ -458,6 +483,15 @@ export default function App() {
       // Remove screenshot mode class in case of error
       el.classList.remove('screenshot-mode');
       document.body.classList.remove('capturing');
+      
+      // Restore original display values in case of error
+      if (slotInfoElements) {
+        slotInfoElements.forEach((element) => {
+          const htmlElement = element as HTMLElement;
+          htmlElement.style.display = '';
+        });
+      }
+      
       setIsCapturing(false);
       console.error("Capture error:", error);
 

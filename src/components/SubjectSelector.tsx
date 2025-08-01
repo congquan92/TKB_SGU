@@ -189,7 +189,7 @@ export default function SubjectSelector({ data, onSelect, ignoreSlotLimit = fals
                         "Chưa có phòng"
                       }</div>
                       {(mon.sl_cp !== undefined || mon.sl_cl !== undefined) && (
-                        <div style={{ 
+                        <div className="print-hide" style={{ 
                           color: !ignoreSlotLimit && mon.sl_cl !== undefined && mon.sl_cl <= 0 
                             ? '#dc3545'  // Đỏ cố định cho hết slot (chỉ khi bật kiểm tra)
                             : 'var(--text-primary)',
