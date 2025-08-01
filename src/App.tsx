@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SubjectSelector from "./components/SubjectSelector";
 import Timetable from "./components/Timetable";
 import DonateModal from "./components/DonateModal";
+import VisitorCounter from "./components/VisitorCounter";
 import { useTheme } from "./hooks/useTheme";
 import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
@@ -551,6 +552,8 @@ export default function App() {
             }}>
               {totalCredits} tín chỉ
             </span>
+            {/* Visitor Counter */}
+            <VisitorCounter />
           </div>
           <div className="d-flex align-items-center gap-3">
             {/* Theme Toggle */}
