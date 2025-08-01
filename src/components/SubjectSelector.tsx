@@ -5,9 +5,10 @@ import { toast } from "react-toastify";
 interface SubjectSelectorProps {
   data: Subject[];
   onSelect: (mon: Subject) => void;
+  ignoreSlotLimit?: boolean; // Props để bỏ qua kiểm tra số lượng chỗ
 }
 
-export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps) {
+export default function SubjectSelector({ data, onSelect, ignoreSlotLimit = false }: SubjectSelectorProps) {
   const [keyword, setKeyword] = useState("");
 
   // Improved search with better matching
@@ -113,7 +114,7 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
             {results.length > 0 ? (
               <div className="d-flex flex-column gap-2">
                 {results.map((mon) => {
-                  const isFullyBooked = mon.sl_cl !== undefined && mon.sl_cl <= 0;
+                  const isFullyBooked = !ignoreSlotLimit && mon.sl_cl !== undefined && mon.sl_cl <= 0;
                   
                   return (
                   <div
@@ -177,25 +178,26 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
                       </span>
                     </div>
                     <div style={{fontSize: '12px', lineHeight: '1.3', color: 'var(--text-secondary)' }}>
-                      <div>📚 Nhóm {mon.nhom_to} {mon.to ? `- Tổ ${mon.to}` : ""}</div>
-                      <div>👨‍🏫 {mon.tkb[0]?.giang_vien || "Chưa có GV"}</div>
-                      <div>📅 {mon.tkb.length > 0 ? 
+                      <div><i className="fa-solid fa-users" style={{ marginRight: '6px', color: 'var(--primary-color)' }}></i>Nhóm {mon.nhom_to} {mon.to ? `- Tổ ${mon.to}` : ""}</div>
+                      <div><i className="fa-solid fa-chalkboard-user" style={{ marginRight: '6px', color: 'var(--success-color)' }}></i>{mon.tkb[0]?.giang_vien || "Chưa có GV"}</div>
+                      <div><i className="fa-solid fa-calendar-days" style={{ marginRight: '6px', color: 'var(--info-color)' }}></i>{mon.tkb.length > 0 ? 
                         mon.tkb.map(session => `${session.thu} ${session.thoi_gian}`).join(', ') : 
                         "Chưa có lịch"
                       }</div>
-                      <div>🏫 {mon.tkb.length > 0 ? 
+                      <div><i className="fa-solid fa-building" style={{ marginRight: '6px', color: 'var(--warning-color)' }}></i>{mon.tkb.length > 0 ? 
                         [...new Set(mon.tkb.map(session => session.phong))].join(', ') : 
                         "Chưa có phòng"
                       }</div>
                       {(mon.sl_cp !== undefined || mon.sl_cl !== undefined) && (
                         <div style={{ 
-                          color: mon.sl_cl !== undefined && mon.sl_cl <= 0 
-                            ? '#dc3545'  // Đỏ cố định cho hết slot
+                          color: !ignoreSlotLimit && mon.sl_cl !== undefined && mon.sl_cl <= 0 
+                            ? '#dc3545'  // Đỏ cố định cho hết slot (chỉ khi bật kiểm tra)
                             : 'var(--text-primary)',
                           fontWeight: '700',
                         }}>
-                          👥 {mon.sl_cp !== undefined && mon.sl_cl !== undefined 
-                            ? `Tổng: ${mon.sl_cp} - Còn: ${mon.sl_cl}${mon.sl_cl <= 0 ? ' ⚠️ HẾT CHỖ' : ''}`
+                          <i className="fa-solid fa-user-group" style={{ marginRight: '6px', color: 'var(--accent-primary)' }}></i>
+                          {mon.sl_cp !== undefined && mon.sl_cl !== undefined 
+                            ? `Tổng: ${mon.sl_cp} - Còn: ${mon.sl_cl}`
                             : mon.sl_cp !== undefined 
                               ? `Tổng: ${mon.sl_cp}`
                               : `Còn: ${mon.sl_cl}`

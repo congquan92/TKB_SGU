@@ -302,7 +302,7 @@ export default function Timetable({ subjects }: TimetableProps) {
                                  : 'var(--text-secondary)'
                              }}>
                            Tình trạng : {cell.sl_cp !== undefined && cell.sl_cl !== undefined 
-                            ? `${cell.sl_cl}/${cell.sl_cp}${cell.sl_cl <= 0 ? ' ⚠️' : ''}`
+                            ? `${cell.sl_cl}/${cell.sl_cp}`
                             : cell.sl_cp !== undefined 
                               ? `Tổng: ${cell.sl_cp}`
                               : `Còn: ${cell.sl_cl}`

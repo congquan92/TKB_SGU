@@ -8,8 +8,8 @@ import html2canvas from "html2canvas";
 import { saveAs } from "file-saver";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import data from "./data/dsCustom.json";
 import type { Subject } from "./types";
+import data from "./data/dsCustom.json";
 
 export default function App() {
   // Khôi phục dữ liệu từ localStorage khi khởi tạo
@@ -21,45 +21,17 @@ export default function App() {
         
         // Validate dữ liệu cơ bản
         if (Array.isArray(parsed)) {
-          // Kiểm tra số lượng còn lại với data gốc
-          const validSubjects: Subject[] = [];
-          const invalidSubjects: string[] = [];
-          
-          parsed.forEach((savedSubject: Subject) => {
+          // Import tất cả môn, không lọc theo sl_cl
+          return parsed.filter((savedSubject: Subject) => {
             const originalSubject = data.find(d => 
               d.ma_mon === savedSubject.ma_mon && 
               d.nhom_to === savedSubject.nhom_to &&
               d.to === savedSubject.to
             );
             
-            // Nếu tìm thấy môn gốc và còn chỗ, hoặc không có thông tin số lượng thì giữ lại
-            if (!originalSubject || 
-                originalSubject.sl_cl === undefined || 
-                originalSubject.sl_cl > 0) {
-              validSubjects.push(savedSubject);
-            } else {
-              invalidSubjects.push(`${savedSubject.ma_mon} (${savedSubject.nhom_to}${savedSubject.to ? `-${savedSubject.to}` : ''})`);
-            }
+            // Giữ lại môn nếu tìm thấy trong data gốc (không quan tâm sl_cl)
+            return originalSubject !== undefined;
           });
-          
-          // Nếu có môn hết chỗ, hiển thị thông báo
-          if (invalidSubjects.length > 0) {
-            setTimeout(() => {
-              toast.warning(
-                `⚠️ Một số môn đã lưu hiện đã hết chỗ và đã bị loại bỏ: ${invalidSubjects.join(", ")}`,
-                {
-                  position: "top-center",
-                  autoClose: 5000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                }
-              );
-            }, 1000);
-          }
-          
-          return validSubjects;
         }
       }
     } catch (error) {
@@ -70,7 +42,35 @@ export default function App() {
   
   const [isCapturing, setIsCapturing] = useState(false);
   const [showDonateModal, setShowDonateModal] = useState(false);
+  
+  // Toggle để bỏ qua kiểm tra sl_cl - Mặc định luôn bỏ qua kiểm tra
+  const [ignoreSlotLimit, setIgnoreSlotLimit] = useState(true); // Luôn mặc định true
+  
   const { theme, toggleTheme } = useTheme();
+
+  // Xử lý khi toggle thay đổi
+  useEffect(() => {
+    if (!ignoreSlotLimit && selected.length > 0) {
+      // Khi tắt toggle, loại bỏ các môn hết chỗ
+      const validSubjects = selected.filter(subject => {
+        const originalSubject = data.find(d => 
+          d.ma_mon === subject.ma_mon && 
+          d.nhom_to === subject.nhom_to &&
+          d.to === subject.to
+        );
+        return !originalSubject || originalSubject.sl_cl === undefined || originalSubject.sl_cl > 0;
+      });
+      
+      const removedCount = selected.length - validSubjects.length;
+      if (removedCount > 0) {
+        setSelected(validSubjects);
+        toast.warning(`Đã loại bỏ ${removedCount} môn hết chỗ khi bật kiểm tra SL`, {
+          position: "top-center",
+          autoClose: 3000,
+        });
+      }
+    }
+  }, [ignoreSlotLimit, selected]); // Chạy khi toggle thay đổi
 
   // Lưu dữ liệu vào localStorage mỗi khi selected thay đổi
   useEffect(() => {
@@ -87,32 +87,17 @@ export default function App() {
   // Hiển thị thông báo khi khôi phục dữ liệu thành công
   useEffect(() => {
     const savedSubjects = localStorage.getItem('tkb-selected-subjects');
-    if (savedSubjects) {
+    if (savedSubjects && selected.length > 0) {
       try {
-        const parsed = JSON.parse(savedSubjects);
-        const originalCount = parsed.length;
-        const currentCount = selected.length;
-        
-        if (currentCount > 0) {
-          if (originalCount === currentCount) {
-            toast.success(`📋 Đã khôi phục ${currentCount} môn học từ lần trước`, {
-              position: "bottom-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-            });
-          } else {
-            toast.info(`📋 Đã khôi phục ${currentCount}/${originalCount} môn học (${originalCount - currentCount} môn đã hết chỗ)`, {
-              position: "bottom-right",
-              autoClose: 3000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: true,
-              draggable: true,
-            });
-          }
+        if (selected.length > 0) {
+          toast.success(`Đã khôi phục ${selected.length} môn học từ lần trước`, {
+            position: "bottom-right",
+            autoClose: 3000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
         }
       } catch (error) {
         console.error('Lỗi khi kiểm tra dữ liệu saved:', error);
@@ -135,11 +120,11 @@ export default function App() {
       return;
     }
 
-    // Kiểm tra số lượng chỗ còn lại
-    if (mon.sl_cl !== undefined && mon.sl_cl <= 0) {
-      toast.error(`⚠️ Môn ${mon.ma_mon} đã hết chỗ! Không thể chọn môn này.`, {
+    // Kiểm tra số lượng chỗ còn lại (chỉ khi không bỏ qua kiểm tra)
+    if (!ignoreSlotLimit && mon.sl_cl !== undefined && mon.sl_cl <= 0) {
+      toast.error(`Môn ${mon.ma_mon} đã hết chỗ! Không thể chọn môn này.`, {
         position: "top-center",
-        autoClose: 4000,
+        autoClose: 3000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -155,7 +140,7 @@ export default function App() {
         ` Môn ${mon.ma_mon} bị trùng lịch với: ${hasConflict.join(", ")}`,
         {
           position: "top-center",
-          autoClose: 5000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -168,7 +153,7 @@ export default function App() {
     setSelected([...selected, mon]);
     toast.success(`Đã thêm môn ${mon.ma_mon} - ${mon.ten_mon}`, {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 1000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: true,
@@ -268,7 +253,7 @@ export default function App() {
     localStorage.removeItem('tkb-selected-subjects');
     toast.info("Đã xóa tất cả môn học và dữ liệu lưu trữ", {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 1000,
     });
   };
 
@@ -278,19 +263,20 @@ export default function App() {
     if (removedSubject) {
       toast.info(`Đã xóa môn ${removedSubject.ma_mon} - ${removedSubject.ten_mon}`, {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 1000,
       });
     }
   };
 
   const exportJson = () => {
+    selected.map(subject => { subject.id_to_hoc = undefined; }); // Xóa id_to_hoc trước khi xuất
     const blob = new Blob([JSON.stringify(selected, null, 2)], {
       type: "application/json",
     });
     saveAs(blob, `thoikhoabieu_${new Date().toISOString().split('T')[0]}.json`);
     toast.success("Đã xuất file JSON thành công!", {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 1000,
     });
   };
 
@@ -313,10 +299,9 @@ export default function App() {
           });
           
           if (isValidData) {
-            // Kiểm tra môn nào đã hết slot trong dữ liệu gốc
+            // Import tất cả môn, không lọc theo sl_cl
             const importedSubjects = arr as Subject[];
             const validSubjects: Subject[] = [];
-            const invalidSubjects: string[] = [];
             
             importedSubjects.forEach(importedSubject => {
               const originalSubject = data.find(d => 
@@ -325,38 +310,21 @@ export default function App() {
                 d.to === importedSubject.to
               );
               
-              // Nếu tìm thấy môn gốc và đã hết chỗ
-              if (originalSubject && originalSubject.sl_cl !== undefined && originalSubject.sl_cl <= 0) {
-                invalidSubjects.push(`${importedSubject.ma_mon} (${importedSubject.nhom_to}${importedSubject.to ? `-${importedSubject.to}` : ''})`);
-              } else {
+              // Import tất cả môn tìm thấy trong data gốc
+              if (originalSubject) {
                 validSubjects.push(importedSubject);
               }
             });
-            
-            // Nếu có môn hết chỗ, hiển thị thông báo
-            if (invalidSubjects.length > 0) {
-              toast.warning(
-                `⚠️ Một số môn trong file đã hết chỗ và sẽ bị bỏ qua: ${invalidSubjects.join(", ")}`,
-                {
-                  position: "top-center",
-                  autoClose: 6000,
-                  hideProgressBar: false,
-                  closeOnClick: true,
-                  pauseOnHover: true,
-                  draggable: true,
-                }
-              );
-            }
             
             // Kiểm tra trùng lịch trong danh sách hợp lệ
             const conflicts = findConflictsInList(validSubjects);
             
             if (conflicts.length > 0) {
               toast.error(
-                `❌ File JSON có trùng lịch! Các môn bị trùng: ${conflicts.join(", ")}`,
+                `File JSON có trùng lịch! Các môn bị trùng: ${conflicts.join(", ")}`,
                 {
                   position: "top-center",
-                  autoClose: 6000,
+                  autoClose: 3000,
                 }
               );
               return;
@@ -373,10 +341,10 @@ export default function App() {
             
             if (existingConflicts.length > 0) {
               toast.error(
-                `❌ Một số môn trong file bị trùng lịch với môn đã chọn: ${existingConflicts.join(", ")}`,
+                `Một số môn trong file bị trùng lịch với môn đã chọn: ${existingConflicts.join(", ")}`,
                 {
                   position: "top-center",
-                  autoClose: 6000,
+                  autoClose: 3000,
                 }
               );
               return;
@@ -384,31 +352,29 @@ export default function App() {
             
             setSelected(validSubjects);
             // localStorage sẽ được cập nhật tự động qua useEffect
-            const successMessage = invalidSubjects.length > 0 
-              ? `✅ Đã nhập file JSON! ${validSubjects.length}/${importedSubjects.length} môn hợp lệ (${invalidSubjects.length} môn hết chỗ)`
-              : `✅ Đã nhập file JSON thành công! ${validSubjects.length} môn học đã được lưu`;
+            const successMessage = `Đã nhập file JSON thành công! ${validSubjects.length} môn học đã được lưu`;
               
             toast.success(successMessage, {
               position: "top-right",
-              autoClose: 4000,
+              autoClose: 3000,
             });
           } else {
-            toast.error("❌ File không đúng định dạng dữ liệu môn học!", {
+            toast.error("File không đúng định dạng dữ liệu môn học!", {
               position: "top-right",
-              autoClose: 4000,
+              autoClose: 3000,
             });
           }
         } else {
-          toast.error("❌ File phải chứa một mảng dữ liệu!", {
+          toast.error("File phải chứa một mảng dữ liệu!", {
             position: "top-right",
-            autoClose: 4000,
+            autoClose: 3000,
           });
         }
       } catch (error) {
         console.error("JSON parse error:", error);
-        toast.error("❌ File JSON lỗi hoặc không hợp lệ!", {
+        toast.error("File JSON lỗi hoặc không hợp lệ!", {
           position: "top-right",
-          autoClose: 4000,
+          autoClose: 3000,
         });
       }
     };
@@ -431,12 +397,13 @@ export default function App() {
     
     toast.info("Đang chuẩn bị chụp ảnh...", {
       position: "top-right",
-      autoClose: 1500,
+      autoClose: 1000,
     });
     
     try {
-      // Add screenshot mode class for better quality
+      // Add screenshot mode class for better quality and hide count info
       el.classList.add('screenshot-mode');
+      document.body.classList.add('capturing');
       
       // Scroll to table and ensure it's visible
       el.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -460,6 +427,7 @@ export default function App() {
       
       // Remove screenshot mode class
       el.classList.remove('screenshot-mode');
+      document.body.classList.remove('capturing');
       
       canvas.toBlob((blob: Blob | null) => {
         if (blob) {
@@ -471,7 +439,7 @@ export default function App() {
 
           toast.success(<><i className="fa-solid fa-face-smile-beam mx-2"></i> Đã chụp ảnh thời khóa biểu thành công!</>, {
             position: "top-center",
-            autoClose: 3000,
+            autoClose: 2000,
             style: {
               fontSize: '16px',
               fontWeight: 'bold'
@@ -480,7 +448,7 @@ export default function App() {
         } else {
           toast.error(<><i className="fa-solid fa-circle-xmark mx-2"></i> Không thể tạo file ảnh!</>, {
             position: "top-right",
-            autoClose: 3000,
+            autoClose: 2000,
           });
         }
         setIsCapturing(false);
@@ -489,30 +457,41 @@ export default function App() {
     } catch (error) {
       // Remove screenshot mode class in case of error
       el.classList.remove('screenshot-mode');
+      document.body.classList.remove('capturing');
       setIsCapturing(false);
       console.error("Capture error:", error);
 
       toast.error(<><i className="fa-solid fa-circle-xmark mx-2"></i> Lỗi khi chụp ảnh! Vui lòng thử lại sau.</>, {
         position: "top-center",
-        autoClose: 4000,
+        autoClose: 3000,
       });
     }
   };
-  // Thông báo mới dô
+  // Thông báo mới 
   useEffect(() => {
-    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 1/8/2025.";
+    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 18:00pm 1/8/2025.";
     toast.info(toastMessage, {
       position: "top-center",
-      autoClose: 6000,
-      hideProgressBar: false,
+      autoClose: 3000,
       closeOnClick: true,
       draggable: true,  
        style: {
               fontSize: '16px',
               fontWeight: 'bold',
-              color: 'red',
+              color: 'var(--text-primary)',
+              backgroundColor: 'var(--surface-color)',
             }
     });
+    // Thông báo về tính năng mới
+    // setTimeout(() => {
+    //   toast.info("Tính năng mới: Bật/tắt kiểm tra số lượng chỗ bằng nút toggle ở góc phải!", {
+    //     position: "bottom-right",
+    //     autoClose: 8000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     draggable: true,
+    //   });
+    // }, 8000);
     
   }, []);
 
@@ -536,7 +515,7 @@ export default function App() {
               <i className="fa-solid fa-graduation-cap" style={{ color: 'var(--text-primary)' }}></i>
               <span style={{ color: 'var(--text-primary)' }}>Thời Khóa Biểu SGU</span>
             </h1>
-            <span className="badge" style={{ 
+            <span className="badge subject-count-badge" style={{ 
               background: 'var(--text-primary)', 
               color: 'var(--background-color)',
               borderRadius: '16px',
@@ -544,7 +523,7 @@ export default function App() {
             }}>
               {selected.length} môn học
             </span>
-            <span className="badge" style={{ 
+            <span className="badge subject-count-badge" style={{ 
               background: 'var(--text-primary)', 
               color: 'var(--background-color)',
               borderRadius: '16px',
@@ -552,8 +531,8 @@ export default function App() {
             }}>
               {totalCredits} tín chỉ
             </span>
-            {/* Visitor Counter */}
-            <VisitorCounter />
+            {/* Visitor Counter - Ẩn khi chụp ảnh */}
+            {!isCapturing && <VisitorCounter />}
           </div>
           <div className="d-flex align-items-center gap-3">
             {/* Theme Toggle */}
@@ -601,7 +580,7 @@ export default function App() {
       </div>
 
       <div className="row">
-        <div className="col-lg-2 col-md-4 mb-4">
+        <div className="col-lg-3 col-md-4 mb-4">
           <div className="card shadow-sm" style={{
             backgroundColor: 'var(--surface-color)',
             borderColor: 'var(--border-color)',
@@ -612,10 +591,51 @@ export default function App() {
               borderBottomColor: 'var(--border-color)',
               color: 'var(--text-primary)'
             }}>
-              <h6 className="mb-0"><i className="fa-solid fa-magnifying-glass"></i> Tìm kiếm môn học</h6>
+              <div className="d-flex justify-content-between align-items-center">
+                <h6 className="mb-0"><i className="fa-solid fa-magnifying-glass"></i> Tìm kiếm môn học</h6>
+                <div className="form-check form-switch">
+                  <input 
+                    className="form-check-input" 
+                    type="checkbox" 
+                    id="ignoreSlotLimitSwitch"
+                    checked={ignoreSlotLimit}
+                    onChange={(e) => setIgnoreSlotLimit(e.target.checked)}
+                    style={{
+                      backgroundColor: ignoreSlotLimit ? 'var(--warning-color)' : '',
+                      borderColor: ignoreSlotLimit ? 'var(--warning-color)' : ''
+                    }}
+                  />
+                  <label 
+                    className="form-check-label" 
+                    htmlFor="ignoreSlotLimitSwitch"
+                    style={{ 
+                      fontSize: '12px', 
+                      color: ignoreSlotLimit ? 'var(--warning-color)' : 'var(--text-secondary)',
+                      fontWeight: ignoreSlotLimit ? '600' : '400'
+                    }}
+                    title={ignoreSlotLimit ? "Đang bỏ qua kiểm tra số lượng chỗ - có thể chọn môn đã hết chỗ" : "Bật để kiểm tra số lượng chỗ - loại bỏ môn hết chỗ"}
+                  >
+                    {ignoreSlotLimit ? (
+                      <>
+                        <i className="fa-solid fa-lock-open" style={{ marginRight: '4px', color: 'var(--warning-color)' }}></i>
+                        Bỏ qua SL
+                      </>
+                    ) : (
+                      <>
+                        <i className="fa-solid fa-lock" style={{ marginRight: '4px', color: 'var(--primary-color)' }}></i>
+                        Kiểm tra SL
+                      </>
+                    )}
+                  </label>
+                </div>
+              </div>
             </div>
             <div className="card-body p-3">
-              <SubjectSelector data={data as Subject[]} onSelect={addSubject} />
+              <SubjectSelector 
+                data={data as Subject[]} 
+                onSelect={addSubject} 
+                ignoreSlotLimit={ignoreSlotLimit}
+              />
             </div>
           </div>
 
@@ -630,7 +650,7 @@ export default function App() {
                 borderBottomColor: 'var(--border-color)',
                 color: 'var(--text-primary)'
               }}>
-                <h6 className="mb-0"><i className="fa-solid fa-book"></i> Môn học đã chọn ({selected.length})</h6>
+                <h6 className="mb-0 subject-count-header"><i className="fa-solid fa-book"></i> Môn học đã chọn ({selected.length})</h6>
               </div>
               <div className="card-body p-3">
                 <div className="d-flex flex-column gap-2 mb-3" style={{ maxHeight: '300px', overflowY: 'auto' }}>
@@ -771,7 +791,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="col-lg-10 col-md-8">
+        <div className="col-lg-9 col-md-8">
           <div className="card shadow-sm" style={{
             backgroundColor: 'var(--surface-color)',
             borderColor: 'var(--border-color)',

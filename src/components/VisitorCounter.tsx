@@ -84,9 +84,9 @@ export default function VisitorCounter({ className = '', style = {} }: VisitorCo
                     screen.height + 
                     new Date().getTimezoneOffset()
                   ));
-                  console.log('✅ New visitor counted!');
+                  console.log('New visitor counted!');
                 } else {
-                  console.log('👁️ Returning visitor, no increment');
+                  console.log('Returning visitor, no increment');
                 }
                 
                 success = true;
@@ -143,7 +143,7 @@ export default function VisitorCounter({ className = '', style = {} }: VisitorCo
         // Vẫn check nếu là new visitor để log
         const visitedThisSession = sessionStorage.getItem('tkb-visited-this-session');
         if (!visitedThisSession) {
-          console.log('🔄 Using cache but checking if new visitor...');
+          console.log('Using cache but checking if new visitor...');
           // Vẫn gọi API để increment nếu cần, nhưng không đợi kết quả
           setTimeout(() => fetchVisitorCount(), 1000);
         }

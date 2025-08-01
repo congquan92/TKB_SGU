@@ -733,3 +733,19 @@
   background: var(--warning-color);
   color: white;
 }
+
+/* Ẩn thông tin số lượng khi chụp ảnh/in */
+@media print {
+  .print-hide,
+  .subject-count-badge,
+  .subject-count-header {
+    display: none !important;
+  }
+}
+
+/* Ẩn khi capture (chụp ảnh) */
+.capturing .print-hide,
+.capturing .subject-count-badge,
+.capturing .subject-count-header {
+  display: none !important;
+}
