@@ -15,6 +15,9 @@ export interface Subject {
   to: string;
   so_tc: string;
   tkb: ScheduleItem[];
+  id_to_hoc?: string;
+  sl_cp?: number;  // Số lượng chỗ tối đa
+  sl_cl?: number;  // Số lượng chỗ còn lại
 }
 
 export interface TimetableCell {
@@ -25,6 +28,8 @@ export interface TimetableCell {
   to?: string;
   isConflict?: boolean;
   subjectCode?: string;
+  sl_cp?: number;  // Số lượng chỗ tối đa
+  sl_cl?: number;  // Số lượng chỗ còn lại
 }
 
 export type TimetableGrid = TimetableCell[][];

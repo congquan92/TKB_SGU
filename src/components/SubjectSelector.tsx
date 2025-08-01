@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import type { Subject } from "../types";
+import { toast } from "react-toastify";
 
 interface SubjectSelectorProps {
   data: Subject[];
@@ -111,34 +112,61 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
           >
             {results.length > 0 ? (
               <div className="d-flex flex-column gap-2">
-                {results.map((mon) => (
+                {results.map((mon) => {
+                  const isFullyBooked = mon.sl_cl !== undefined && mon.sl_cl <= 0;
+                  
+                  return (
                   <div
                     key={`${mon.ma_mon}-${mon.nhom_to}-${mon.to}`}
                     className="list-group-item"
                     onClick={(e) => {
-                      // console.log('Click event triggered', e);
+                      if (isFullyBooked) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toast.error('Môn học này đã hết chỗ, không thể chọn!', {
+                          position: "top-center",
+                          autoClose: 1000,
+                          hideProgressBar: true,
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          draggable: true,
+                          progress: undefined,
+                        });
+                        return;
+                      }
                       e.preventDefault();
                       e.stopPropagation();
                       handleSubjectClick(mon);
                     }}
                     style={{ 
-                      cursor: 'pointer',
+                      cursor: isFullyBooked ? 'not-allowed' : 'pointer',
                       borderRadius: '8px',
                       padding: '12px 16px',
                       border: '1px solid var(--border-color)',
                       marginBottom: '6px',
                       transition: 'all 0.2s ease',
-                      backgroundColor: 'var(--background-color)',
-                      color: 'var(--text-primary)'
+                      backgroundColor: isFullyBooked 
+                        ? '#f8f9fa'  // Màu xám nhạt cho hết slot
+                        : 'var(--background-color)',
+                      opacity: isFullyBooked ? 0.6 : 1
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--surface-color)';
+                      if (!isFullyBooked) {
+                        e.currentTarget.style.backgroundColor = 'var(--surface-color)';
+                      }
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.backgroundColor = 'var(--background-color)';
+                      if (!isFullyBooked) {
+                        e.currentTarget.style.backgroundColor = isFullyBooked ? '#f8f9fa' : 'var(--background-color)';
+                      }
                     }}
                   >
-                    <div style={{ fontWeight: '600', color: 'var(--text-primary)', fontSize: '14px', marginBottom: '4px' }}>
+                    <div style={{ 
+                      fontWeight: '600', 
+                      color: 'var(--text-primary)', 
+                      fontSize: '14px', 
+                      marginBottom: '4px' 
+                    }}>
                       <strong>{mon.ma_mon}</strong> – {mon.ten_mon}
                       <span className="badge ms-2" style={{ 
                         background: 'var(--text-primary)', 
@@ -148,7 +176,7 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
                         {mon.so_tc} TC
                       </span>
                     </div>
-                    <div style={{ color: 'var(--text-secondary)', fontSize: '12px', lineHeight: '1.3' }}>
+                    <div style={{fontSize: '12px', lineHeight: '1.3', color: 'var(--text-secondary)' }}>
                       <div>📚 Nhóm {mon.nhom_to} {mon.to ? `- Tổ ${mon.to}` : ""}</div>
                       <div>👨‍🏫 {mon.tkb[0]?.giang_vien || "Chưa có GV"}</div>
                       <div>📅 {mon.tkb.length > 0 ? 
@@ -159,9 +187,25 @@ export default function SubjectSelector({ data, onSelect }: SubjectSelectorProps
                         [...new Set(mon.tkb.map(session => session.phong))].join(', ') : 
                         "Chưa có phòng"
                       }</div>
+                      {(mon.sl_cp !== undefined || mon.sl_cl !== undefined) && (
+                        <div style={{ 
+                          color: mon.sl_cl !== undefined && mon.sl_cl <= 0 
+                            ? '#dc3545'  // Đỏ cố định cho hết slot
+                            : 'var(--text-primary)',
+                          fontWeight: '700',
+                        }}>
+                          👥 {mon.sl_cp !== undefined && mon.sl_cl !== undefined 
+                            ? `Tổng: ${mon.sl_cp} - Còn: ${mon.sl_cl}${mon.sl_cl <= 0 ? ' ⚠️ HẾT CHỖ' : ''}`
+                            : mon.sl_cp !== undefined 
+                              ? `Tổng: ${mon.sl_cp}`
+                              : `Còn: ${mon.sl_cl}`
+                          }
+                        </div>
+                      )}
                     </div>
                   </div>
-                ))}
+                );
+                })}
               </div>
             ) : (
               <div className="text-center py-4" style={{ color: 'var(--text-secondary)' }}>

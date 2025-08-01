@@ -17,8 +17,49 @@ export default function App() {
       const savedSubjects = localStorage.getItem('tkb-selected-subjects');
       if (savedSubjects) {
         const parsed = JSON.parse(savedSubjects);
-        // console.log('Khôi phục thời khóa biểu từ localStorage:', parsed.length, 'môn học');
-        return parsed;
+        
+        // Validate dữ liệu cơ bản
+        if (Array.isArray(parsed)) {
+          // Kiểm tra số lượng còn lại với data gốc
+          const validSubjects: Subject[] = [];
+          const invalidSubjects: string[] = [];
+          
+          parsed.forEach((savedSubject: Subject) => {
+            const originalSubject = data.find(d => 
+              d.ma_mon === savedSubject.ma_mon && 
+              d.nhom_to === savedSubject.nhom_to &&
+              d.to === savedSubject.to
+            );
+            
+            // Nếu tìm thấy môn gốc và còn chỗ, hoặc không có thông tin số lượng thì giữ lại
+            if (!originalSubject || 
+                originalSubject.sl_cl === undefined || 
+                originalSubject.sl_cl > 0) {
+              validSubjects.push(savedSubject);
+            } else {
+              invalidSubjects.push(`${savedSubject.ma_mon} (${savedSubject.nhom_to}${savedSubject.to ? `-${savedSubject.to}` : ''})`);
+            }
+          });
+          
+          // Nếu có môn hết chỗ, hiển thị thông báo
+          if (invalidSubjects.length > 0) {
+            setTimeout(() => {
+              toast.warning(
+                `⚠️ Một số môn đã lưu hiện đã hết chỗ và đã bị loại bỏ: ${invalidSubjects.join(", ")}`,
+                {
+                  position: "top-center",
+                  autoClose: 5000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                }
+              );
+            }, 1000);
+          }
+          
+          return validSubjects;
+        }
       }
     } catch (error) {
       console.error('Lỗi khi khôi phục dữ liệu từ localStorage:', error);
@@ -48,28 +89,56 @@ export default function App() {
     if (savedSubjects) {
       try {
         const parsed = JSON.parse(savedSubjects);
-        if (parsed.length > 0) {
-          toast.success(`Đã khôi phục ${parsed.length} môn học từ lần trước`, {
-            position: "bottom-right",
-            autoClose: 2000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-          });
+        const originalCount = parsed.length;
+        const currentCount = selected.length;
+        
+        if (currentCount > 0) {
+          if (originalCount === currentCount) {
+            toast.success(`📋 Đã khôi phục ${currentCount} môn học từ lần trước`, {
+              position: "bottom-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            });
+          } else {
+            toast.info(`📋 Đã khôi phục ${currentCount}/${originalCount} môn học (${originalCount - currentCount} môn đã hết chỗ)`, {
+              position: "bottom-right",
+              autoClose: 3000,
+              hideProgressBar: false,
+              closeOnClick: true,
+              pauseOnHover: true,
+              draggable: true,
+            });
+          }
         }
       } catch (error) {
         console.error('Lỗi khi kiểm tra dữ liệu saved:', error);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Chỉ chạy một lần khi component mount
 
   const addSubject = (mon: Subject) => {
-
+    // Kiểm tra môn đã được chọn chưa
     if (selected.some((m) => m.ma_mon === mon.ma_mon)) {
       toast.error(`Môn ${mon.ma_mon} đã được chọn!`, {
         position: "top-right",
         autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      return;
+    }
+
+    // Kiểm tra số lượng chỗ còn lại
+    if (mon.sl_cl !== undefined && mon.sl_cl <= 0) {
+      toast.error(`⚠️ Môn ${mon.ma_mon} đã hết chỗ! Không thể chọn môn này.`, {
+        position: "top-center",
+        autoClose: 4000,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,
@@ -114,16 +183,39 @@ export default function App() {
       currentSubjects.forEach((subject) => {
         subject.tkb.forEach((session) => {
           if (session.thu === newSession.thu) {
-            // Parse time
-            const newMatch = newSession.thoi_gian.match(/từ (\d{2}:\d{2}) đến (\d{2}:\d{2})/);
-            const existMatch = session.thoi_gian.match(/từ (\d{2}:\d{2}) đến (\d{2}:\d{2})/);
+            // Parse time - hỗ trợ cả hai định dạng
+            let newStart = -1, newEnd = -1, existStart = -1, existEnd = -1;
             
-            if (newMatch && existMatch) {
-              const newStart = parseTime(newMatch[1]);
-              const newEnd = parseTime(newMatch[2]);
-              const existStart = parseTime(existMatch[1]);
-              const existEnd = parseTime(existMatch[2]);
-              
+            // Kiểm tra định dạng "tiết X->Y" cho session mới
+            const newTietMatch = newSession.thoi_gian.match(/tiết (\d+)->(\d+)/);
+            if (newTietMatch) {
+              newStart = parseInt(newTietMatch[1]);
+              newEnd = parseInt(newTietMatch[2]);
+            } else {
+              // Kiểm tra định dạng "từ HH:mm đến HH:mm"
+              const newMatch = newSession.thoi_gian.match(/từ (\d{2}:\d{2}) đến (\d{2}:\d{2})/);
+              if (newMatch) {
+                newStart = parseTime(newMatch[1]);
+                newEnd = parseTime(newMatch[2]);
+              }
+            }
+            
+            // Kiểm tra định dạng "tiết X->Y" cho session hiện có
+            const existTietMatch = session.thoi_gian.match(/tiết (\d+)->(\d+)/);
+            if (existTietMatch) {
+              existStart = parseInt(existTietMatch[1]);
+              existEnd = parseInt(existTietMatch[2]);
+            } else {
+              // Kiểm tra định dạng "từ HH:mm đến HH:mm"
+              const existMatch = session.thoi_gian.match(/từ (\d{2}:\d{2}) đến (\d{2}:\d{2})/);
+              if (existMatch) {
+                existStart = parseTime(existMatch[1]);
+                existEnd = parseTime(existMatch[2]);
+              }
+            }
+            
+            // Kiểm tra overlap nếu cả hai đều được parse thành công
+            if (newStart !== -1 && newEnd !== -1 && existStart !== -1 && existEnd !== -1) {
               // Check overlap
               if (!(newEnd <= existStart || newStart >= existEnd)) {
                 if (!conflicts.includes(subject.ma_mon)) {
@@ -220,9 +312,43 @@ export default function App() {
           });
           
           if (isValidData) {
-            // Kiểm tra trùng lịch trong danh sách nhập vào
+            // Kiểm tra môn nào đã hết slot trong dữ liệu gốc
             const importedSubjects = arr as Subject[];
-            const conflicts = findConflictsInList(importedSubjects);
+            const validSubjects: Subject[] = [];
+            const invalidSubjects: string[] = [];
+            
+            importedSubjects.forEach(importedSubject => {
+              const originalSubject = data.find(d => 
+                d.ma_mon === importedSubject.ma_mon && 
+                d.nhom_to === importedSubject.nhom_to &&
+                d.to === importedSubject.to
+              );
+              
+              // Nếu tìm thấy môn gốc và đã hết chỗ
+              if (originalSubject && originalSubject.sl_cl !== undefined && originalSubject.sl_cl <= 0) {
+                invalidSubjects.push(`${importedSubject.ma_mon} (${importedSubject.nhom_to}${importedSubject.to ? `-${importedSubject.to}` : ''})`);
+              } else {
+                validSubjects.push(importedSubject);
+              }
+            });
+            
+            // Nếu có môn hết chỗ, hiển thị thông báo
+            if (invalidSubjects.length > 0) {
+              toast.warning(
+                `⚠️ Một số môn trong file đã hết chỗ và sẽ bị bỏ qua: ${invalidSubjects.join(", ")}`,
+                {
+                  position: "top-center",
+                  autoClose: 6000,
+                  hideProgressBar: false,
+                  closeOnClick: true,
+                  pauseOnHover: true,
+                  draggable: true,
+                }
+              );
+            }
+            
+            // Kiểm tra trùng lịch trong danh sách hợp lệ
+            const conflicts = findConflictsInList(validSubjects);
             
             if (conflicts.length > 0) {
               toast.error(
@@ -237,7 +363,7 @@ export default function App() {
             
             // Kiểm tra trùng lịch với môn học hiện tại
             const existingConflicts: string[] = [];
-            importedSubjects.forEach(newSubject => {
+            validSubjects.forEach(newSubject => {
               const hasConflict = checkScheduleConflict(newSubject, selected);
               if (hasConflict.length > 0) {
                 existingConflicts.push(newSubject.ma_mon);
@@ -255,15 +381,16 @@ export default function App() {
               return;
             }
             
-            setSelected(importedSubjects);
+            setSelected(validSubjects);
             // localStorage sẽ được cập nhật tự động qua useEffect
-            toast.success(
-              `✅ Đã nhập file JSON thành công! ${importedSubjects.length} môn học đã được lưu`,
-              {
-                position: "top-right",
-                autoClose: 3000,
-              }
-            );
+            const successMessage = invalidSubjects.length > 0 
+              ? `✅ Đã nhập file JSON! ${validSubjects.length}/${importedSubjects.length} môn hợp lệ (${invalidSubjects.length} môn hết chỗ)`
+              : `✅ Đã nhập file JSON thành công! ${validSubjects.length} môn học đã được lưu`;
+              
+            toast.success(successMessage, {
+              position: "top-right",
+              autoClose: 4000,
+            });
           } else {
             toast.error("❌ File không đúng định dạng dữ liệu môn học!", {
               position: "top-right",
@@ -372,7 +499,7 @@ export default function App() {
   };
   // Thông báo mới dô
   useEffect(() => {
-    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 30/7/2025.";
+    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 1/8/2025.";
     toast.info(toastMessage, {
       position: "top-center",
       autoClose: 6000,
@@ -471,7 +598,7 @@ export default function App() {
       </div>
 
       <div className="row">
-        <div className="col-lg-3 col-md-4 mb-4">
+        <div className="col-lg-2 col-md-4 mb-4">
           <div className="card shadow-sm" style={{
             backgroundColor: 'var(--surface-color)',
             borderColor: 'var(--border-color)',
@@ -641,7 +768,7 @@ export default function App() {
           </div>
         </div>
 
-        <div className="col-lg-9 col-md-8">
+        <div className="col-lg-10 col-md-8">
           <div className="card shadow-sm" style={{
             backgroundColor: 'var(--surface-color)',
             borderColor: 'var(--border-color)',

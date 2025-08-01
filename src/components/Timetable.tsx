@@ -92,20 +92,29 @@ export default function Timetable({ subjects }: TimetableProps) {
         return;
       }
 
-      const timeMatch = session.thoi_gian.match(/từ (\d{2}:\d{2}) đến (\d{2}:\d{2})/);
-      // console.log('Time match:', timeMatch, 'for time:', session.thoi_gian);
-      
-      if (!timeMatch) {
-        // console.log('Time format not matched:', session.thoi_gian);
-        return;
+      let startSlot = -1;
+      let endSlot = -1;
+
+      // Kiểm tra định dạng "tiết X->Y"
+      const tietMatch = session.thoi_gian.match(/tiết (\d+)->(\d+)/);
+      if (tietMatch) {
+        const tietStart = parseInt(tietMatch[1]);
+        const tietEnd = parseInt(tietMatch[2]);
+        
+        // Chuyển đổi tiết thành slot index (tiết 1 = slot 0)
+        startSlot = tietStart - 1;
+        endSlot = tietEnd;
+      } else {
+        // Kiểm tra định dạng "từ HH:mm đến HH:mm"
+        const timeMatch = session.thoi_gian.match(/từ (\d{2}:\d{2}) đến (\d{2}:\d{2})/);
+        if (timeMatch) {
+          startSlot = getTimeSlotIndex(timeMatch[1]);
+          endSlot = getTimeSlotIndex(timeMatch[2]);
+        }
       }
 
-      const startSlot = getTimeSlotIndex(timeMatch[1]);
-      const endSlot = getTimeSlotIndex(timeMatch[2]);
-      // console.log('Start slot:', startSlot, 'End slot:', endSlot, 'Start time:', timeMatch[1], 'End time:', timeMatch[2]);
-
       if (startSlot === -1 || endSlot === -1) {
-        // console.log('Invalid slots - Start:', startSlot, 'End:', endSlot);
+        // console.log('Invalid time format:', session.thoi_gian);
         return;
       }
 
@@ -121,6 +130,8 @@ export default function Timetable({ subjects }: TimetableProps) {
           cell.to = subject.to;
           cell.isConflict = false;
           cell.subjectCode = subject.ma_mon; // Thêm mã môn để dễ tìm màu
+          cell.sl_cp = subject.sl_cp; // Thêm thông tin slot
+          cell.sl_cl = subject.sl_cl;
         }
       }
     });
@@ -278,6 +289,24 @@ export default function Timetable({ subjects }: TimetableProps) {
                              style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}
                              title={cell.instructor}>
                             GV : {cell.instructor.replace('GV ', '')}     
+                        </div>
+                      )}
+                      {(cell.sl_cp !== undefined || cell.sl_cl !== undefined) && (
+                        <div className="fst-italic" 
+                             style={{ 
+                               fontSize: '0.75rem', 
+                               lineHeight: '1.2', 
+                               fontWeight: '600',
+                               color: cell.sl_cl !== undefined && cell.sl_cl <= 0 
+                                 ? '#dc3545'  // Đỏ cho hết slot
+                                 : 'var(--text-secondary)'
+                             }}>
+                           Tình trạng : {cell.sl_cp !== undefined && cell.sl_cl !== undefined 
+                            ? `${cell.sl_cl}/${cell.sl_cp}${cell.sl_cl <= 0 ? ' ⚠️' : ''}`
+                            : cell.sl_cp !== undefined 
+                              ? `Tổng: ${cell.sl_cp}`
+                              : `Còn: ${cell.sl_cl}`
+                          }
                         </div>
                       )}
                     </div>
