@@ -17,9 +17,9 @@ export const fallbackVisitorService = {
       }
       
       // 2. Thử GitHub API backup
-      const response = await fetch('https://api.github.com/repos/congquan92/TKB_SGU');
-      const data = await response.json();
-      const count = Math.max((data.stargazers_count || 0) + 450, 500);
+      // const response = await fetch('https://api.github.com/repos/congquan92/TKB_SGU');
+      // const data = await response.json();
+      // const count = Math.max((data.stargazers_count || 0) + 450, 500);
       
       // Cache kết quả
       localStorage.setItem('tkb-visitor-count-fallback', count.toString());
