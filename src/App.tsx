@@ -503,7 +503,7 @@ export default function App() {
   };
   // Thông báo mới 
   useEffect(() => {
-    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 18:00pm 1/8/2025.";
+    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 16:00pm 2/8/2025.";
     toast.info(toastMessage, {
       position: "top-center",
       autoClose: 3000,
