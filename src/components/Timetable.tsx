@@ -314,7 +314,7 @@ export default function Timetable({ subjects }: TimetableProps) {
                         <div className="fst-italic mb-1" 
                              style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}
                              title={cell.instructor}>
-                            GV : {cell.instructor}     
+                            GV : {cell.instructor.replace('GV ','')}     
                         </div>
                       )}
                       {(cell.sl_cp !== undefined || cell.sl_cl !== undefined) && (
