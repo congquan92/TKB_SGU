@@ -627,40 +627,49 @@ export default function App() {
             }}>
               <div className="d-flex justify-content-between align-items-center">
                 <h6 className="mb-0"><i className="fa-solid fa-magnifying-glass"></i> Tìm kiếm môn học</h6>
-                <div className="form-check form-switch">
-                  <input 
-                    className="form-check-input" 
-                    type="checkbox" 
-                    id="ignoreSlotLimitSwitch"
-                    checked={ignoreSlotLimit}
-                    onChange={(e) => setIgnoreSlotLimit(e.target.checked)}
-                    style={{
-                      backgroundColor: ignoreSlotLimit ? 'var(--warning-color)' : '',
-                      borderColor: ignoreSlotLimit ? 'var(--warning-color)' : ''
-                    }}
-                  />
-                  <label 
-                    className="form-check-label" 
-                    htmlFor="ignoreSlotLimitSwitch"
+                <div className="d-flex align-items-center gap-2">          
+                  <span 
                     style={{ 
                       fontSize: '12px', 
-                      color: ignoreSlotLimit ? 'var(--warning-color)' : 'var(--text-secondary)',
-                      fontWeight: ignoreSlotLimit ? '600' : '400'
+                      color: 'var(--text-secondary)',
+                      cursor: 'pointer',
+                      fontWeight: '600'
                     }}
-                    title={ignoreSlotLimit ? "Đang bỏ qua kiểm tra số lượng chỗ - có thể chọn môn đã hết chỗ" : "Bật để kiểm tra số lượng chỗ - loại bỏ môn hết chỗ"}
+                      onClick={() => setIgnoreSlotLimit(!ignoreSlotLimit)}
                   >
+                    {ignoreSlotLimit ? "Bỏ qua SL" : "Kiểm tra SL"}
+                  </span>
+                  <div 
+                    onClick={() => setIgnoreSlotLimit(!ignoreSlotLimit)}
+                    title={ignoreSlotLimit ? "Đang bỏ qua kiểm tra số lượng chỗ - có thể chọn môn đã hết chỗ" : "Bật để kiểm tra số lượng chỗ - loại bỏ môn hết chỗ"}
+                    style={{
+                      width: '32px',
+                      height: '32px',
+                      borderRadius: '50%',
+                      color: 'var(--text-primary)',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      transition: 'all 0.2s ease',
+                      fontSize: '14px'
+                    }}
+                    // onMouseEnter={(e) => {
+                    //   e.currentTarget.style.transform = 'scale(1.1)';
+                    //   e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.2)';
+                    // }}
+                    // onMouseLeave={(e) => {
+                    //   e.currentTarget.style.transform = 'scale(1)';
+                    //   e.currentTarget.style.boxShadow = 'none';
+                    // }}
+                  >
+                    
                     {ignoreSlotLimit ? (
-                      <>
-                        <i className="fa-solid fa-lock-open" style={{ marginRight: '4px', color: 'var(--warning-color)' }}></i>
-                        Bỏ qua SL
-                      </>
+                      <i className="fa-solid fa-lock-open" style={{ fontSize: '14px' }}></i>
                     ) : (
-                      <>
-                        <i className="fa-solid fa-lock" style={{ marginRight: '4px', color: 'var(--primary-color)' }}></i>
-                        Kiểm tra SL
-                      </>
+                      <i className="fa-solid fa-lock" style={{ fontSize: '14px' }}></i>
                     )}
-                  </label>
+                  </div>
                 </div>
               </div>
             </div>
