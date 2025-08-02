@@ -275,28 +275,109 @@
 
 @media (max-width: 768px) {
   .table-container {
-    padding: 10px;
+    padding: 5px;
+    border-radius: 8px;
+    /* Enhanced mobile scrolling */
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
   }
   
   .timetable-custom {
-    font-size: 0.8rem;
-    min-width: 750px;
+    font-size: 0.75rem;
+    min-width: 700px; /* Reduced from 750px */
+    border-collapse: separate;
+    border-spacing: 1px;
   }
   
   .timetable-custom thead th {
-    padding: 8px 4px;
-    font-size: 0.9rem;
+    padding: 6px 3px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    min-width: 90px;
   }
   
   .timetable-custom tbody td {
-    padding: 6px 4px;
-    height: 70px;
-    font-size: 0.75rem;
+    padding: 4px 2px;
+    height: 60px; /* Reduced height for mobile */
+    font-size: 0.7rem;
+    line-height: 1.2;
+    min-width: 90px;
   }
   
   .badge {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+  
+  /* Mobile-specific timetable cell content */
+  .timetable-custom .subject-cell {
+    padding: 2px 4px;
+    font-size: 0.65rem;
+    line-height: 1.1;
+  }
+  
+  /* Improve mobile touch scrolling indicators */
+  .table-container::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .table-container::-webkit-scrollbar-track {
+    background: var(--surface-color);
+    border-radius: 3px;
+  }
+  
+  .table-container::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+  }
+}
+
+/* Extra small devices (phones) - More aggressive mobile optimization */
+@media (max-width: 576px) {
+  .table-container {
+    padding: 2px;
+    margin: 0 -5px; /* Extend to edges */
+  }
+  
+  .timetable-custom {
+    font-size: 0.7rem;
+    min-width: 650px; /* Further reduced for small phones */
+  }
+  
+  .timetable-custom thead th {
+    padding: 4px 2px;
+    font-size: 0.75rem;
+    min-width: 80px;
+  }
+  
+  .timetable-custom tbody td {
+    padding: 2px 1px;
+    height: 50px; /* More compact */
+    font-size: 0.65rem;
+    min-width: 80px;
+  }
+  
+  /* Very compact subject cells */
+  .timetable-custom .subject-cell {
+    padding: 1px 2px;
+    font-size: 0.6rem;
+    line-height: 1;
+  }
+  
+  /* Mobile header optimizations */
+  .card-header {
+    padding: 0.5rem 0.75rem;
+  }
+  
+  .card-header h6 {
     font-size: 0.85rem;
+  }
+  
+  /* Compact mobile forms */
+  .form-control {
     padding: 8px 12px;
+    font-size: 0.9rem;
   }
 }
 

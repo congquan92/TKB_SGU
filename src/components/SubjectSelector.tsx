@@ -37,7 +37,7 @@ export default function SubjectSelector({ data, onSelect, ignoreSlotLimit = fals
       if (hasRoom) return true;
       
       return false;
-    }).slice(0, 50); // Limit results for performance
+    }); // Limit results for performance   :  .slice(0, 50)
   }, [data, keyword]);
 
   const handleKeywordChange = (e: React.ChangeEvent<HTMLInputElement>) => {

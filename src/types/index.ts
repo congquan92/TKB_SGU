@@ -30,6 +30,8 @@ export interface TimetableCell {
   subjectCode?: string;
   sl_cp?: number;  // Số lượng chỗ tối đa
   sl_cl?: number;  // Số lượng chỗ còn lại
+  rowSpan?: number; // Số dòng cell này span
+  isMerged?: boolean; // Cell này có bị merge không (sẽ ẩn)
 }
 
 export type TimetableGrid = TimetableCell[][];

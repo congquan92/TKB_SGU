@@ -61,12 +61,79 @@
 
 body {
   margin: 0;
-  min-width: 320px;
+  min-width: 320px; /* Mobile-first minimum width */
   min-height: 100vh;
   background: var(--background-gradient);
   background-attachment: fixed;
   color: var(--text-primary);
   transition: background 0.3s ease, color 0.3s ease;
+}
+
+/* Mobile-First Responsive Design */
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll; /* Better performance on mobile */
+  }
+  
+  .container-fluid {
+    padding: 0.5rem !important;
+  }
+  
+  /* Mobile header adjustments */
+  .mb-4 {
+    margin-bottom: 1rem !important;
+  }
+  
+  /* Improve touch targets */
+  .btn {
+    min-height: 44px; /* Apple's recommended touch target */
+    padding: 8px 16px;
+  }
+  
+  /* Better mobile cards */
+  .card {
+    border-radius: 8px !important;
+    margin-bottom: 1rem;
+  }
+  
+  .card-body {
+    padding: 1rem !important;
+  }
+  
+  /* Mobile table container */
+  .table-container {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+}
+
+@media (max-width: 576px) {
+  /* Extra small devices optimizations */
+  .container-fluid {
+    padding: 0.25rem !important;
+  }
+  
+  /* Compact mobile header */
+  h1 {
+    font-size: 1.2rem !important;
+  }
+  
+  .card-header h6 {
+    font-size: 0.9rem !important;
+  }
+  
+  /* Touch-friendly buttons */
+  .btn-sm {
+    min-height: 40px;
+    padding: 6px 12px;
+    font-size: 0.875rem;
+  }
+  
+  /* Mobile sidebar full height */
+  .mobile-sidebar {
+    height: 100vh !important;
+    overflow-y: auto;
+  }
 }
 
 h1, h2, h3, h4, h5, h6 {

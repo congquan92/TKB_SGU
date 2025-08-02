@@ -14,7 +14,7 @@ export default function DonateModal({ show, onHide }: DonateModalProps) {
   const accountName = "NGUYEN CONG QUAN";
   
   // VietQR URL
-  const vietQRUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-${template}.png?amount=${amount}&addInfo=${encodeURIComponent(description)}&accountName=${encodeURIComponent(accountName)}`;
+  const vietQRUrl =`https://img.vietqr.io/image/${bankCode}-${accountNumber}-${template}.png?amount=${amount}&addInfo=${encodeURIComponent(description)}&accountName=${encodeURIComponent(accountName)}`;
 
   if (!show) return null;
 
@@ -28,20 +28,15 @@ export default function DonateModal({ show, onHide }: DonateModalProps) {
           borderRadius: '16px'
         }}>
           <div className="modal-header text-white" style={{ 
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            // background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             borderRadius: '16px 16px 0 0',
-            border: 'none'
+            borderBottom: '1px solid var(--border-color)',
           }}>
             <h4 className="modal-title">
               <i className="fa-solid fa-heart text-danger me-2 fa-beat"></i>
               Ủng hộ phát triển dự án
             </h4>
-            <button 
-              type="button" 
-              className="btn-close btn-close-white" 
-              onClick={onHide}
-              title="Đóng"
-            ></button>
+           
           </div>
           <div className="modal-body p-4" style={{
             backgroundColor: 'var(--surface-color)',

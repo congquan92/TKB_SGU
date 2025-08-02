@@ -11,19 +11,21 @@ const COLORS = [
   '#ef4444', '#84cc16', '#f97316', '#8b5cf6', '#14b8a6', '#f472b6'
 ];
 
-const WEEKDAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+const WEEKDAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Thứ 8'];
 
 const TIME_SLOTS = [
   '07:00-07:50', '07:50-08:40', '08:50-09:40', '09:40-10:30', 
   '10:40-11:30', '11:30-12:20', '13:00-13:50', '13:50-14:40',
-  '14:50-15:40', '15:40-16:30', '16:40-17:30', '17:30-18:20'
+  '14:50-15:40', '15:40-16:30', '16:40-17:30', '17:30-18:20',
+  '18:30-19:20', '19:20-20:10'
 ];
 
 const getTimeSlotIndex = (time: string): number => {
   const timeSlotMap: { [key: string]: number } = {
     '07:00': 0, '07:50': 1, '08:50': 2, '09:40': 3,
     '10:40': 4, '11:30': 5, '13:00': 6, '13:50': 7,
-    '14:50': 8, '15:40': 9, '16:40': 10, '17:30': 11
+    '14:50': 8, '15:40': 9, '16:40': 10, '17:30': 11,
+    '18:30': 12, '19:20': 13
   };
   
   // Nếu thời gian chính xác có trong map
@@ -48,7 +50,9 @@ const getTimeSlotIndex = (time: string): number => {
     14*60+50,  // 14:50
     15*60+40,  // 15:40
     16*60+40,  // 16:40
-    17*60+30   // 17:30
+    17*60+30,  // 17:30
+    18*60+30,  // 18:30
+    19*60+20   // 19:20
   ];
   
   // Tìm slot phù hợp nhất
@@ -65,14 +69,17 @@ export default function Timetable({ subjects }: TimetableProps) {
   // console.log('Timetable received subjects:', subjects);
   // console.log('Number of subjects:', subjects.length);
   
-  // Initialize empty timetable grid
-  const grid: TimetableCell[][] = Array.from({ length: 12 }, () =>
-    Array.from({ length: 6 }, () => ({}))
+  // Initialize empty timetable grid - Now 7 days (including Thứ 8) and 14 slots
+  const grid: TimetableCell[][] = Array.from({ length: 14 }, () =>
+    Array.from({ length: 7 }, () => ({}))
   );
 
   // Track subject colors
   const subjectColors = new Map<string, string>();
   let colorIndex = 0;
+
+  // Track merged cells to avoid rendering duplicates
+  const mergedCells = new Set<string>();
 
   // Fill the grid with subjects
   subjects.forEach((subject) => {
@@ -118,20 +125,30 @@ export default function Timetable({ subjects }: TimetableProps) {
         return;
       }
 
-      for (let slot = startSlot; slot < endSlot && slot < 12; slot++) {
+      // Calculate rowspan (number of slots this subject spans)
+      const rowSpan = endSlot - startSlot;
+
+      // Only fill the first cell with complete info and rowspan
+      const firstCell = grid[startSlot][dayIndex];
+      if (!firstCell.subject) {
+        firstCell.subject = subject.ten_mon;
+        firstCell.room = session.phong;
+        firstCell.instructor = session.giang_vien;
+        firstCell.nhom_to = subject.nhom_to;
+        firstCell.to = subject.to;
+        firstCell.isConflict = false;
+        firstCell.subjectCode = subject.ma_mon;
+        firstCell.sl_cp = subject.sl_cp;
+        firstCell.sl_cl = subject.sl_cl;
+        firstCell.rowSpan = rowSpan; // Add rowspan info
+      }
+
+      // Mark subsequent cells as merged (hidden)
+      for (let slot = startSlot + 1; slot < endSlot && slot < 14; slot++) {
         const cell = grid[slot][dayIndex];
-        
-        // Chỉ thêm vào nếu ô trống (không trùng lịch)
         if (!cell.subject) {
-          cell.subject = subject.ten_mon;
-          cell.room = session.phong;
-          cell.instructor = session.giang_vien;
-          cell.nhom_to = subject.nhom_to;
-          cell.to = subject.to;
-          cell.isConflict = false;
-          cell.subjectCode = subject.ma_mon; // Thêm mã môn để dễ tìm màu
-          cell.sl_cp = subject.sl_cp; // Thêm thông tin slot
-          cell.sl_cl = subject.sl_cl;
+          cell.isMerged = true; // Mark as merged cell (will be hidden)
+          mergedCells.add(`${slot}-${dayIndex}`);
         }
       }
     });
@@ -216,7 +233,7 @@ export default function Timetable({ subjects }: TimetableProps) {
                 color: 'var(--text-primary)',
                 borderColor: 'var(--border-color)'
               }}>
-                {day.replace('Thứ ', 'T')}
+                {day.replace('Thứ 8', 'CN')}
               </th>
             ))}
           </tr>
@@ -241,12 +258,20 @@ export default function Timetable({ subjects }: TimetableProps) {
                 <small>{TIME_SLOTS[slotIndex]}</small>
               </td>
               {row.map((cell, dayIndex) => {
+                // Skip rendering cells that are merged (hidden)
+                if (cell.isMerged) {
+                  return null;
+                }
+
                 const cellColor = cell.subjectCode ? subjectColors.get(cell.subjectCode) : '#6366f1';
+                const rowSpan = cell.rowSpan || 1;
+                
                 return (
                 <td 
                   key={dayIndex} 
                   className="align-middle subject-cell"
                   data-has-subject={cell.subject ? "true" : "false"}
+                  rowSpan={rowSpan}
                   style={{
                     ...getCellStyle(cell),
                     wordWrap: 'break-word',
@@ -255,7 +280,8 @@ export default function Timetable({ subjects }: TimetableProps) {
                     minHeight: '60px',
                     padding: '8px',
                     '--subject-border-color': cellColor,
-                    '--subject-text-color': cellColor
+                    '--subject-text-color': cellColor,
+                    verticalAlign: 'middle'
                   } as React.CSSProperties & { '--subject-border-color': string; '--subject-text-color': string }}
                 >
                   {cell.subject && (
@@ -288,7 +314,7 @@ export default function Timetable({ subjects }: TimetableProps) {
                         <div className="fst-italic mb-1" 
                              style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}
                              title={cell.instructor}>
-                            GV : {cell.instructor.replace('GV ', '')}     
+                            GV : {cell.instructor}     
                         </div>
                       )}
                       {(cell.sl_cp !== undefined || cell.sl_cl !== undefined) && (
@@ -302,17 +328,27 @@ export default function Timetable({ subjects }: TimetableProps) {
                                  : 'var(--text-secondary)'
                              }}>
                            Tình trạng : {cell.sl_cp !== undefined && cell.sl_cl !== undefined 
-                            ? `${cell.sl_cl}/${cell.sl_cp}`
+                            ? `${cell.sl_cp - cell.sl_cl}/${cell.sl_cp}`
                             : cell.sl_cp !== undefined 
                               ? `Tổng: ${cell.sl_cp}`
                               : `Còn: ${cell.sl_cl}`
                           }
                         </div>
                       )}
+                      {rowSpan > 1 && (
+                        <div className="mt-1" style={{ 
+                          fontSize: '0.7rem', 
+                          color: 'var(--accent-primary)', 
+                          fontWeight: '600',
+                          opacity: 0.8 
+                        }}>
+                          ({rowSpan} tiết)
+                        </div>
+                      )}
                     </div>
                   )}
                 </td>
-                )
+                );
               })}
             </tr>
           ))}
