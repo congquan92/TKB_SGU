@@ -10,7 +10,8 @@
 - ⚠️ **Phát hiện trùng lịch**: Cảnh báo khi có môn học trùng thời gian
 - 📸 **Xuất ảnh**: Chụp ảnh thời khóa biểu để lưu trữ
 - 💾 **Xuất/Nhập JSON**: Lưu và khôi phục thời khóa biểu
-- 📱 **Responsive design**: Tương thích trên mọi thiết bị
+- � **Đếm lượt truy cập**: Thống kê visitor với Firebase Firestore
+- �📱 **Responsive design**: Tương thích trên mọi thiết bị
 
 ## 🛠️ Công nghệ sử dụng
 
@@ -18,6 +19,7 @@
 - **TypeScript** - Type Safety
 - **Vite** - Build Tool
 - **Bootstrap 5** - CSS Framework
+- **Firebase/Firestore** - Database cho visitor counter
 - **html2canvas** - Screenshot functionality
 - **file-saver** - File download
 
@@ -26,6 +28,12 @@
 ### Yêu cầu hệ thống
 - Node.js >= 20.19.0
 - npm hoặc yarn
+
+### Cài đặt Firebase (Optional)
+1. Tạo project Firebase tại [Firebase Console](https://console.firebase.google.com/)
+2. Tạo Firestore Database
+3. Copy `.env.example` thành `.env.local`
+4. Điền thông tin Firebase vào `.env.local`
 
 ### Cài đặt
 ```bash

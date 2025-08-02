@@ -1,0 +1,15 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Rules for visitor counter
+    match /stats/visitors {
+      // Cho phép tất cả đọc và ghi vào document visitor stats
+      allow read, write: if true;
+    }
+    
+    // Chặn tất cả các collection khác
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
