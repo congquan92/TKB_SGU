@@ -41,7 +41,7 @@ export default function App() {
   });
 
   const [isCapturing, setIsCapturing] = useState(false);
-  const [showDonateModal, setShowDonateModal] = useState(false);
+  const [showDonateModal, setShowDonateModal] = useState(true); // Hiện modal ngay khi vào trang
   const [showToolsDropdown, setShowToolsDropdown] = useState(false);
   const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
@@ -1047,6 +1047,7 @@ export default function App() {
         show={showDonateModal}
         onHide={() => setShowDonateModal(false)}
       />
+      
 
       {/* Toast Container */}
       <ToastContainer

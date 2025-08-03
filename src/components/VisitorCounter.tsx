@@ -58,7 +58,7 @@ export default function VisitorCounter({ className = '', style = {} }: VisitorCo
   }
 
   const todayCount = getTodayVisits();
-  const tooltipText = `Tổng số lượt truy cập: ${visitorCount.toLocaleString('vi-VN')} visitors\nHôm nay: ${todayCount.toLocaleString('vi-VN')} visitors\nCooldown: 30 phút mỗi user\nCập nhật lần cuối: ${stats?.lastUpdated ? new Date(stats.lastUpdated).toLocaleString('vi-VN') : 'N/A'}`;
+  const tooltipText = `Tổng số lượt truy cập: ${visitorCount.toLocaleString('vi-VN')} visitors\nHôm nay: ${todayCount.toLocaleString('vi-VN')} visitors\nCooldown: 15 phút mỗi user\nCập nhật lần cuối: ${stats?.lastUpdated ? new Date(stats.lastUpdated).toLocaleString('vi-VN') : 'N/A'}`;
 
   return (
     <div 
