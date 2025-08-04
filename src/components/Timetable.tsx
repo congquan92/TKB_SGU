@@ -14,18 +14,36 @@ const COLORS = [
 const WEEKDAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Thứ 8'];
 
 const TIME_SLOTS = [
-  '07:00-07:50', '07:50-08:40', '08:50-09:40', '09:40-10:30', 
-  '10:40-11:30', '11:30-12:20', '13:00-13:50', '13:50-14:40',
-  '14:50-15:40', '15:40-16:30', '16:40-17:30', '17:30-18:20',
-  '18:30-19:20', '19:20-20:10'
+  '07:00-07:50',  // Tiết 1
+  '07:50-08:40',  // Tiết 2
+  '09:00-09:50',  // Tiết 3
+  '09:50-10:40',  // Tiết 4
+  '10:40-11:30',  // Tiết 5
+  '13:00-13:50',  // Tiết 6
+  '13:50-14:40',  // Tiết 7
+  '15:00-15:50',  // Tiết 8
+  '15:50-16:40',  // Tiết 9
+  '16:40-17:30',  // Tiết 10
+  '17:40-18:30',  // Tiết 11
+  '18:30-19:20',  // Tiết 12
+  '19:20-20:10'   // Tiết 13
 ];
 
 const getTimeSlotIndex = (time: string): number => {
   const timeSlotMap: { [key: string]: number } = {
-    '07:00': 0, '07:50': 1, '08:50': 2, '09:40': 3,
-    '10:40': 4, '11:30': 5, '13:00': 6, '13:50': 7,
-    '14:50': 8, '15:40': 9, '16:40': 10, '17:30': 11,
-    '18:30': 12, '19:20': 13
+    '07:00': 0,  // Tiết 1
+    '07:50': 1,  // Tiết 2
+    '09:00': 2,  // Tiết 3
+    '09:50': 3,  // Tiết 4
+    '10:40': 4,  // Tiết 5
+    '13:00': 5,  // Tiết 6
+    '13:50': 6,  // Tiết 7
+    '15:00': 7,  // Tiết 8
+    '15:50': 8,  // Tiết 9
+    '16:40': 9,  // Tiết 10
+    '17:40': 10, // Tiết 11
+    '18:30': 11, // Tiết 12
+    '19:20': 12  // Tiết 13
   };
   
   // Nếu thời gian chính xác có trong map
@@ -39,20 +57,19 @@ const getTimeSlotIndex = (time: string): number => {
   
   // Danh sách thời gian bắt đầu các slot (tính bằng phút)
   const slotTimes = [
-    7*60,      // 07:00
-    7*60+50,   // 07:50
-    8*60+50,   // 08:50
-    9*60+40,   // 09:40
-    10*60+40,  // 10:40
-    11*60+30,  // 11:30
-    13*60,     // 13:00
-    13*60+50,  // 13:50
-    14*60+50,  // 14:50
-    15*60+40,  // 15:40
-    16*60+40,  // 16:40
-    17*60+30,  // 17:30
-    18*60+30,  // 18:30
-    19*60+20   // 19:20
+    7*60,        // 07:00 - Tiết 1
+    7*60+50,     // 07:50 - Tiết 2
+    9*60,        // 09:00 - Tiết 3
+    9*60+50,     // 09:50 - Tiết 4
+    10*60+40,    // 10:40 - Tiết 5
+    13*60,       // 13:00 - Tiết 6
+    13*60+50,    // 13:50 - Tiết 7
+    15*60,       // 15:00 - Tiết 8
+    15*60+50,    // 15:50 - Tiết 9
+    16*60+40,    // 16:40 - Tiết 10
+    17*60+40,    // 17:40 - Tiết 11
+    18*60+30,    // 18:30 - Tiết 12
+    19*60+20     // 19:20 - Tiết 13
   ];
   
   // Tìm slot phù hợp nhất
@@ -69,8 +86,8 @@ export default function Timetable({ subjects }: TimetableProps) {
   // console.log('Timetable received subjects:', subjects);
   // console.log('Number of subjects:', subjects.length);
   
-  // Initialize empty timetable grid - Now 7 days (including Thứ 8) and 14 slots
-  const grid: TimetableCell[][] = Array.from({ length: 14 }, () =>
+  // Initialize empty timetable grid - Now 7 days (including Thứ 8) and 13 slots
+  const grid: TimetableCell[][] = Array.from({ length: 13 }, () =>
     Array.from({ length: 7 }, () => ({}))
   );
 
@@ -144,7 +161,7 @@ export default function Timetable({ subjects }: TimetableProps) {
       }
 
       // Mark subsequent cells as merged (hidden)
-      for (let slot = startSlot + 1; slot < endSlot && slot < 14; slot++) {
+      for (let slot = startSlot + 1; slot < endSlot && slot < 13; slot++) {
         const cell = grid[slot][dayIndex];
         if (!cell.subject) {
           cell.isMerged = true; // Mark as merged cell (will be hidden)
