@@ -518,7 +518,7 @@ export default function App() {
   };
   // Thông báo mới 
   useEffect(() => {
-    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 6/8/2025.";
+    const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 14/11/2025.";
     toast.info(toastMessage, {
       position: "top-center",
       autoClose: 4000,
