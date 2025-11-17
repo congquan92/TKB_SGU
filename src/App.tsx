@@ -9,7 +9,7 @@ import { saveAs } from "file-saver";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import type { Subject } from "./types";
-import { data, hoc_ky_dang_ky } from "./data/dsCustom.json";
+import { data, hoc_ky_dang_ky, time } from "./data/dsCustom.json";
 
 export default function App() {
     // Khôi phục dữ liệu từ localStorage khi khởi tạo
@@ -520,10 +520,10 @@ export default function App() {
     };
     // Thông báo mới
     useEffect(() => {
-        const toastMessage = "Dữ liệu trên được cập nhật lần cuối vào 14/11/2025.";
+        const toastMessage = `Dữ liệu trên được cập nhật lần cuối vào ${time}.`;
         toast.info(toastMessage, {
             position: "top-center",
-            autoClose: 4000,
+            autoClose: 8000, // set thời gian tự đóng
             closeOnClick: true,
             draggable: true,
             style: {
