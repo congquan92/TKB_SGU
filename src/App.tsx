@@ -752,14 +752,13 @@ export default function App() {
                                             style={{ display: "none" }}
                                         />
                                         <button
-                                            className="btn btn-sm w-100"
+                                            className="btn btn-sm w-100 mb-2"
                                             onClick={() => document.getElementById("json-file-input")?.click()}
                                             style={{
                                                 backgroundColor: "var(--info-color)",
                                                 borderColor: "var(--info-color)",
                                                 color: "white",
                                                 textAlign: "left",
-                                                padding: "8px 12px",
                                                 borderRadius: "6px",
                                                 transition: "all 0.2s ease",
                                                 border: "1px solid var(--info-color)",
@@ -768,6 +767,13 @@ export default function App() {
                                             <i className="fa-solid fa-file-import me-2"></i>
                                             Nhập file JSON
                                         </button>
+                                    </div>
+                                    <div>
+                                        <small style={{ color: "var(--text-secondary)" }}>
+                                            <a href="https://daotao.sgu.edu.vn/index.php/thong-bao/so-tay-dang-ki-mon-hoc/so-tay-dang-ki-mon-hoc-hk3-nh-2024-2025" target="_blank" rel="noopener noreferrer">
+                                                Xem Sổ tay đăng kí môn học
+                                            </a>
+                                        </small>
                                     </div>
                                 </div>
                             )}
