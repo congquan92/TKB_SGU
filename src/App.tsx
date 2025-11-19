@@ -585,17 +585,34 @@ export default function App() {
                             <i className="fa-solid fa-bars" style={{ fontSize: "14px" }}></i>
                         </div>
 
-                        <h1 className="mb-0 d-flex align-items-center gap-2">
-                            <i className="fa-solid fa-graduation-cap" style={{ color: "var(--text-primary)" }}></i>
-                            <span
+                        <div className="d-flex align-items-center gap-2 justify-content-center">
+                            <i
+                                className="fa-solid fa-graduation-cap"
                                 style={{
                                     color: "var(--text-primary)",
-                                    fontSize: "clamp(1.2rem, 4vw, 1.5rem)", // Responsive font size
+                                    fontSize: "1.5rem", // icon responsive theo title
                                 }}
-                            >
-                                Thời Khóa Biểu SGU
-                            </span>
-                        </h1>
+                            ></i>
+                            <div className="d-flex flex-column">
+                                <h1
+                                    className="mb-0"
+                                    style={{
+                                        color: "var(--text-primary)",
+                                        fontSize: "clamp(0.8rem, 4vw, 1.5rem)", // title
+                                    }}
+                                >
+                                    Thời Khóa Biểu SGU
+                                </h1>
+                                <small
+                                    style={{
+                                        color: "var(--text-secondary)",
+                                        fontSize: "clamp(0.6rem, 2vw, 0.9rem)", // subtitle nhỏ theo
+                                    }}
+                                >
+                                    ({hoc_ky_dang_ky})
+                                </small>
+                            </div>
+                        </div>
 
                         {/* Hide badges on very small screens */}
                         <div className="d-none d-sm-flex align-items-center gap-2">
@@ -630,18 +647,18 @@ export default function App() {
                             </div>
                         )}
                     </div>
-                    <div className="align-items-center">
-                        <h2 className="mb-0 d-flex align-items-center gap-2">
+                    {/* <div className="align-items-center">
+                        <h6 className="mb-0 d-flex align-items-center gap-2">
                             <span
                                 style={{
                                     color: "var(--text-primary)",
-                                    fontSize: "clamp(1.2rem, 4vw, 1.5rem)", // Responsive font size
+                                    // fontSize: "clamp(1.2rem, 4vw, 1.5rem)", // Responsive font size
                                 }}
                             >
                                 {hoc_ky_dang_ky}
                             </span>
-                        </h2>
-                    </div>
+                        </h6>
+                    </div> */}
                     <div className="d-flex align-items-center gap-2 gap-md-3">
                         {/* Theme Toggle */}
                         <div
