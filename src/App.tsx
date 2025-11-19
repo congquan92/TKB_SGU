@@ -276,9 +276,10 @@ export default function App() {
     };
 
     const exportJson = () => {
-        selected.map((subject) => {
-            subject.id_to_hoc = undefined;
-        }); // Xóa id_to_hoc trước khi xuất
+        //  có gì dùng sau
+        // selected.map((subject) => {
+        //     subject.id_to_hoc = undefined;
+        // }); // Xóa id_to_hoc trước khi xuất
         const blob = new Blob([JSON.stringify(selected, null, 2)], {
             type: "application/json",
         });
