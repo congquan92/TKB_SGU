@@ -1,28 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
     <head>
         <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/g.gif" />
+        <link rel="icon" type="image/svg+xml" href="/logo.png" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <!-- SEO -->
-        <title>Thời Khóa Biểu SGU</title>
-        <meta name="title" content="Thời Khóa Biểu SGU" />
-        <meta name="description" content="Xem lịch học SGU nhanh, đẹp, gọn." />
-        <meta name="keywords" content="SGU, thời khóa biểu, lịch học SGU" />
-        <!-- Open Graph -->
-        <meta property="og:title" content="Thời Khóa Biểu SGU" />
-        <meta property="og:description" content="Xem lịch học SGU nhanh, tiện, auto update." />
-        <meta property="og:image" content="/g.gif" />
-        <meta property="og:url" content="https://tkb-sgu.vercel.app" />
+
+        <!-- Primary Meta Tags -->
+        <title>Thời Khóa Biểu SGU - Xem Lịch Học Đại Học Sài Gòn Nhanh & Tiện Lợi</title>
+        <meta name="title" content="Thời Khóa Biểu SGU - Xem Lịch Học Đại Học Sài Gòn Nhanh & Tiện Lợi" />
+        <meta name="description" content="Công cụ xem và quản lý thời khóa biểu SGU (Đại học Sài Gòn) miễn phí. Tìm kiếm môn học, kiểm tra trùng lịch, xuất ảnh TKB, lưu và khôi phục lịch học dễ dàng. Giao diện đẹp, nhanh chóng." />
+        <meta name="keywords" content="thời khóa biểu SGU, TKB SGU, lịch học SGU, Đại học Sài Gòn, đăng ký môn học SGU, xem lịch học SGU, schedule SGU, timetable SGU, Saigon University, tkb sgu," />
+        <meta name="author" content="Nguyen Cong Quan" />
+        <meta name="robots" content="index, follow" />
+        <meta name="language" content="Vietnamese" />
+
+        <!-- Open Graph / Facebook -->
         <meta property="og:type" content="website" />
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-        <link
-            rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css"
-            integrity="sha512-DxV+EoADOkOygM4IR9yXP8Sb2qwgidEmeqAEmDKIOfPRQZOWbXCzLC6vjbZyy0vPisbH2SyW27+ddLVCN+OMzQ=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-        />
+        <meta property="og:url" content="https://tkb-sgu.vercel.app" />
+        <meta property="og:site_name" content="Thời Khóa Biểu SGU" />
+        <meta property="og:title" content="Thời Khóa Biểu SGU - Xem Lịch Học Đại Học Sài Gòn" />
+        <meta property="og:description" content="Xem và quản lý thời khóa biểu Đại học Sài Gòn nhanh chóng. Tìm môn, check trùng lịch, xuất ảnh, lưu TKB dễ dàng. Miễn phí 100%." />
+        <meta property="og:image" content="https://tkb-sgu.vercel.app/logo.png" />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="vi_VN" />
+
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:url" content="https://tkb-sgu.vercel.app" />
+        <meta name="twitter:title" content="Thời Khóa Biểu SGU - Xem Lịch Học Đại Học Sài Gòn" />
+        <meta name="twitter:description" content="Công cụ quản lý thời khóa biểu SGU miễn phí. Tìm môn, check trùng lịch, xuất ảnh TKB nhanh chóng." />
+        <meta name="twitter:image" content="https://tkb-sgu.vercel.app/logo.png" />
+
+        <!-- Additional SEO -->
+        <link rel="canonical" href="https://tkb-sgu.vercel.app" />
+        <meta name="theme-color" content="#ffffff" />
+
+        <!-- Structured Data (JSON-LD) -->
+        <script type="application/ld+json">
+            {
+                "@context": "https://schema.org",
+                "@type": "WebApplication",
+                "name": "Thời Khóa Biểu SGU",
+                "alternateName": "TKB SGU",
+                "url": "https://tkb-sgu.vercel.app",
+                "description": "Công cụ xem và quản lý thời khóa biểu Đại học Sài Gòn (SGU) miễn phí với các tính năng tìm kiếm môn học, kiểm tra trùng lịch, xuất ảnh và lưu trữ thời khóa biểu",
+                "applicationCategory": "EducationalApplication",
+                "operatingSystem": "Web Browser",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "VND"
+                },
+                "featureList": ["Tìm kiếm môn học nhanh chóng", "Kiểm tra trùng lịch tự động", "Xuất ảnh thời khóa biểu", "Lưu và khôi phục TKB", "Quản lý nhiều phiên bản TKB", "Giao diện thân thiện, dễ sử dụng"],
+                "provider": {
+                    "@type": "Organization",
+                    "name": "betterTKB"
+                },
+                "audience": {
+                    "@type": "EducationalAudience",
+                    "educationalRole": "student"
+                },
+                "about": {
+                    "@type": "Organization",
+                    "name": "Đại học Sài Gòn",
+                    "alternateName": "SGU",
+                    "url": "https://www.sgu.edu.vn"
+                }
+            }
+        </script>
     </head>
     <body>
         <div id="root"></div>

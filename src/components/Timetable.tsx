@@ -1,376 +1,431 @@
-import type { Subject, TimetableCell } from "../types";
+import { useState, useRef, useEffect } from "react";
+import { Calendar, Camera, Download, Trash, Upload } from "lucide-react";
+import { SearchCourse } from "@/components/SearchCourse";
+import TimetableGrid from "@/components/TimetableGrid";
+import { CourseGroupTable } from "@/components/CourseGroupTable";
+import { toast } from "sonner";
 
-interface TimetableProps {
-  subjects: Subject[];
+import type { ClassItem, MonHocItem, SguTimetableJson, TimetableEvent } from "@/helper/type";
+import raw from "@/data/dsCustom.json";
+import { Button } from "@/components/ui/button";
+import CourseGroupSelected from "@/components/CourseGroupSelected";
+import { toPng } from "html-to-image";
+import TimetableTabs, { type TimetableVersion } from "@/components/TimetableTabs";
+
+const rawData = raw as SguTimetableJson;
+const groups: ClassItem[] = rawData.data.ds_nhom_to;
+const subjects: MonHocItem[] = rawData.data.ds_mon_hoc;
+const hocKy = rawData.hoc_ky_dang_ky;
+
+// map "Thứ 2" -> 1, ...
+function parseDay(thu: string): number {
+    thu = thu.trim();
+    const map: Record<string, number> = {
+        "Chủ nhật": 0,
+        CN: 0,
+        "Thứ 2": 1,
+        "Thứ 3": 2,
+        "Thứ 4": 3,
+        "Thứ 5": 4,
+        "Thứ 6": 5,
+        "Thứ 7": 6,
+    };
+    return map[thu] ?? -1;
 }
 
-// Google Calendar inspired colors
-const COLORS = [
-  '#1a73e8', '#ea4335', '#fbbc04', '#34a853', '#9aa0a6', '#ff6d01',
-  '#7c3aed', '#06b6d4', '#ec4899', '#f59e0b', '#10b981', '#6366f1',
-  '#ef4444', '#84cc16', '#f97316', '#8b5cf6', '#14b8a6', '#f472b6'
-];
-
-const WEEKDAYS = ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Thứ 8'];
-
-const TIME_SLOTS = [
-  '07:00-07:50',  // Tiết 1
-  '07:50-08:40',  // Tiết 2
-  '09:00-09:50',  // Tiết 3
-  '09:50-10:40',  // Tiết 4
-  '10:40-11:30',  // Tiết 5
-  '13:00-13:50',  // Tiết 6
-  '13:50-14:40',  // Tiết 7
-  '15:00-15:50',  // Tiết 8
-  '15:50-16:40',  // Tiết 9
-  '16:40-17:30',  // Tiết 10
-  '17:40-18:30',  // Tiết 11
-  '18:30-19:20',  // Tiết 12
-  '19:20-20:10'   // Tiết 13
-];
-
-const getTimeSlotIndex = (time: string): number => {
-  const timeSlotMap: { [key: string]: number } = {
-    '07:00': 0,  // Tiết 1
-    '07:50': 1,  // Tiết 2
-    '09:00': 2,  // Tiết 3
-    '09:50': 3,  // Tiết 4
-    '10:40': 4,  // Tiết 5
-    '13:00': 5,  // Tiết 6
-    '13:50': 6,  // Tiết 7
-    '15:00': 7,  // Tiết 8
-    '15:50': 8,  // Tiết 9
-    '16:40': 9,  // Tiết 10
-    '17:40': 10, // Tiết 11
-    '18:30': 11, // Tiết 12
-    '19:20': 12  // Tiết 13
-  };
-  
-  // Nếu thời gian chính xác có trong map
-  if (timeSlotMap[time] !== undefined) {
-    return timeSlotMap[time];
-  }
-  
-  // Nếu không có, tìm slot gần nhất
-  const [hours, minutes] = time.split(':').map(Number);
-  const totalMinutes = hours * 60 + minutes;
-  
-  // Danh sách thời gian bắt đầu các slot (tính bằng phút)
-  const slotTimes = [
-    7*60,        // 07:00 - Tiết 1
-    7*60+50,     // 07:50 - Tiết 2
-    9*60,        // 09:00 - Tiết 3
-    9*60+50,     // 09:50 - Tiết 4
-    10*60+40,    // 10:40 - Tiết 5
-    13*60,       // 13:00 - Tiết 6
-    13*60+50,    // 13:50 - Tiết 7
-    15*60,       // 15:00 - Tiết 8
-    15*60+50,    // 15:50 - Tiết 9
-    16*60+40,    // 16:40 - Tiết 10
-    17*60+40,    // 17:40 - Tiết 11
-    18*60+30,    // 18:30 - Tiết 12
-    19*60+20     // 19:20 - Tiết 13
-  ];
-  
-  // Tìm slot phù hợp nhất
-  for (let i = 0; i < slotTimes.length; i++) {
-    if (totalMinutes <= slotTimes[i] + 25) { // Cho phép sai lệch 25 phút
-      return i;
-    }
-  }
-  
-  return -1;
-};
-
-export default function Timetable({ subjects }: TimetableProps) {
-  // console.log('Timetable received subjects:', subjects);
-  // console.log('Number of subjects:', subjects.length);
-  
-  // Initialize empty timetable grid - Now 7 days (including Thứ 8) and 13 slots
-  const grid: TimetableCell[][] = Array.from({ length: 13 }, () =>
-    Array.from({ length: 7 }, () => ({}))
-  );
-
-  // Track subject colors
-  const subjectColors = new Map<string, string>();
-  let colorIndex = 0;
-
-  // Track merged cells to avoid rendering duplicates
-  const mergedCells = new Set<string>();
-
-  // Fill the grid with subjects
-  subjects.forEach((subject) => {
-    // Assign color to subject if not already assigned
-    if (!subjectColors.has(subject.ma_mon)) {
-      subjectColors.set(subject.ma_mon, COLORS[colorIndex % COLORS.length]);
-      colorIndex++;
-    }
-
-    subject.tkb.forEach((session) => {
-      // console.log('Processing session:', session);
-      const dayIndex = WEEKDAYS.indexOf(session.thu);
-      // console.log('Day index:', dayIndex, 'for day:', session.thu);
-      
-      if (dayIndex === -1) {
-        // console.log('Day not found:', session.thu);
-        return;
-      }
-
-      let startSlot = -1;
-      let endSlot = -1;
-
-      // Kiểm tra định dạng "tiết X->Y"
-      const tietMatch = session.thoi_gian.match(/tiết (\d+)->(\d+)/);
-      if (tietMatch) {
-        const tietStart = parseInt(tietMatch[1]);
-        const tietEnd = parseInt(tietMatch[2]);
-        
-        // Chuyển đổi tiết thành slot index (tiết 1 = slot 0)
-        startSlot = tietStart - 1;
-        endSlot = tietEnd;
-      } else {
-        // Kiểm tra định dạng "từ HH:mm đến HH:mm"
-        const timeMatch = session.thoi_gian.match(/từ (\d{2}:\d{2}) đến (\d{2}:\d{2})/);
-        if (timeMatch) {
-          startSlot = getTimeSlotIndex(timeMatch[1]);
-          endSlot = getTimeSlotIndex(timeMatch[2]);
-        }
-      }
-
-      if (startSlot === -1 || endSlot === -1) {
-        // console.log('Invalid time format:', session.thoi_gian);
-        return;
-      }
-
-      // Calculate rowspan (number of slots this subject spans)
-      const rowSpan = endSlot - startSlot;
-
-      // Only fill the first cell with complete info and rowspan
-      const firstCell = grid[startSlot][dayIndex];
-      if (!firstCell.subject) {
-        firstCell.subject = subject.ten_mon;
-        firstCell.room = session.phong;
-        firstCell.instructor = session.giang_vien;
-        firstCell.nhom_to = subject.nhom_to;
-        firstCell.to = subject.to;
-        firstCell.isConflict = false;
-        firstCell.subjectCode = subject.ma_mon;
-        firstCell.sl_cp = subject.sl_cp;
-        firstCell.sl_cl = subject.sl_cl;
-        firstCell.rowSpan = rowSpan; // Add rowspan info
-      }
-
-      // Mark subsequent cells as merged (hidden)
-      for (let slot = startSlot + 1; slot < endSlot && slot < 13; slot++) {
-        const cell = grid[slot][dayIndex];
-        if (!cell.subject) {
-          cell.isMerged = true; // Mark as merged cell (will be hidden)
-          mergedCells.add(`${slot}-${dayIndex}`);
-        }
-      }
-    });
-  });
-
-  const getCellStyle = (cell: TimetableCell) => {
-    if (!cell.subject) {
-      return {
-        backgroundColor: 'var(--background-color)', // Nền thuần theo theme
-        border: '1px solid var(--border-color)',
-        color: 'var(--text-primary)',
-        minHeight: '80px',
-      };
-    }
-    
+// "tiết 3->5" -> { start: 3, end: 5 }
+function parsePeriod(thoi_gian: string) {
+    const match = thoi_gian.match(/(\d+)\s*->\s*(\d+)/);
+    if (!match) return null;
     return {
-      backgroundColor: 'var(--surface-color)', // Nền tối cho cell có content
-      // borderLeft được xử lý bởi CSS với data attribute
-      borderTop: '1px solid var(--border-color)', // Đảm bảo có border top
-      borderRight: '1px solid var(--border-color)', // Đảm bảo có border right  
-      borderBottom: '1px solid var(--border-color)', // Đảm bảo có border bottom
-      fontWeight: cell.isConflict ? 'bold' : 'normal',
-      position: 'relative' as const,
-      color: 'var(--text-primary)', // Text theo theme
-      minHeight: '80px',
+        start: Number(match[1]),
+        end: Number(match[2]),
     };
-  };
+}
 
-  // Tính tổng tín chỉ
-  const totalCredits = subjects.reduce((sum, subject) => sum + parseInt(subject.so_tc), 0);
+function classToEvents(item: ClassItem): TimetableEvent[] {
+    return item.tkb
+        .map((t) => {
+            const day = parseDay(t.thu);
+            const period = parsePeriod(t.thoi_gian);
 
-  return (
-    <div className="table-container">
-      <div className="d-flex justify-content-between align-items-center mb-3">
-        <h4 className="fw-bold mb-0" style={{ color: 'var(--text-primary)' }}>
-          <i className="fa-solid fa-calendar-days me-2" style={{ color: 'var(--primary-color)' }}></i>
-          Thời Khóa Biểu
-        </h4>
-        {subjects.length > 0 && (
-          <div className="d-flex gap-2">
-            <span className="badge bg-success fs-6 px-3 py-2">
-              <i className="fa-solid fa-book me-1"></i>
-              {subjects.length} môn học
-            </span>
-            <span className="badge bg-info fs-6 px-3 py-2">
-              <i className="fa-solid fa-credit-card me-1"></i>
-              {totalCredits} tín chỉ
-            </span>
-          </div>
-        )}
-      </div>
-      <table className="table table-bordered text-center timetable-custom" style={{
-        borderCollapse: 'collapse',
-        border: '2px solid var(--border-color)',
-        backgroundColor: 'var(--background-color)',
-        color: 'var(--text-primary)'
-      }}>
-        <thead>
-          <tr>
-            <th style={{ 
-              width: '40px', 
-              minWidth: '40px',
-              border: '1px solid var(--border-color)',
-              backgroundColor: 'var(--surface-color)',
-              color: 'var(--text-primary)',
-              borderColor: 'var(--border-color)'
-            }}>Tiết</th>
-            <th style={{ 
-              width: '70px', 
-              minWidth: '70px',
-              border: '1px solid var(--border-color)',
-              backgroundColor: 'var(--surface-color)',
-              color: 'var(--text-primary)',
-              borderColor: 'var(--border-color)'
-            }}>Giờ</th>
-            {WEEKDAYS.map((day) => (
-              <th key={day} style={{ 
-                width: '140px', 
-                minWidth: '140px',
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--surface-color)',
-                color: 'var(--text-primary)',
-                borderColor: 'var(--border-color)'
-              }}>
-                {day.replace('Thứ 8', 'CN')}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {grid.map((row, slotIndex) => (
-            <tr key={slotIndex}>
-              <td className="align-middle fw-bold" style={{
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--surface-color)',
-                color: 'var(--text-primary)',
-                borderColor: 'var(--border-color)'
-              }}>
-                {slotIndex + 1}
-              </td>
-              <td className="align-middle" style={{
-                border: '1px solid var(--border-color)',
-                backgroundColor: 'var(--surface-color)',
-                color: 'var(--text-primary)',
-                borderColor: 'var(--border-color)'
-              }}>
-                <small>{TIME_SLOTS[slotIndex]}</small>
-              </td>
-              {row.map((cell, dayIndex) => {
-                // Skip rendering cells that are merged (hidden)
-                if (cell.isMerged) {
-                  return null;
+            if (day === -1 || !period) return null;
+
+            return {
+                id: item.id_to_hoc,
+                courseName: item.ten_mon,
+                ma_mon: item.ma_mon,
+                dayOfWeek: day,
+                periodStart: period.start,
+                periodEnd: period.end,
+                room: t.phong,
+                giang_vien: t.giang_vien,
+            } as TimetableEvent;
+        })
+        .filter(Boolean) as TimetableEvent[];
+}
+
+function hasConflict(existing: TimetableEvent[], incoming: TimetableEvent[]): boolean {
+    for (const ev of incoming) {
+        for (const cur of existing) {
+            if (ev.dayOfWeek !== cur.dayOfWeek) continue;
+            const overlap = ev.periodStart <= cur.periodEnd && ev.periodEnd >= cur.periodStart;
+            if (overlap) return true;
+        }
+    }
+    return false;
+}
+
+const STORAGE_KEY = "tkb-versions";
+const ACTIVE_VERSION_KEY = "tkb-active-version-id";
+
+// Helper function để load events từ chosenIds
+function loadEventsFromIds(ids: string[]): TimetableEvent[] {
+    const newEvents: TimetableEvent[] = [];
+    ids.forEach((id) => {
+        const group = groups.find((g) => g.id_to_hoc === id);
+        if (group) {
+            newEvents.push(...classToEvents(group));
+        }
+    });
+    return newEvents;
+}
+
+export default function Timetable() {
+    const [selectedSubject, setSelectedSubject] = useState<MonHocItem | null>(null);
+
+    // Khởi tạo versions từ localStorage hoặc tạo mới
+    const [versions, setVersions] = useState<TimetableVersion[]>(() => {
+        try {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
+            }
+        } catch (error) {
+            console.error("Lỗi khi đọc versions:", error);
+        }
+        // Tạo phiên bản mặc định
+        const defaultVersion: TimetableVersion = {
+            id: `v-${Date.now()}`,
+            name: "TKB_1",
+            chosenIds: [],
+            createdAt: Date.now(),
+        };
+        // Lưu ngay vào localStorage
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify([defaultVersion]));
+        } catch (error) {
+            console.error("Lỗi khi lưu default version:", error);
+        }
+        return [defaultVersion];
+    });
+
+    // Khởi tạo activeVersionId dựa vào versions
+    const [activeVersionId, setActiveVersionId] = useState<string>(() => {
+        try {
+            const saved = localStorage.getItem(ACTIVE_VERSION_KEY);
+            if (saved) {
+                // Kiểm tra xem ID này có tồn tại trong versions không
+                const versionsSaved = localStorage.getItem(STORAGE_KEY);
+                if (versionsSaved) {
+                    const parsed = JSON.parse(versionsSaved);
+                    if (Array.isArray(parsed)) {
+                        const exists = parsed.find((v: TimetableVersion) => v.id === saved);
+                        if (exists) return saved;
+                    }
+                }
+            }
+
+            // Nếu không có hoặc không hợp lệ, lấy version đầu tiên
+            const versionsSaved = localStorage.getItem(STORAGE_KEY);
+            if (versionsSaved) {
+                const parsed = JSON.parse(versionsSaved);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed[0].id;
+                }
+            }
+        } catch (error) {
+            console.error("Lỗi khi đọc active version:", error);
+        }
+        // Fallback: trả về ID của version đầu tiên trong state
+        return versions[0]?.id || "";
+    });
+
+    const activeVersion = versions.find((v) => v.id === activeVersionId);
+    const chosenIds = activeVersion?.chosenIds || [];
+    const events = loadEventsFromIds(chosenIds);
+
+    const timetableRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    // Lưu active version ID
+    useEffect(() => {
+        if (activeVersionId) {
+            try {
+                localStorage.setItem(ACTIVE_VERSION_KEY, activeVersionId);
+            } catch (error) {
+                console.error("Lỗi khi lưu active version:", error);
+            }
+        }
+    }, [activeVersionId]);
+
+    // Lưu versions vào localStorage
+    useEffect(() => {
+        try {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(versions));
+        } catch (error) {
+            console.error("Lỗi khi lưu versions:", error);
+        }
+    }, [versions]);
+
+    // Update chosenIds của active version
+    const updateChosenIds = (newIds: string[]) => {
+        if (!activeVersionId) {
+            console.error("Không có phiên bản đang active");
+            toast.error("Vui lòng chọn một phiên bản trước!");
+            return;
+        }
+
+        setVersions((prev) => prev.map((v) => (v.id === activeVersionId ? { ...v, chosenIds: newIds } : v)));
+    };
+
+    const handleVersionChange = (versionId: string) => {
+        setActiveVersionId(versionId);
+        setSelectedSubject(null); // Reset selected subject khi đổi version
+    };
+
+    const handleVersionsUpdate = (newVersions: TimetableVersion[]) => {
+        setVersions(newVersions);
+    };
+
+    const handleCourseChange = (item: MonHocItem | null) => {
+        setSelectedSubject(item);
+    };
+
+    // tick / bỏ tick 1 nhóm tổ
+    const handleToggleGroup = (item: ClassItem, checked: boolean) => {
+        if (checked) {
+            const incoming = classToEvents(item);
+            if (incoming.length === 0) return;
+
+            // bỏ hết event của cùng mã môn trước (giống radio theo mã môn)
+            const cleanedEvents = events.filter((ev) => ev.ma_mon !== item.ma_mon);
+
+            // chỉ check trùng với môn khác (đã loại cùng mã rồi)
+            if (hasConflict(cleanedEvents, incoming)) {
+                toast.error("Lịch trùng !");
+                return;
+            }
+
+            // chosenIds: bỏ hết id cùng mã môn, chỉ giữ lại id mới
+            const sameCourseIds = groups.filter((g) => g.ma_mon === item.ma_mon).map((g) => g.id_to_hoc);
+            const filtered = chosenIds.filter((id) => !sameCourseIds.includes(id));
+            updateChosenIds([...filtered, item.id_to_hoc]);
+        } else {
+            // bỏ tick -> xóa id của chính nhóm đó
+            updateChosenIds(chosenIds.filter((id) => id !== item.id_to_hoc));
+        }
+    };
+
+    const clearAll = () => {
+        setSelectedSubject(null);
+        updateChosenIds([]);
+    };
+
+    const handleRemoveGroup = (id: string) => {
+        updateChosenIds(chosenIds.filter((cid) => cid !== id));
+    };
+
+    const handleCapture = async () => {
+        if (!timetableRef.current) return;
+
+        try {
+            // Tìm element TimetableGrid bên trong timetableRef
+            const gridElement = timetableRef.current.querySelector(".w-full.bg-white.overflow-hidden.border") as HTMLElement;
+
+            if (!gridElement) {
+                toast.error("Không tìm thấy thời khóa biểu");
+                return;
+            }
+
+            toast.loading("Đang chụp ảnh...");
+
+            // Chụp ảnh với quality cao
+            const dataUrl = await toPng(gridElement, {
+                quality: 1,
+                pixelRatio: 3, // 3x resolution cho ảnh sắc nét
+                backgroundColor: "#ffffff",
+            });
+
+            // Download ảnh
+            const link = document.createElement("a");
+            link.download = `tkb-sgu-${new Date().getTime()}.png`;
+            link.href = dataUrl;
+            link.click();
+
+            toast.dismiss();
+            toast.success("Đã lưu ảnh thời khóa biểu!");
+        } catch (error) {
+            console.error("Lỗi khi chụp ảnh:", error);
+            toast.dismiss();
+            toast.error("Không thể chụp ảnh");
+        }
+    };
+
+    const handleDownloadJson = () => {
+        if (chosenIds.length === 0) {
+            toast.error("Chưa có môn học nào để tải xuống");
+            return;
+        }
+
+        // Lưu chỉ chosenIds, không lưu số lượng
+        const data = {
+            chosenIds,
+            exportDate: new Date().toISOString(),
+            hocKy,
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `tkb-sgu-${new Date().getTime()}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+
+        toast.success("Đã tải xuống file JSON!");
+    };
+
+    const handleUploadJson = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const content = e.target?.result as string;
+                const data = JSON.parse(content);
+
+                if (!data.chosenIds || !Array.isArray(data.chosenIds)) {
+                    toast.error("File JSON không hợp lệ");
+                    return;
                 }
 
-                const cellColor = cell.subjectCode ? subjectColors.get(cell.subjectCode) : '#6366f1';
-                const rowSpan = cell.rowSpan || 1;
-                
-                return (
-                <td 
-                  key={dayIndex} 
-                  className="align-middle subject-cell"
-                  data-has-subject={cell.subject ? "true" : "false"}
-                  rowSpan={rowSpan}
-                  style={{
-                    ...getCellStyle(cell),
-                    wordWrap: 'break-word',
-                    overflow: 'hidden',
-                    border: '1px solid var(--border-color)',
-                    minHeight: '60px',
-                    padding: '8px',
-                    '--subject-border-color': cellColor,
-                    '--subject-text-color': cellColor,
-                    verticalAlign: 'middle'
-                  } as React.CSSProperties & { '--subject-border-color': string; '--subject-text-color': string }}
-                >
-                  {cell.subject && (
-                    <div className="h-100 d-flex flex-column justify-content-center">
-                      <div className="fw-bold mb-1 subject-name" 
-                           style={{ 
-                             fontSize: '0.9rem', 
-                             lineHeight: '1.2'
-                           }}
-                           title={cell.subject}>
-                        {cell.subject}
-                      </div>
-                       {cell.subjectCode && (
-                        <div className="mb-1 fst-italic" style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}>
-                         Mã môn : {cell.subjectCode}
+                // Load chosenIds từ file
+                const validIds = data.chosenIds.filter((id: string) => groups.some((g) => g.id_to_hoc === id));
+
+                if (validIds.length === 0) {
+                    toast.error("Không tìm thấy môn học nào trong file");
+                    return;
+                }
+
+                updateChosenIds(validIds);
+                toast.success(`Đã tải ${validIds.length} môn học!`);
+            } catch (error) {
+                console.error("Lỗi khi đọc file:", error);
+                toast.error("Không thể đọc file JSON");
+            }
+        };
+        reader.readAsText(file);
+
+        // Reset input để có thể upload lại cùng file
+        event.target.value = "";
+    };
+
+    return (
+        <div className="w-full bg-white">
+            <input ref={fileInputRef} type="file" accept=".json" onChange={handleUploadJson} style={{ display: "none" }} />
+
+            {/* Tabs phiên bản */}
+            <TimetableTabs activeVersionId={activeVersionId} onVersionChange={handleVersionChange} onVersionsUpdate={handleVersionsUpdate} versions={versions} />
+
+            <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+                {/*  Search and Course Group Table */}
+                <div className="bg-white shadow-sm border border-slate-200 overflow-hidden">
+                    {/* Header Section */}
+                    <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-4 border-b border-slate-300">
+                        <div>
+                            <h2 className="text-xl font-bold text-slate-900">Thời Khóa Biểu</h2>
+                            {hocKy && <p className="text-xs text-slate-500 mt-1">{hocKy}</p>}
                         </div>
-                      )}
-                         
-                      {cell.room && (
-                        <div className="mb-1 fst-italic" style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}>
-                          Phòng : {cell.room.replace('Ph ', '')}
-                        </div>
-                      )}    
-                      {cell.nhom_to && (
-                        <div className="mb-1 fst-italic" style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}>
-                          Nhóm : {cell.nhom_to}{cell.to ? ` - Tổ: ${cell.to}` : ''}
-                        </div>
-                      )}
-                      {cell.instructor && (
-                        <div className="fst-italic mb-1" 
-                             style={{ fontSize: '0.75rem', lineHeight: '1.2', fontWeight: '500', color: 'var(--text-secondary)' }}
-                             title={cell.instructor}>
-                            GV : {cell.instructor.replace('GV ','')}     
-                        </div>
-                      )}
-                      {(cell.sl_cp !== undefined || cell.sl_cl !== undefined) && (
-                        <div className="fst-italic print-hide" 
-                             style={{ 
-                               fontSize: '0.75rem', 
-                               lineHeight: '1.2', 
-                               fontWeight: '600',
-                               color: cell.sl_cl !== undefined && cell.sl_cl <= 0 
-                                 ? '#dc3545'  // Đỏ cho hết slot
-                                 : 'var(--text-secondary)'
-                             }}>
-                           Tình trạng : {cell.sl_cp !== undefined && cell.sl_cl !== undefined 
-                            ? `${cell.sl_cp - cell.sl_cl}/${cell.sl_cp}`
-                            : cell.sl_cp !== undefined 
-                              ? `Tổng: ${cell.sl_cp}`
-                              : `Còn: ${cell.sl_cl}`
-                          }
-                        </div>
-                      )}
-                      {rowSpan > 1 && (
-                        <div className="mt-1" style={{ 
-                          fontSize: '0.7rem', 
-                          color: 'var(--accent-primary)', 
-                          fontWeight: '600',
-                          opacity: 0.8 
-                        }}>
-                          ({rowSpan} tiết)
-                        </div>
-                      )}
                     </div>
-                  )}
-                </td>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
+
+                    {/* Search Section */}
+                    <div className="flex items-center gap-3 flex-wrap px-6 py-4">
+                        <div className="flex-1 min-w-[300px]">
+                            <SearchCourse subjects={subjects} value={selectedSubject} onChange={handleCourseChange} />
+                        </div>
+                    </div>
+
+                    {/* Course Group Table */}
+                    <div className="px-6 py-4">
+                        <CourseGroupTable groups={groups} selectedSubject={selectedSubject} chosenIds={chosenIds} onToggle={handleToggleGroup} />
+                    </div>
+                </div>
+
+                {/* Timetable Grid */}
+                {events.length > 0 && (
+                    <div className="flex flex-col gap-4">
+                        <div ref={timetableRef} className="bg-white border border-slate-200 px-6 py-4 shadow-sm ">
+                            <div className="flex justify-between">
+                                <div className="flex items-center gap-2 p-4">
+                                    <h2 className="text-xl font-bold text-slate-900">Thời khóa biểu của bạn</h2>
+                                    <span className="text-xs font-medium text-slate-700 px-3 py-1 bg-slate-100 border border-slate-300">
+                                        {groups.filter((g) => chosenIds.includes(g.id_to_hoc)).reduce((sum, g) => sum + Number(g.so_tc), 0)} tín chỉ
+                                    </span>
+                                    <span className="text-xs font-medium text-slate-700 px-3 py-1 bg-slate-100 border border-slate-300">{new Set(groups.filter((g) => chosenIds.includes(g.id_to_hoc)).map((g) => g.ma_mon)).size} môn</span>
+                                </div>
+
+                                <div className="flex items-center gap-2">
+                                    <Button variant={"outline"} onClick={clearAll} size={"icon"} className="cursor-pointer rounded-none" title="Xóa tất cả">
+                                        <Trash />
+                                    </Button>
+                                    <Button variant={"outline"} onClick={handleCapture} size={"icon"} className="cursor-pointer rounded-none" title="Chụp ảnh">
+                                        <Camera />
+                                    </Button>
+                                    <Button variant={"outline"} onClick={() => fileInputRef.current?.click()} size={"icon"} className="cursor-pointer rounded-none" title="Tải lên TKB">
+                                        <Upload />
+                                    </Button>
+                                    <Button variant={"outline"} onClick={handleDownloadJson} size={"icon"} className="cursor-pointer rounded-none" title="Tải xuống TKB">
+                                        <Download />
+                                    </Button>
+                                </div>
+                            </div>
+
+                            <TimetableGrid events={events} />
+                        </div>
+
+                        <div className="px-6 py-4 border border-slate-200 mt-4 bg-white">
+                            <CourseGroupSelected groups={groups} chosenIds={chosenIds} onRemove={handleRemoveGroup} />
+                        </div>
+                    </div>
+                )}
+
+                {events.length === 0 && (
+                    <div className="bg-white border border-slate-200 overflow-hidden shadow-sm">
+                        <div className="px-6 py-12 text-center">
+                            <div className="max-w-md mx-auto space-y-4">
+                                <div className="flex items-center justify-center text-slate-300">
+                                    <Calendar size={64} strokeWidth={1.5} />
+                                </div>
+                                <div className="space-y-2">
+                                    <h3 className="text-lg font-bold text-slate-900">Chưa có môn học nào</h3>
+                                    <p className="text-sm text-slate-500">Tìm kiếm và chọn các môn học bạn muốn đăng ký ở trên, hoặc tải lên file JSON để khôi phục thời khóa biểu</p>
+                                </div>
+                                <div className="flex items-center justify-center gap-3 pt-2">
+                                    <Button variant={"outline"} onClick={() => fileInputRef.current?.click()} className="rounded-none gap-2 cursor-pointer">
+                                        <Upload size={16} />
+                                        Tải lên TKB
+                                    </Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
 }
