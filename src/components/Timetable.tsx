@@ -6,7 +6,7 @@ import { CourseGroupTable } from "@/components/CourseGroupTable";
 import { toast } from "sonner";
 
 import type { ClassItem, MonHocItem, SguTimetableJson, TimetableEvent } from "@/helper/type";
-import raw from "@/data/dsCustom.json";
+import raw from "@/data/daiTra.json";
 import { Button } from "@/components/ui/button";
 import CourseGroupSelected from "@/components/CourseGroupSelected";
 import { toPng } from "html-to-image";
