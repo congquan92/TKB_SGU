@@ -5,17 +5,12 @@ import TimetableGrid from "@/components/TimetableGrid";
 import { CourseGroupTable } from "@/components/CourseGroupTable";
 import { toast } from "sonner";
 
-import type { ClassItem, MonHocItem, SguTimetableJson, TimetableEvent } from "@/helper/type";
-import raw from "@/data/daiTra.json";
+import type { ClassItem, MonHocItem, TimetableEvent } from "@/helper/type";
 import { Button } from "@/components/ui/button";
 import CourseGroupSelected from "@/components/CourseGroupSelected";
 import { toPng } from "html-to-image";
 import TimetableTabs, { type TimetableVersion } from "@/components/TimetableTabs";
-
-const rawData = raw as SguTimetableJson;
-const groups: ClassItem[] = rawData.data.ds_nhom_to;
-const subjects: MonHocItem[] = rawData.data.ds_mon_hoc;
-const hocKy = rawData.hoc_ky_dang_ky;
+import { useProgram } from "@/context/ProgramContext";
 
 // map "Thứ 2" -> 1, ...
 function parseDay(thu: string): number {
@@ -80,7 +75,7 @@ const STORAGE_KEY = "tkb-versions";
 const ACTIVE_VERSION_KEY = "tkb-active-version-id";
 
 // Helper function để load events từ chosenIds
-function loadEventsFromIds(ids: string[]): TimetableEvent[] {
+function loadEventsFromIds(ids: string[], groups: ClassItem[]): TimetableEvent[] {
     const newEvents: TimetableEvent[] = [];
     ids.forEach((id) => {
         const group = groups.find((g) => g.id_to_hoc === id);
@@ -92,6 +87,11 @@ function loadEventsFromIds(ids: string[]): TimetableEvent[] {
 }
 
 export default function Timetable() {
+    const { currentData } = useProgram();
+    const groups: ClassItem[] = currentData.data.ds_nhom_to;
+    const subjects: MonHocItem[] = currentData.data.ds_mon_hoc;
+    const hocKy = currentData.hoc_ky_dang_ky;
+
     const [selectedSubject, setSelectedSubject] = useState<MonHocItem | null>(null);
 
     // Khởi tạo versions từ localStorage hoặc tạo mới
@@ -156,7 +156,7 @@ export default function Timetable() {
 
     const activeVersion = versions.find((v) => v.id === activeVersionId);
     const chosenIds = activeVersion?.chosenIds || [];
-    const events = loadEventsFromIds(chosenIds);
+    const events = loadEventsFromIds(chosenIds, groups);
 
     const timetableRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
