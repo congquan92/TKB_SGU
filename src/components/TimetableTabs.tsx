@@ -77,7 +77,7 @@ export default function TimetableTabs({ activeVersionId, onVersionChange, onVers
     };
 
     return (
-        <div className="bg-white border-b border-slate-200">
+        <div className="bg-background border-b border-border">
             <div className="max-w-7xl mx-auto px-4">
                 <div className="flex items-center gap-2 overflow-x-auto py-2">
                     {versions.map((version) => {
@@ -91,12 +91,12 @@ export default function TimetableTabs({ activeVersionId, onVersionChange, onVers
                                 className={`
                                     flex items-center gap-2 px-4 py-2 border-b-2 cursor-pointer whitespace-nowrap
                                     transition-colors group relative
-                                    ${isActive ? "border-blue-500 bg-blue-50 text-blue-700" : "border-transparent hover:bg-slate-50 text-slate-600 hover:text-slate-900"}
+                                    ${isActive ? "border-primary bg-primary/10 text-primary" : "border-transparent hover:bg-muted text-muted-foreground hover:text-foreground"}
                                 `}
                             >
                                 <span className="font-medium">{version.name}</span>
-                                {courseCount > 0 && <span className="text-xs px-2 py-0.5 rounded-full bg-slate-200 text-slate-700">{courseCount}</span>}
-                                <button onClick={(e) => handleDeleteVersion(version.id, e)} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1 hover:bg-red-100 rounded p-0.5 cursor-pointer" title="Xóa phiên bản">
+                                {courseCount > 0 && <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{courseCount}</span>}
+                                <button onClick={(e) => handleDeleteVersion(version.id, e)} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1 hover:bg-destructive/10 rounded p-0.5 cursor-pointer" title="Xóa phiên bản">
                                     <X size={14} className="text-red-600" />
                                 </button>
                             </div>

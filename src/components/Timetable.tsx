@@ -244,7 +244,7 @@ export default function Timetable() {
 
         try {
             // Tìm element TimetableGrid bên trong timetableRef
-            const gridElement = timetableRef.current.querySelector(".w-full.bg-white.overflow-hidden.border") as HTMLElement;
+            const gridElement = timetableRef.current.querySelector(".w-full.bg-background.overflow-hidden.border") as HTMLElement;
 
             if (!gridElement) {
                 toast.error("Không tìm thấy thời khóa biểu");
@@ -336,7 +336,7 @@ export default function Timetable() {
     };
 
     return (
-        <div className="w-full bg-white">
+        <div className="w-full bg-background">
             <input ref={fileInputRef} type="file" accept=".json" onChange={handleUploadJson} style={{ display: "none" }} />
 
             {/* Tabs phiên bản */}
@@ -344,12 +344,12 @@ export default function Timetable() {
 
             <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
                 {/*  Search and Course Group Table */}
-                <div className="bg-white shadow-sm border border-slate-200 overflow-hidden">
+                <div className="bg-card shadow-sm border border-border overflow-hidden">
                     {/* Header Section */}
-                    <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-4 border-b border-slate-300">
+                    <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-4 border-b border-border">
                         <div>
-                            <h2 className="text-xl font-bold text-slate-900">Thời Khóa Biểu</h2>
-                            {hocKy && <p className="text-xs text-slate-500 mt-1">{hocKy}</p>}
+                            <h2 className="text-xl font-bold text-foreground">Thời Khóa Biểu</h2>
+                            {hocKy && <p className="text-xs text-muted-foreground mt-1">{hocKy}</p>}
                         </div>
                     </div>
 
@@ -369,14 +369,14 @@ export default function Timetable() {
                 {/* Timetable Grid */}
                 {events.length > 0 && (
                     <div className="flex flex-col gap-4">
-                        <div ref={timetableRef} className="bg-white border border-slate-200 px-6 py-4 shadow-sm ">
+                        <div ref={timetableRef} className="bg-card border border-border px-6 py-4 shadow-sm ">
                             <div className="flex justify-between">
                                 <div className="flex items-center gap-2 p-4">
-                                    <h2 className="text-xl font-bold text-slate-900">Thời khóa biểu của bạn</h2>
-                                    <span className="text-xs font-medium text-slate-700 px-3 py-1 bg-slate-100 border border-slate-300">
+                                    <h2 className="text-xl font-bold text-foreground">Thời khóa biểu của bạn</h2>
+                                    <span className="text-xs font-medium text-muted-foreground px-3 py-1 bg-muted border border-border">
                                         {groups.filter((g) => chosenIds.includes(g.id_to_hoc)).reduce((sum, g) => sum + Number(g.so_tc), 0)} tín chỉ
                                     </span>
-                                    <span className="text-xs font-medium text-slate-700 px-3 py-1 bg-slate-100 border border-slate-300">{new Set(groups.filter((g) => chosenIds.includes(g.id_to_hoc)).map((g) => g.ma_mon)).size} môn</span>
+                                    <span className="text-xs font-medium text-muted-foreground px-3 py-1 bg-muted border border-border">{new Set(groups.filter((g) => chosenIds.includes(g.id_to_hoc)).map((g) => g.ma_mon)).size} môn</span>
                                 </div>
 
                                 <div className="flex items-center gap-2">
@@ -398,22 +398,22 @@ export default function Timetable() {
                             <TimetableGrid events={events} />
                         </div>
 
-                        <div className="px-6 py-4 border border-slate-200 mt-4 bg-white">
+                        <div className="px-6 py-4 border border-border mt-4 bg-card">
                             <CourseGroupSelected groups={groups} chosenIds={chosenIds} onRemove={handleRemoveGroup} />
                         </div>
                     </div>
                 )}
 
                 {events.length === 0 && (
-                    <div className="bg-white border border-slate-200 overflow-hidden shadow-sm">
+                    <div className="bg-card border border-border overflow-hidden shadow-sm">
                         <div className="px-6 py-12 text-center">
                             <div className="max-w-md mx-auto space-y-4">
-                                <div className="flex items-center justify-center text-slate-300">
+                                <div className="flex items-center justify-center text-muted-foreground">
                                     <Calendar size={64} strokeWidth={1.5} />
                                 </div>
                                 <div className="space-y-2">
-                                    <h3 className="text-lg font-bold text-slate-900">Chưa có môn học nào</h3>
-                                    <p className="text-sm text-slate-500">Tìm kiếm và chọn các môn học bạn muốn đăng ký ở trên, hoặc tải lên file JSON để khôi phục thời khóa biểu</p>
+                                    <h3 className="text-lg font-bold text-foreground">Chưa có môn học nào</h3>
+                                    <p className="text-sm text-muted-foreground">Tìm kiếm và chọn các môn học bạn muốn đăng ký ở trên, hoặc tải lên file JSON để khôi phục thời khóa biểu</p>
                                 </div>
                                 <div className="flex items-center justify-center gap-3 pt-2">
                                     <Button variant={"outline"} onClick={() => fileInputRef.current?.click()} className="rounded-none gap-2 cursor-pointer">

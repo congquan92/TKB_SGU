@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import type { TimetableEvent } from "@/helper/type";
 
 const DAYS = [
@@ -16,41 +17,71 @@ const MAX_PERIOD = 13;
 const PERIODS = Array.from({ length: MAX_PERIOD }, (_, i) => i + 1);
 const ROW_HEIGHT = 66; // px cho 1 tiết
 
+const COLORS = [
+    "bg-blue-50 dark:bg-blue-950/50 border-l-4 border-blue-500 dark:border-blue-400 text-slate-800 dark:text-blue-100",
+    "bg-emerald-50 dark:bg-emerald-950/50 border-l-4 border-emerald-500 dark:border-emerald-400 text-slate-800 dark:text-emerald-100",
+    "bg-amber-50 dark:bg-amber-950/50 border-l-4 border-amber-500 dark:border-amber-400 text-slate-800 dark:text-amber-100",
+    "bg-purple-50 dark:bg-purple-950/50 border-l-4 border-purple-500 dark:border-purple-400 text-slate-800 dark:text-purple-100",
+    "bg-rose-50 dark:bg-rose-950/50 border-l-4 border-rose-500 dark:border-rose-400 text-slate-800 dark:text-rose-100",
+    "bg-cyan-50 dark:bg-cyan-950/50 border-l-4 border-cyan-500 dark:border-cyan-400 text-slate-800 dark:text-cyan-100",
+    "bg-indigo-50 dark:bg-indigo-950/50 border-l-4 border-indigo-500 dark:border-indigo-400 text-slate-800 dark:text-indigo-100",
+    "bg-pink-50 dark:bg-pink-950/50 border-l-4 border-pink-500 dark:border-pink-400 text-slate-800 dark:text-pink-100",
+    "bg-teal-50 dark:bg-teal-950/50 border-l-4 border-teal-500 dark:border-teal-400 text-slate-800 dark:text-teal-100",
+    "bg-orange-50 dark:bg-orange-950/50 border-l-4 border-orange-500 dark:border-orange-400 text-slate-800 dark:text-orange-100",
+    "bg-lime-50 dark:bg-lime-950/50 border-l-4 border-lime-600 dark:border-lime-400 text-slate-800 dark:text-lime-100",
+    "bg-fuchsia-50 dark:bg-fuchsia-950/50 border-l-4 border-fuchsia-500 dark:border-fuchsia-400 text-slate-800 dark:text-fuchsia-100",
+    "bg-violet-50 dark:bg-violet-950/50 border-l-4 border-violet-500 dark:border-violet-400 text-slate-800 dark:text-violet-100",
+    "bg-sky-50 dark:bg-sky-950/50 border-l-4 border-sky-500 dark:border-sky-400 text-slate-800 dark:text-sky-100",
+    "bg-red-50 dark:bg-red-950/50 border-l-4 border-red-500 dark:border-red-400 text-slate-800 dark:text-red-100",
+];
+
 type Props = {
     events: TimetableEvent[];
 };
 
 export default function TimetableGrid({ events }: Props) {
+    // Tạo map màu cho từng môn học để đảm bảo không trùng lặp (trong giới hạn số lượng màu)
+    const colorMap = useMemo(() => {
+        const uniqueSubjects = Array.from(new Set(events.map((e) => e.ma_mon))).sort();
+        const map: Record<string, string> = {};
+        
+        uniqueSubjects.forEach((subject, index) => {
+            map[subject] = COLORS[index % COLORS.length];
+        });
+        
+        return map;
+    }, [events]);
+
     return (
-        <div className="w-full bg-white overflow-hidden border border-b-0 border-r-0">
+        <div className="w-full bg-background overflow-hidden border border-b-0 border-r-0">
             {/* header: Tiết / Giờ / Thứ */}
             <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] ">
-                <div className="flex items-center justify-center border-r border-b border-slate-200 py-3 text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-50">Tiết</div>
-                <div className="flex items-center justify-center border-r border-b border-slate-200 py-3 text-xs font-bold uppercase tracking-wider text-slate-700 bg-slate-50">Giờ</div>
+                <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted">Tiết</div>
+                <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted">Giờ</div>
 
                 {/* Các thứ */}
                 {DAYS.map((d) => (
-                    <div key={d.value} className="flex flex-col items-center justify-center py-3 border-r border-b bg-slate-50">
-                        <span className="text-sm font-bold text-slate-800">{d.label}</span>
+                    <div key={d.value} className="flex flex-col items-center justify-center py-3 border-r border-b bg-muted">
+                        <span className="text-sm font-bold text-foreground">{d.label}</span>
                     </div>
                 ))}
             </div>
 
             {/* body */}
-            <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] text-xs bg-white relative">
+            <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] text-xs bg-background relative">
                 {/* Cột Tiết bên trái */}
-                <div className="border-r bg-white">
+                <div className="border-r bg-background">
                     {PERIODS.map((p) => (
-                        <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-slate-200 flex items-center justify-center text-[11px] font-semibold text-slate-700">
+                        <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
                             {p}
                         </div>
                     ))}
                 </div>
 
                 {/* Cột Giờ bên trái */}
-                <div className="border-r border-slate-200 bg-white">
+                <div className="border-r border-border bg-background">
                     {PERIODS.map((p, idx) => (
-                        <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-slate-200 flex items-center justify-center text-[11px] text-slate-600 font-medium">
+                        <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-[11px] text-muted-foreground font-medium">
                             {PERIOD_TIMES[idx] || "--"}
                         </div>
                     ))}
@@ -61,7 +92,7 @@ export default function TimetableGrid({ events }: Props) {
                     const dayEvents = events.filter((e) => e.dayOfWeek === d.value);
 
                     return (
-                        <div key={d.value} className="relative border-r bg-white" style={{ minHeight: PERIODS.length * ROW_HEIGHT }}>
+                        <div key={d.value} className="relative border-r bg-background" style={{ minHeight: PERIODS.length * ROW_HEIGHT }}>
                             {/* grid lines nền */}
                             {PERIODS.map((p) => (
                                 <div key={p} style={{ height: ROW_HEIGHT }} className="border-b" />
@@ -71,28 +102,7 @@ export default function TimetableGrid({ events }: Props) {
                             {dayEvents.map((ev) => {
                                 const top = (ev.periodStart - 1) * ROW_HEIGHT + 4;
                                 const height = (ev.periodEnd - ev.periodStart + 1) * ROW_HEIGHT - 8;
-
-                                const colors = [
-                                    "bg-blue-50 border-l-4 border-blue-500 text-slate-800",
-                                    "bg-emerald-50 border-l-4 border-emerald-500 text-slate-800",
-                                    "bg-amber-50 border-l-4 border-amber-500 text-slate-800",
-                                    "bg-purple-50 border-l-4 border-purple-500 text-slate-800",
-                                    "bg-rose-50 border-l-4 border-rose-500 text-slate-800",
-                                    "bg-cyan-50 border-l-4 border-cyan-500 text-slate-800",
-                                    "bg-indigo-50 border-l-4 border-indigo-500 text-slate-800",
-                                    "bg-pink-50 border-l-4 border-pink-500 text-slate-800",
-                                    "bg-teal-50 border-l-4 border-teal-500 text-slate-800",
-                                    "bg-orange-50 border-l-4 border-orange-500 text-slate-800",
-                                    "bg-lime-50 border-l-4 border-lime-600 text-slate-800",
-                                    "bg-fuchsia-50 border-l-4 border-fuchsia-500 text-slate-800",
-                                    "bg-violet-50 border-l-4 border-violet-500 text-slate-800",
-                                    "bg-sky-50 border-l-4 border-sky-500 text-slate-800",
-                                    "bg-red-50 border-l-4 border-red-500 text-slate-800",
-                                ];
-
-                                // Sử dụng ma_mon để đảm bảo cùng môn học luôn có cùng màu
-                                const colorIndex = ev.ma_mon.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0) % colors.length;
-                                const colorClass = colors[colorIndex];
+                                const colorClass = colorMap[ev.ma_mon] || COLORS[0];
 
                                 return (
                                     <div
@@ -101,11 +111,11 @@ export default function TimetableGrid({ events }: Props) {
                                         style={{ top, height }}
                                         title={`${ev.courseName}\n${ev.giang_vien || ""}\nTiết ${ev.periodStart}–${ev.periodEnd}\n${ev.room || ""}`}
                                     >
-                                        <div className="text-[11px] font-bold text-sky-900 leading-snug line-clamp-2 text-center mb-1">{ev.courseName}</div>
-                                        <div className="text-[10px] font-medium leading-tight text-slate-700 text-center">Mã môn: {ev.ma_mon}</div>
-                                        {ev.room && <div className="text-[10px] font-medium leading-tight text-slate-700 text-center">Phòng: {ev.room}</div>}
-                                        {ev.giang_vien && <div className="text-[9px] font-medium leading-tight text-slate-600 text-center mt-0.5">{ev.giang_vien}</div>}
-                                        <div className="text-[9px] font-medium leading-tight text-slate-500 text-center mt-0.5">
+                                        <div className="text-[11px] font-bold text-sky-900 dark:text-sky-100 leading-snug line-clamp-2 text-center mb-1">{ev.courseName}</div>
+                                        <div className="text-[10px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Mã môn: {ev.ma_mon}</div>
+                                        {ev.room && <div className="text-[10px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Phòng: {ev.room}</div>}
+                                        {ev.giang_vien && <div className="text-[9px] font-medium leading-tight text-slate-600 dark:text-slate-400 text-center mt-0.5">{ev.giang_vien}</div>}
+                                        <div className="text-[9px] font-medium leading-tight text-slate-500 dark:text-slate-400 text-center mt-0.5">
                                             Tiết {ev.periodStart}–{ev.periodEnd}
                                         </div>
                                     </div>

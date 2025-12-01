@@ -1,32 +1,42 @@
-import { Heart, Github } from "lucide-react";
+import { Heart, Github } from "lucide-react"; // Thêm icon CalendarClock cho sinh động
 import VictorCounter from "@/components/feature/VictorCounter";
 
 export default function Footer() {
     return (
-        <footer className="w-full border-t border-slate-200 bg-slate-50 mt-12">
-            <div className="mx-auto max-w-7xl px-4 py-8">
-                <div className="flex flex-col items-center gap-4 text-sm text-slate-600">
-                    {/* Visitor Counter */}
-                    <VictorCounter />
-
-                    <div className="flex items-center gap-2">
-                        <span>Made with</span>
-                        <Heart className="w-4 h-4 text-red-500 fill-red-500" />
-                        <a href="https://www.facebook.com/cucngau.quan/" target="_blank" rel="noopener noreferrer" className="hover:text-slate-900 transition-colors font-medium">
-                            Quan
-                        </a>
+        <footer className="w-full border-t border-border/40 bg-muted/20 backdrop-blur-sm mt-12">
+            <div className="mx-auto max-w-7xl px-6 py-8">
+                <div className="flex flex-col items-center gap-6 text-sm">
+                    {/*Giới thiệu */}
+                    <div className="text-center space-y-2">
+                        <p className="text-muted-foreground max-w-lg leading-relaxed">Công cụ hỗ trợ sinh viên sắp xếp thời khóa biểu thông minh, tránh xung đột lịch học của sinh viên</p>
                     </div>
 
-                    <div className="flex items-center gap-4">
-                        <a href="#" className="hover:text-slate-900 transition-colors flex items-center gap-2">
-                            <Github className="w-4 h-4" />
-                            <span>GitHub</span>
-                        </a>
-                        <span className="text-slate-300">•</span>
-                        <span className="text-xs text-slate-500">v1.0.0</span>
+                    {/* (Copyright, Version, Counter) */}
+                    <div className="flex flex-col sm:flex-row items-center justify-between w-full max-w-2xl gap-4 text-xs text-muted-foreground/60 mt-2 pt-4 border-t border-border/30">
+                        <span>© 2025 SVSGU - K23 </span>
+
+                        <div className="opacity-80 scale-90">
+                            <VictorCounter />
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-foreground transition-colors group">
+                                <Github className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                            </a>
+                            <span className="font-mono bg-muted px-2 py-0.5 rounded">v2.0.0</span>
+                        </div>
                     </div>
 
-                    <p className="text-xs text-slate-400 text-center max-w-md">Công cụ hỗ trợ sinh viên sắp xếp thời khóa biểu thông minh, tránh xung đột lịch học</p>
+                    {/* Auhtor */}
+                    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-muted-foreground border-t border-border/50 pt-4">
+                        <div className="flex items-center gap-1.5">
+                            <span>Mọi thắc mắc xin hãy liên hệ qua nhà phát triển </span>
+                            <a href="https://www.facebook.com/cucngau.quan/" target="_blank" rel="noopener noreferrer" className="font-medium text-foreground hover:text-primary transition-colors decoration-primary/50 underline underline-offset-4">
+                                Quan
+                            </a>
+                            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </footer>
