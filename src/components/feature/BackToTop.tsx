@@ -30,7 +30,7 @@ export default function BackToTop() {
                     variant="secondary"
                     onClick={() => scrollToTop()}
                     size="icon"
-                    className="fixed bottom-5 right-5 z-50 rounded-none shadow-lg hover:shadow-xl transition-all duration-300 border border-black cursor-pointer"
+                    className="fixed bottom-5 right-5 z-50 rounded-none shadow-lg hover:shadow-xl transition-all duration-300 border border-black cursor-pointer dark:border-white/30"
                     aria-label="Về đầu trang"
                 >
                     <ArrowUp className="w-5 h-5" />

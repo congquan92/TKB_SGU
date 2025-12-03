@@ -44,17 +44,7 @@ export function artAcsii() {
    _.-*' \`.                               $$$$:$$$$$;$$$:$$$$$
            \`-.                            :$$$;$$$$$$$$$;$$$$$
               \`-.                        .-T$$$$P$$$$$P d$$$$;
-                 \`.     \`.     .* .'   T$$$b\`T$P.sd$$$$P
-                   \`.     \`-  '      .'      \`T$$b$$$$$$$$P'
-                     \`.            .'          \`T.T$$$$P$$$b.
-                       \`.        .'             :$$$$P'd$$$$$;
-                         \`.    .'               $$$$$:d$;$$$$$.
-                           \`..'                 :$$$$;$$$b\`T$$;
-                                                 T$$$:$$$$; $$$
-                                                  T$$$T$$$;d$$;
-                                                   \`T$b\`T$$$$P
-                                                     \`*b T$P'`;
+                 \`.     \`.     .* .'      T$$$b\`T$P.sd$$$$P`;
 
-    // Font chữ nhỏ (8px), màu đỏ (#d00000)
     console.log(dragonArt, "font-size: 8px; line-height: 1.0; font-family: monospace; color: #d00000; font-weight: bold;");
 }

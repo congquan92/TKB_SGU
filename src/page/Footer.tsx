@@ -12,7 +12,7 @@ export default function Footer() {
                     </div>
 
                     {/* (Copyright, Version, Counter) */}
-                    <div className="flex flex-col sm:flex-row items-center justify-between w-full max-w-2xl gap-4 text-xs text-muted-foreground/60 mt-2 pt-4 border-t border-border/30">
+                    <div className="flex flex-col sm:flex-row items-center justify-between w-full max-w-2xl gap-4 text-xs text-muted-foreground mt-2 pt-4 border-t">
                         <span>© 2025 SVSGU - K23 </span>
 
                         <div className="opacity-80 scale-90">
@@ -23,12 +23,12 @@ export default function Footer() {
                             <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-foreground transition-colors group">
                                 <Github className="w-4 h-4 group-hover:scale-110 transition-transform" />
                             </a>
-                            <span className="font-mono bg-muted px-2 py-0.5 rounded">v2.0.0</span>
+                            <span className="font-mono bg-muted px-2 py-0.5 rounded">v2.1.0</span>
                         </div>
                     </div>
 
                     {/* Auhtor */}
-                    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-muted-foreground border-t border-border/50 pt-4">
+                    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-muted-foreground border-t pt-4">
                         <div className="flex items-center gap-1.5">
                             <span>Mọi thắc mắc xin hãy liên hệ qua nhà phát triển </span>
                             <a href="https://www.facebook.com/cucngau.quan/" target="_blank" rel="noopener noreferrer" className="font-medium text-foreground hover:text-primary transition-colors decoration-primary/50 underline underline-offset-4">

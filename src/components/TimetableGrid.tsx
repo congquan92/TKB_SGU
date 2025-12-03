@@ -15,7 +15,7 @@ const PERIOD_TIMES = ["07:00-07:50", "07:50-08:40", "09:00-09:50", "09:50-10:40"
 
 const MAX_PERIOD = 13;
 const PERIODS = Array.from({ length: MAX_PERIOD }, (_, i) => i + 1);
-const ROW_HEIGHT = 66; // px cho 1 tiết
+const ROW_HEIGHT = 70; // px cho 1 tiết
 
 const COLORS = [
     "bg-blue-50 dark:bg-blue-950/50 border-l-4 border-blue-500 dark:border-blue-400 text-slate-800 dark:text-blue-100",
@@ -44,16 +44,16 @@ export default function TimetableGrid({ events }: Props) {
     const colorMap = useMemo(() => {
         const uniqueSubjects = Array.from(new Set(events.map((e) => e.ma_mon))).sort();
         const map: Record<string, string> = {};
-        
+
         uniqueSubjects.forEach((subject, index) => {
             map[subject] = COLORS[index % COLORS.length];
         });
-        
+
         return map;
     }, [events]);
 
     return (
-        <div className="w-full bg-background overflow-hidden border border-b-0 border-r-0">
+        <div className="w-full bg-background overflow-hidden border border-b-0 border-r-0 dark:border-b dark:border-r">
             {/* header: Tiết / Giờ / Thứ */}
             <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] ">
                 <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted">Tiết</div>
@@ -81,7 +81,7 @@ export default function TimetableGrid({ events }: Props) {
                 {/* Cột Giờ bên trái */}
                 <div className="border-r border-border bg-background">
                     {PERIODS.map((p, idx) => (
-                        <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-[11px] text-muted-foreground font-medium">
+                        <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-[12px] text-muted-foreground font-medium">
                             {PERIOD_TIMES[idx] || "--"}
                         </div>
                     ))}
@@ -103,19 +103,20 @@ export default function TimetableGrid({ events }: Props) {
                                 const top = (ev.periodStart - 1) * ROW_HEIGHT + 4;
                                 const height = (ev.periodEnd - ev.periodStart + 1) * ROW_HEIGHT - 8;
                                 const colorClass = colorMap[ev.ma_mon] || COLORS[0];
+                                const width = `calc((100% - 14px))`;
 
                                 return (
                                     <div
                                         key={`${ev.id}-${ev.periodStart}-${ev.periodEnd}`}
                                         className={`absolute mx-[7px] shadow-sm cursor-pointer overflow-hidden ${colorClass} px-2.5 py-2 rounded-md`}
-                                        style={{ top, height }}
+                                        style={{ top, height, width }}
                                         title={`${ev.courseName}\n${ev.giang_vien || ""}\nTiết ${ev.periodStart}–${ev.periodEnd}\n${ev.room || ""}`}
                                     >
-                                        <div className="text-[11px] font-bold text-sky-900 dark:text-sky-100 leading-snug line-clamp-2 text-center mb-1">{ev.courseName}</div>
-                                        <div className="text-[10px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Mã môn: {ev.ma_mon}</div>
-                                        {ev.room && <div className="text-[10px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Phòng: {ev.room}</div>}
-                                        {ev.giang_vien && <div className="text-[9px] font-medium leading-tight text-slate-600 dark:text-slate-400 text-center mt-0.5">{ev.giang_vien}</div>}
-                                        <div className="text-[9px] font-medium leading-tight text-slate-500 dark:text-slate-400 text-center mt-0.5">
+                                        <div className="text-[13px] font-bold text-sky-900 dark:text-sky-100 leading-snug line-clamp-2 text-center mb-1">{ev.courseName}</div>
+                                        <div className="text-[11px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Mã môn: {ev.ma_mon}</div>
+                                        {ev.room && <div className="text-[11px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Phòng: {ev.room}</div>}
+                                        {ev.giang_vien && <div className="text-[11px] font-medium leading-tight text-slate-600 dark:text-slate-400 text-center mt-0.5">{ev.giang_vien}</div>}
+                                        <div className="text-[11px] font-medium leading-tight text-slate-500 dark:text-slate-400 text-center mt-0.5">
                                             Tiết {ev.periodStart}–{ev.periodEnd}
                                         </div>
                                     </div>
