@@ -1,6 +1,11 @@
 import { doc, getDoc, setDoc, increment, serverTimestamp } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
+export const getVNDate = (): string => {
+    return new Intl.DateTimeFormat("sv-SE", {
+        timeZone: "Asia/Ho_Chi_Minh",
+    }).format(new Date());
+};
 export interface VisitorData {
     count: number;
     lastUpdated: unknown;
@@ -11,6 +16,36 @@ const VISITOR_DOC = "stats";
 const VISITOR_STATS = "visitors";
 const COOLDOWN_KEY = "visitor_last_increment";
 const COOLDOWN_DURATION = 30 * 60 * 1000; // 30 minutes in milliseconds
+const INCREMENT_LOCK_KEY = "visitor_increment_lock";
+const INCREMENT_LOCK_DURATION = 10 * 1000; // 10 seconds
+
+const tryAcquireIncrementLock = (): boolean => {
+    try {
+        const now = Date.now();
+        const lockValue = localStorage.getItem(INCREMENT_LOCK_KEY);
+
+        if (lockValue) {
+            const lockTime = parseInt(lockValue, 10);
+            if (!Number.isNaN(lockTime) && now - lockTime < INCREMENT_LOCK_DURATION) {
+                return false;
+            }
+        }
+
+        localStorage.setItem(INCREMENT_LOCK_KEY, now.toString());
+        return true;
+    } catch {
+        // If localStorage is unavailable, don't block counting.
+        return true;
+    }
+};
+
+const releaseIncrementLock = (): void => {
+    try {
+        localStorage.removeItem(INCREMENT_LOCK_KEY);
+    } catch {
+        // Ignore localStorage errors
+    }
+};
 
 // Kiểm tra xem có nên tăng visitor count không (cooldown 30 phút)
 export const shouldIncrementVisitor = (): boolean => {
@@ -63,6 +98,7 @@ export const getVisitorCount = async (): Promise<number> => {
 export const incrementVisitorCount = async (): Promise<number> => {
     try {
         const docRef = doc(db, VISITOR_DOC, VISITOR_STATS);
+        const today = getVNDate();
 
         // Kiểm tra cooldown trước khi tăng
         if (!shouldIncrementVisitor()) {
@@ -76,7 +112,15 @@ export const incrementVisitorCount = async (): Promise<number> => {
             return 0;
         }
 
-        const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+        // Prevent duplicate increments from concurrent effects/renders.
+        if (!tryAcquireIncrementLock()) {
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data() as VisitorData;
+                return data.count || 0;
+            }
+            return 0;
+        }
 
         // Check if document exists
         const docSnap = await getDoc(docRef);
@@ -102,7 +146,7 @@ export const incrementVisitorCount = async (): Promise<number> => {
                 lastUpdated: serverTimestamp(),
                 [`dailyVisits.${today}`]: increment(1),
             },
-            { merge: true }
+            { merge: true },
         );
 
         // Lưu thời gian increment
@@ -115,6 +159,8 @@ export const incrementVisitorCount = async (): Promise<number> => {
     } catch (error) {
         console.error("Error incrementing visitor count:", error);
         throw error;
+    } finally {
+        releaseIncrementLock();
     }
 };
 
@@ -146,9 +192,7 @@ export const getTodayVisitorCount = async (): Promise<number> => {
         }
 
         const data = docSnap.data() as VisitorData;
-
-        const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
-
+        const today = getVNDate(); // YYYY-MM-DD theo múi giờ Việt Nam
         return data.dailyVisits?.[today] || 0;
     } catch (error) {
         console.error("Error getting today visitor count:", error);

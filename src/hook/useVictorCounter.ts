@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getVisitorCount, incrementVisitorCount, getVisitorStats, getTodayVisitorCount } from "@/lib/visitorService";
+import { getVNDate, getVisitorCount, incrementVisitorCount, getVisitorStats, getTodayVisitorCount } from "@/lib/visitorService";
 import { onSnapshot, doc } from "firebase/firestore";
 import { db } from "../lib/firebase";
 import type { VisitorData } from "@/lib/visitorService";
@@ -78,15 +78,14 @@ export const useVisitorCounter = () => {
                         setStats(data);
 
                         // Cập nhật today count
-                        const vnTime = new Date(new Date().getTime() + 7 * 60 * 60 * 1000);
-                        const today = vnTime.toISOString().split("T")[0];
+                        const today = getVNDate();
                         setTodayCount(data.dailyVisits?.[today] || 0);
                     }
                 },
                 (error) => {
                     console.error("Real-time listener error:", error);
                     setError("Real-time sync failed");
-                }
+                },
             );
         } catch (error) {
             console.error("Failed to setup real-time listener:", error);

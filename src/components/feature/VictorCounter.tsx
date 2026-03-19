@@ -27,7 +27,7 @@ export default function VictorCounter() {
                 <span className="text-xs text-muted-foreground font-medium">lượt xem</span>
             </div>
 
-            <div className="h-4 w-px bg-border" />
+            {/* <div className="h-4 w-px bg-border" />
 
             <div className="flex items-center gap-1.5">
                 {isLoading ? (
@@ -38,7 +38,7 @@ export default function VictorCounter() {
                     <span className="text-sm font-bold text-primary">{todayCount.toLocaleString()}</span>
                 )}
                 <span className="text-xs text-muted-foreground font-medium">hôm nay</span>
-            </div>
+            </div> */}
         </div>
     );
 }
