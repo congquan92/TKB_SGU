@@ -1,3 +1,16 @@
+/*
+ * Copyright (C) 2026  Nguyen Cong Quan
+ * * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
 import { useState, useRef, useEffect } from "react";
 import { Calendar, Camera, Download, Trash, Upload } from "lucide-react";
 import { SearchCourse } from "@/components/SearchCourse";
@@ -79,7 +92,6 @@ function hasConflict(existing: TimetableEvent[], incoming: TimetableEvent[]): bo
 const STORAGE_KEY = "tkb-versions";
 const ACTIVE_VERSION_KEY = "tkb-active-version-id";
 
-// Helper function để load events từ chosenIds
 function loadEventsFromIds(ids: string[]): TimetableEvent[] {
     const newEvents: TimetableEvent[] = [];
     ids.forEach((id) => {
@@ -94,7 +106,6 @@ function loadEventsFromIds(ids: string[]): TimetableEvent[] {
 export default function Timetable() {
     const [selectedSubject, setSelectedSubject] = useState<MonHocItem | null>(null);
 
-    // Khởi tạo versions từ localStorage hoặc tạo mới
     const [versions, setVersions] = useState<TimetableVersion[]>(() => {
         try {
             const saved = localStorage.getItem(STORAGE_KEY);
@@ -114,7 +125,7 @@ export default function Timetable() {
             chosenIds: [],
             createdAt: Date.now(),
         };
-        // Lưu ngay vào localStorage
+
         try {
             localStorage.setItem(STORAGE_KEY, JSON.stringify([defaultVersion]));
         } catch (error) {
@@ -123,7 +134,6 @@ export default function Timetable() {
         return [defaultVersion];
     });
 
-    // Khởi tạo activeVersionId dựa vào versions
     const [activeVersionId, setActiveVersionId] = useState<string>(() => {
         try {
             const saved = localStorage.getItem(ACTIVE_VERSION_KEY);
@@ -205,7 +215,6 @@ export default function Timetable() {
         setSelectedSubject(item);
     };
 
-    // tick / bỏ tick 1 nhóm tổ
     const handleToggleGroup = (item: ClassItem, checked: boolean) => {
         if (checked) {
             const incoming = classToEvents(item);
@@ -220,7 +229,6 @@ export default function Timetable() {
                 return;
             }
 
-            // chosenIds: bỏ hết id cùng mã môn, chỉ giữ lại id mới
             const sameCourseIds = groups.filter((g) => g.ma_mon === item.ma_mon).map((g) => g.id_to_hoc);
             const filtered = chosenIds.filter((id) => !sameCourseIds.includes(id));
             updateChosenIds([...filtered, item.id_to_hoc]);
@@ -245,18 +253,14 @@ export default function Timetable() {
         try {
             // Tìm element TimetableGrid bên trong timetableRef
             const gridElement = timetableRef.current.querySelector(".w-full.bg-background.overflow-hidden.border") as HTMLElement;
-
             if (!gridElement) {
                 toast.error("Không tìm thấy thời khóa biểu");
                 return;
             }
-
             toast.loading("Đang chụp ảnh...");
-
-            // Chụp ảnh với quality cao
             const dataUrl = await toPng(gridElement, {
                 quality: 1,
-                pixelRatio: 3, // 3x resolution cho ảnh sắc nét
+                pixelRatio: 3, // tăng độ phân giải
                 backgroundColor: "#ffffff",
             });
 
@@ -281,7 +285,7 @@ export default function Timetable() {
             return;
         }
 
-        // Lưu chỉ chosenIds, không lưu số lượng
+        // Lưu chosenIds
         const data = {
             chosenIds,
             exportDate: new Date().toISOString(),
