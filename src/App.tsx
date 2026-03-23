@@ -17,6 +17,7 @@ import { artAcsii } from "@/lib/artAcsii";
 import Footer from "@/page/Footer";
 import Header from "@/page/Header";
 import { useEffect } from "react";
+import { Analytics } from "@vercel/analytics/react";
 function App() {
     useEffect(() => {
         artAcsii();
@@ -27,6 +28,7 @@ function App() {
             <Timetable />
             <BackToTop />
             <Footer />
+            <Analytics />
         </>
     );
 }
