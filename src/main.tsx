@@ -23,8 +23,8 @@ createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <ThemeProvider defaultTheme="dark" storageKey="theme">
             <MobileBlockedLayout>
-                <App />
-                <Toaster />
+            <App />
+            <Toaster />
             </MobileBlockedLayout>
         </ThemeProvider>
     </StrictMode>
