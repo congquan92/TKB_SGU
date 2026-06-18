@@ -20,17 +20,17 @@ export default function Header() {
         <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
             <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-xl">
+                    <div className="flex items-center justify-center w-10 h-10 rounded-md">
                         <GraduationCap size={50} />
                     </div>
                     <div>
-                        <h1 className="text-xl font-bold text-foreground flex items-center gap-2">
+                        <h1 className="text-h1 flex items-center gap-2">
                             Thời Khóa Biểu SGU
-                            <Sparkles className="w-4 h-4 text-amber-500" />
+                            <Sparkles className="w-4 h-4 text-primary" />
                         </h1>
-                        <p className="text-xs text-muted-foreground">Sắp xếp thời khóa biểu thông minh</p>
+                        <p className="text-label text-muted-foreground uppercase tracking-wider">Sắp xếp thời khóa biểu thông minh</p>
                     </div>
-                    <div className="px-3 py-1.5 bg-card border border-destructive/20 hover:bg-destructive/10 hover:border-destructive/30  transition-colors cursor-pointer">{time}</div>
+                    <div className="px-3 py-1.5 bg-card border border-border hover:bg-muted transition-colors cursor-pointer font-mono text-xs">{time}</div>
                 </div>
 
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">

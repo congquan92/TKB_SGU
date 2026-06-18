@@ -103,14 +103,14 @@ export default function TimetableTabs({ activeVersionId, onVersionChange, onVers
                                 onClick={() => onVersionChange(version.id)}
                                 className={`
                                     flex items-center gap-2 px-4 py-2 border-b-2 cursor-pointer whitespace-nowrap
-                                    transition-colors group relative
+                                    transition-colors group relative font-mono text-label
                                     ${isActive ? "border-primary bg-primary/10 text-primary" : "border-transparent hover:bg-muted text-muted-foreground hover:text-foreground"}
                                 `}
                             >
-                                <span className="font-medium">{version.name}</span>
-                                {courseCount > 0 && <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground">{courseCount}</span>}
-                                <button onClick={(e) => handleDeleteVersion(version.id, e)} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1 hover:bg-destructive/10 rounded p-0.5 cursor-pointer" title="Xóa phiên bản">
-                                    <X size={14} className="text-red-600" />
+                                <span className="font-medium uppercase tracking-wider">{version.name}</span>
+                                {courseCount > 0 && <span className="px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">{courseCount}</span>}
+                                <button onClick={(e) => handleDeleteVersion(version.id, e)} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1 hover:bg-destructive/10 rounded-sm p-0.5 cursor-pointer" title="Xóa phiên bản">
+                                    <X size={14} className="text-destructive" />
                                 </button>
                             </div>
                         );

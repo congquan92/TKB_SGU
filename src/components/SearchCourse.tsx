@@ -39,30 +39,30 @@ export function SearchCourse({ subjects, value, onChange }: Props) {
     return (
         <div className="flex items-center gap-2.5">
             {/* label */}
-            <span className="text-xs font-bold text-muted-foreground min-w-[65px] uppercase tracking-wide">Môn học:</span>
+            <span className="text-label font-bold text-muted-foreground min-w-[65px] uppercase tracking-wider font-mono">Môn học:</span>
 
             {/* combobox */}
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                    <Button variant="outline" role="combobox" className="w-[min(520px,90vw)] justify-between border-border bg-background hover:bg-accent text-left h-9 px-3 shadow-sm cursor-pointer">
+                    <Button variant="outline" role="combobox" className="w-[min(520px,90vw)] justify-between border-border bg-background hover:bg-accent text-left h-9 px-3 shadow-sm cursor-pointer rounded-none">
                         <span className="truncate text-sm font-medium">{value ? value.ten : "Chọn môn học..."}</span>
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-40" />
                     </Button>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-[min(520px,90vw)] p-0 shadow-xl border-border overflow-hidden" align="start" sideOffset={4}>
-                    <div className="border-b bg-muted px-3 py-2.5 text-[10px] font-bold text-muted-foreground uppercase tracking-wider">Danh sách môn học</div>
+                <PopoverContent className="w-[min(520px,90vw)] p-0 shadow-xl border-border overflow-hidden rounded-none" align="start" sideOffset={4}>
+                    <div className="border-b bg-muted px-3 py-2.5 text-label font-bold text-muted-foreground uppercase tracking-wider font-mono">Danh sách môn học</div>
 
                     <Command>
                         <div className="border-b px-3 pt-2.5 pb-2">
                             <CommandInput placeholder="Tìm kiếm môn học, mã HP" value={search} onValueChange={setSearch} className="h-8 text-sm" />
-                            <p className="mt-1.5 text-[10px] text-muted-foreground font-medium">Tìm thấy {filtered.length} môn học</p>
+                            <p className="mt-1.5 text-label text-muted-foreground font-medium font-mono">Tìm thấy {filtered.length} môn học</p>
                         </div>
 
                         <CommandList>
                             <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">Không tìm thấy môn phù hợp</CommandEmpty>
 
-                            <ScrollArea className="max-h-72">
+                            <ScrollArea className="max-h-72 font-mono">
                                 <CommandGroup>
                                     {filtered.map((item) => (
                                         <CommandItem
@@ -74,8 +74,8 @@ export function SearchCourse({ subjects, value, onChange }: Props) {
                                             }}
                                             className="flex flex-col items-start gap-1 px-3 py-2.5 cursor-pointer hover:bg-accent"
                                         >
-                                            <span className="text-sm font-semibold text-foreground">{item.ten}</span>
-                                            <span className="text-[11px] text-muted-foreground font-medium">Mã: {item.ma}</span>
+                                            <span className="text-sm font-semibold text-foreground font-sans">{item.ten}</span>
+                                            <span className="text-label text-muted-foreground font-medium">Mã: {item.ma}</span>
                                         </CommandItem>
                                     ))}
                                 </CommandGroup>
@@ -86,7 +86,7 @@ export function SearchCourse({ subjects, value, onChange }: Props) {
             </Popover>
 
             {/* nút reset 1 môn */}
-            <Button size="icon" variant="outline" className="h-9 w-9 hover:bg-accent shadow-sm cursor-pointer" onClick={() => onChange(null)} title="Làm mới lựa chọn">
+            <Button size="icon" variant="outline" className="h-9 w-9 hover:bg-accent shadow-sm cursor-pointer rounded-none" onClick={() => onChange(null)} title="Làm mới lựa chọn">
                 <RotateCcw className="h-4 w-4 text-muted-foreground" />
             </Button>
         </div>
