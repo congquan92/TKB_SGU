@@ -22,10 +22,10 @@ import { ThemeProvider } from "@/components/theme/theme-provider";
 createRoot(document.getElementById("root")!).render(
     <StrictMode>
         <ThemeProvider defaultTheme="dark" storageKey="theme">
-            <MobileBlockedLayout>
+            {/* <MobileBlockedLayout>
+            </MobileBlockedLayout> */}
             <App />
             <Toaster />
-            </MobileBlockedLayout>
         </ThemeProvider>
-    </StrictMode>
+    </StrictMode>,
 );

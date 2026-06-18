@@ -66,78 +66,80 @@ export default function TimetableGrid({ events }: Props) {
     }, [events]);
 
     return (
-        <div className="w-full bg-background overflow-hidden border border-b-0 border-r-0 dark:border-b dark:border-r">
-            {/* header: Tiết / Giờ / Thứ */}
-            <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] ">
-                <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted">Tiết</div>
-                <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted">Giờ</div>
+        <div className="w-full overflow-x-auto no-scrollbar">
+            <div className="min-w-[900px] w-full bg-background border border-border">
+                {/* header: Tiết / Giờ / Thứ */}
+                <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] ">
+                    <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted">Tiết</div>
+                    <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted">Giờ</div>
 
-                {/* Các thứ */}
-                {DAYS.map((d) => (
-                    <div key={d.value} className="flex flex-col items-center justify-center py-3 border-r border-b bg-muted">
-                        <span className="text-sm font-bold text-foreground">{d.label}</span>
+                    {/* Các thứ */}
+                    {DAYS.map((d) => (
+                        <div key={d.value} className="flex flex-col items-center justify-center py-3 border-r border-b bg-muted">
+                            <span className="text-sm font-bold text-foreground">{d.label}</span>
+                        </div>
+                    ))}
+                </div>
+
+                {/* body */}
+                <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] text-xs bg-background relative">
+                    {/* Cột Tiết bên trái */}
+                    <div className="border-r bg-background">
+                        {PERIODS.map((p) => (
+                            <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
+                                {p}
+                            </div>
+                        ))}
                     </div>
-                ))}
-            </div>
 
-            {/* body */}
-            <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] text-xs bg-background relative">
-                {/* Cột Tiết bên trái */}
-                <div className="border-r bg-background">
-                    {PERIODS.map((p) => (
-                        <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
-                            {p}
-                        </div>
-                    ))}
-                </div>
+                    {/* Cột Giờ bên trái */}
+                    <div className="border-r border-border bg-background">
+                        {PERIODS.map((p, idx) => (
+                            <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-[12px] text-muted-foreground font-medium">
+                                {PERIOD_TIMES[idx] || "--"}
+                            </div>
+                        ))}
+                    </div>
 
-                {/* Cột Giờ bên trái */}
-                <div className="border-r border-border bg-background">
-                    {PERIODS.map((p, idx) => (
-                        <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-[12px] text-muted-foreground font-medium">
-                            {PERIOD_TIMES[idx] || "--"}
-                        </div>
-                    ))}
-                </div>
+                    {/* 7 cột ngày */}
+                    {DAYS.map((d) => {
+                        const dayEvents = events.filter((e) => e.dayOfWeek === d.value);
 
-                {/* 7 cột ngày */}
-                {DAYS.map((d) => {
-                    const dayEvents = events.filter((e) => e.dayOfWeek === d.value);
+                        return (
+                            <div key={d.value} className="relative border-r bg-background" style={{ minHeight: PERIODS.length * ROW_HEIGHT }}>
+                                {/* grid lines nền */}
+                                {PERIODS.map((p) => (
+                                    <div key={p} style={{ height: ROW_HEIGHT }} className="border-b" />
+                                ))}
 
-                    return (
-                        <div key={d.value} className="relative border-r bg-background" style={{ minHeight: PERIODS.length * ROW_HEIGHT }}>
-                            {/* grid lines nền */}
-                            {PERIODS.map((p) => (
-                                <div key={p} style={{ height: ROW_HEIGHT }} className="border-b" />
-                            ))}
+                                {/* block môn học */}
+                                {dayEvents.map((ev) => {
+                                    const top = (ev.periodStart - 1) * ROW_HEIGHT + 4;
+                                    const height = (ev.periodEnd - ev.periodStart + 1) * ROW_HEIGHT - 8;
+                                    const colorClass = colorMap[ev.ma_mon] || COLORS[0];
+                                    const width = `calc((100% - 14px))`;
 
-                            {/* block môn học */}
-                            {dayEvents.map((ev) => {
-                                const top = (ev.periodStart - 1) * ROW_HEIGHT + 4;
-                                const height = (ev.periodEnd - ev.periodStart + 1) * ROW_HEIGHT - 8;
-                                const colorClass = colorMap[ev.ma_mon] || COLORS[0];
-                                const width = `calc((100% - 14px))`;
-
-                                return (
-                                    <div
-                                        key={`${ev.id}-${ev.periodStart}-${ev.periodEnd}`}
-                                        className={`absolute mx-[7px] shadow-sm cursor-pointer overflow-hidden ${colorClass} px-2.5 py-2 rounded-md`}
-                                        style={{ top, height, width }}
-                                        title={`${ev.courseName}\n${ev.giang_vien || ""}\nTiết ${ev.periodStart}–${ev.periodEnd}\n${ev.room || ""}`}
-                                    >
-                                        <div className="text-[13px] font-bold text-sky-900 dark:text-sky-100 leading-snug line-clamp-2 text-center mb-1">{ev.courseName}</div>
-                                        <div className="text-[11px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Mã môn: {ev.ma_mon}</div>
-                                        {ev.room && <div className="text-[11px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Phòng: {ev.room}</div>}
-                                        {ev.giang_vien && <div className="text-[11px] font-medium leading-tight text-slate-600 dark:text-slate-400 text-center mt-0.5">{ev.giang_vien}</div>}
-                                        <div className="text-[11px] font-medium leading-tight text-slate-500 dark:text-slate-400 text-center mt-0.5">
-                                            Tiết {ev.periodStart}–{ev.periodEnd}
+                                    return (
+                                        <div
+                                            key={`${ev.id}-${ev.periodStart}-${ev.periodEnd}`}
+                                            className={`absolute mx-[7px] shadow-sm cursor-pointer overflow-hidden ${colorClass} px-2.5 py-2 rounded-md`}
+                                            style={{ top, height, width }}
+                                            title={`${ev.courseName}\n${ev.giang_vien || ""}\nTiết ${ev.periodStart}–${ev.periodEnd}\n${ev.room || ""}`}
+                                        >
+                                            <div className="text-[13px] font-bold text-sky-900 dark:text-sky-100 leading-snug line-clamp-2 text-center mb-1">{ev.courseName}</div>
+                                            <div className="text-[11px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Mã môn: {ev.ma_mon}</div>
+                                            {ev.room && <div className="text-[11px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Phòng: {ev.room}</div>}
+                                            {ev.giang_vien && <div className="text-[11px] font-medium leading-tight text-slate-600 dark:text-slate-400 text-center mt-0.5">{ev.giang_vien}</div>}
+                                            <div className="text-[11px] font-medium leading-tight text-slate-500 dark:text-slate-400 text-center mt-0.5">
+                                                Tiết {ev.periodStart}–{ev.periodEnd}
+                                            </div>
                                         </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    );
-                })}
+                                    );
+                                })}
+                            </div>
+                        );
+                    })}
+                </div>
             </div>
         </div>
     );

@@ -17,37 +17,41 @@ import VictorCounter from "@/components/feature/VictorCounter";
 export default function Footer() {
     return (
         <footer className="w-full border-t border-border/40 bg-muted/20 backdrop-blur-sm mt-12">
-            <div className="mx-auto max-w-7xl px-6 py-8">
-                <div className="flex flex-col items-center gap-6 text-sm">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+                <div className="flex flex-col items-center gap-6 text-xs sm:text-sm">
                     {/*Giới thiệu */}
                     <div className="text-center space-y-2">
-                        <p className="text-muted-foreground max-w-lg leading-relaxed">Công cụ hỗ trợ sinh viên sắp xếp thời khóa biểu thông minh, tránh xung đột lịch học của sinh viên</p>
+                        <p className="text-muted-foreground max-w-lg leading-relaxed px-2">
+                            Công cụ hỗ trợ sinh viên sắp xếp thời khóa biểu thông minh, tránh xung đột lịch học của sinh viên
+                        </p>
                     </div>
 
                     {/* (Copyright, Version, Counter) */}
-                    <div className="flex flex-col sm:flex-row items-center justify-between w-full max-w-2xl gap-4 text-label text-muted-foreground mt-2 pt-4 border-t font-mono">
-                        <span>© 2025 SVSGU - K23 </span>
+                    <div className="flex flex-col sm:flex-row items-center justify-between w-full max-w-2xl gap-4 text-[10px] sm:text-xs text-muted-foreground mt-2 pt-6 border-t font-mono">
+                        <span className="order-2 sm:order-1">© 2025 SVSGU - K23</span>
 
-                        <div className="opacity-80 scale-90">
+                        <div className="opacity-80 scale-90 order-1 sm:order-2">
                             <VictorCounter />
                         </div>
 
-                        <div className="flex items-center gap-2">
-                            <a href="https://www.youtube.com/watch?v=dQw4w9WgXcQ" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-foreground transition-colors group">
+                        <div className="flex items-center gap-2 order-3">
+                            <a href="https://github.com/nguyencongquan" target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:text-foreground transition-colors group">
                                 <Github className="w-4 h-4 group-hover:scale-110 transition-transform" />
                             </a>
                             <span className="bg-muted px-2 py-0.5 rounded-sm">v2.1.0</span>
                         </div>
                     </div>
 
-                    {/* Auhtor */}
-                    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-label text-muted-foreground border-t pt-4 font-mono uppercase tracking-wider">
-                        <div className="flex items-center gap-1.5">
-                            <span>Mọi thắc mắc xin hãy liên hệ qua nhà phát triển </span>
-                            <a href="https://www.facebook.com/cucngau.quan/" target="_blank" rel="noopener noreferrer" className="font-medium text-foreground hover:text-primary transition-colors decoration-primary/50 underline underline-offset-4">
-                                Quan
-                            </a>
-                            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
+                    {/* Author */}
+                    <div className="flex flex-col items-center justify-center gap-2 text-[10px] sm:text-xs text-muted-foreground border-t pt-6 font-mono uppercase tracking-wider text-center w-full max-w-2xl">
+                        <div className="flex flex-wrap items-center justify-center gap-1.5 px-4">
+                            <span>Mọi thắc mắc hãy liên hệ qua nhà phát triển</span>
+                            <div className="flex items-center gap-1.5">
+                                <a href="https://nguyencongquan.id.vn/en" target="_blank" rel="noopener noreferrer" className="font-bold text-foreground hover:text-primary transition-colors decoration-primary/50 underline underline-offset-4 normal-case">
+                                    Quan
+                                </a>
+                                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
+                            </div>
                         </div>
                     </div>
                 </div>

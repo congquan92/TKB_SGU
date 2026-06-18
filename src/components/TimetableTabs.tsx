@@ -90,9 +90,9 @@ export default function TimetableTabs({ activeVersionId, onVersionChange, onVers
     };
 
     return (
-        <div className="bg-background border-b border-border">
-            <div className="max-w-7xl mx-auto px-4">
-                <div className="flex items-center gap-2 overflow-x-auto py-2">
+        <div className="bg-background border-b border-border sticky top-[60px] sm:top-[65px] z-40 transform-gpu">
+            <div className="max-w-7xl mx-auto px-2 sm:px-4">
+                <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto py-1 sm:py-2 no-scrollbar scroll-smooth">
                     {versions.map((version) => {
                         const isActive = version.id === activeVersionId;
                         const courseCount = version.chosenIds.length;
@@ -102,24 +102,31 @@ export default function TimetableTabs({ activeVersionId, onVersionChange, onVers
                                 key={version.id}
                                 onClick={() => onVersionChange(version.id)}
                                 className={`
-                                    flex items-center gap-2 px-4 py-2 border-b-2 cursor-pointer whitespace-nowrap
-                                    transition-colors group relative font-mono text-label
+                                    flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 border-b-2 cursor-pointer whitespace-nowrap
+                                    transition-colors group relative font-mono text-[10px] sm:text-xs
                                     ${isActive ? "border-primary bg-primary/10 text-primary" : "border-transparent hover:bg-muted text-muted-foreground hover:text-foreground"}
                                 `}
                             >
-                                <span className="font-medium uppercase tracking-wider">{version.name}</span>
-                                {courseCount > 0 && <span className="px-1.5 py-0.5 rounded-sm bg-muted text-muted-foreground">{courseCount}</span>}
-                                <button onClick={(e) => handleDeleteVersion(version.id, e)} className="opacity-0 group-hover:opacity-100 transition-opacity ml-1 hover:bg-destructive/10 rounded-sm p-0.5 cursor-pointer" title="Xóa phiên bản">
-                                    <X size={14} className="text-destructive" />
+                                <span className="font-bold uppercase tracking-wider">{version.name}</span>
+                                {courseCount > 0 && <span className={`px-1 rounded-sm text-[9px] sm:text-[10px] ${isActive ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"}`}>{courseCount}</span>}
+                                <button
+                                    onClick={(e) => handleDeleteVersion(version.id, e)}
+                                    className={`
+                                        transition-all ml-1 hover:bg-destructive/10 rounded-sm p-0.5 cursor-pointer
+                                        ${isActive ? "opacity-100" : "opacity-0 group-hover:opacity-100"}
+                                    `}
+                                    title="Xóa phiên bản"
+                                >
+                                    <X size={12} className="text-destructive sm:w-3.5 sm:h-3.5" />
                                 </button>
                             </div>
                         );
                     })}
 
                     {versions.length < MAX_VERSIONS && (
-                        <Button variant="ghost" size="sm" onClick={handleAddVersion} className="gap-2 rounded-none cursor-pointer" title={`Thêm phiên bản (${versions.length}/${MAX_VERSIONS})`}>
-                            <Plus size={16} />
-                            <span className="text-sm">Thêm phiên bản</span>
+                        <Button variant="ghost" size="sm" onClick={handleAddVersion} className="gap-1.5 h-8 sm:h-9 px-2 sm:px-3 rounded-none cursor-pointer shrink-0" title={`Thêm phiên bản (${versions.length}/${MAX_VERSIONS})`}>
+                            <Plus size={14} className="sm:w-4 sm:h-4" />
+                            <span className="text-[10px] sm:text-sm">Thêm</span>
                         </Button>
                     )}
                 </div>

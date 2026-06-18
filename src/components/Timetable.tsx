@@ -252,7 +252,7 @@ export default function Timetable() {
 
         try {
             // Tìm element TimetableGrid bên trong timetableRef
-            const gridElement = timetableRef.current.querySelector(".w-full.bg-background.overflow-hidden.border") as HTMLElement;
+            const gridElement = timetableRef.current.querySelector(".min-w-\\[900px\\]") as HTMLElement;
             if (!gridElement) {
                 toast.error("Không tìm thấy thời khóa biểu");
                 return;
@@ -346,55 +346,82 @@ export default function Timetable() {
             {/* Tabs phiên bản */}
             <TimetableTabs activeVersionId={activeVersionId} onVersionChange={handleVersionChange} onVersionsUpdate={handleVersionsUpdate} versions={versions} />
 
-            <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+            <div className="max-w-7xl mx-auto px-2 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
                 {/*  Search and Course Group Table */}
                 <div className="bg-card shadow-sm border border-border overflow-hidden">
                     {/* Header Section */}
-                    <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-4 border-b border-border">
+                    <div className="flex items-center justify-between flex-wrap gap-4 px-4 sm:px-6 py-3 sm:py-4 border-b border-border">
                         <div>
-                            <h2 className="text-xl font-bold text-foreground">Thời Khóa Biểu</h2>
-                            {hocKy && <p className="text-xs text-muted-foreground mt-1">{hocKy}</p>}
+                            <h2 className="text-lg sm:text-xl font-bold text-foreground">Thời Khóa Biểu</h2>
+                            {hocKy && <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5 sm:mt-1">{hocKy}</p>}
                         </div>
                     </div>
 
                     {/* Search Section */}
-                    <div className="flex items-center gap-3 flex-wrap px-6 py-4">
-                        <div className="flex-1 min-w-[300px]">
-                            <SearchCourse subjects={subjects} value={selectedSubject} onChange={handleCourseChange} />
-                        </div>
+                    <div className="px-4 sm:px-6 py-3 sm:py-4">
+                        <SearchCourse subjects={subjects} value={selectedSubject} onChange={handleCourseChange} />
                     </div>
 
                     {/* Course Group Table */}
-                    <div className="px-6 py-4">
+                    <div className="px-2 sm:px-6 py-3 sm:py-4">
                         <CourseGroupTable groups={groups} selectedSubject={selectedSubject} chosenIds={chosenIds} onToggle={handleToggleGroup} />
                     </div>
                 </div>
 
                 {/* Timetable Grid */}
                 {events.length > 0 && (
-                    <div className="flex flex-col gap-4">
-                        <div ref={timetableRef} className="bg-card border border-border px-6 py-4 shadow-sm ">
-                            <div className="flex justify-between">
-                                <div className="flex items-center gap-2 p-4">
-                                    <h2 className="text-xl font-bold text-foreground">Thời khóa biểu của bạn</h2>
-                                    <span className="text-xs font-medium text-muted-foreground px-3 py-1 bg-muted border border-border">
-                                        {groups.filter((g) => chosenIds.includes(g.id_to_hoc)).reduce((sum, g) => sum + Number(g.so_tc), 0)} tín chỉ
-                                    </span>
-                                    <span className="text-xs font-medium text-muted-foreground px-3 py-1 bg-muted border border-border">{new Set(groups.filter((g) => chosenIds.includes(g.id_to_hoc)).map((g) => g.ma_mon)).size} môn</span>
+                    <div className="flex flex-col gap-4 sm:gap-6">
+                        <div ref={timetableRef} className="bg-card border border-border px-3 sm:px-6 py-4 sm:py-5 shadow-sm ">
+                            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+                                <div className="flex flex-col gap-1.5">
+                                    <h2 className="text-lg sm:text-xl font-extrabold text-foreground leading-tight tracking-tight uppercase">Thời khóa biểu của bạn</h2>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-[10px] sm:text-xs font-bold text-primary bg-primary/5 px-2.5 py-1 border border-primary/10">
+                                            {groups.filter((g) => chosenIds.includes(g.id_to_hoc)).reduce((sum, g) => sum + Number(g.so_tc), 0)} Tín chỉ
+                                        </span>
+                                        <span className="text-[10px] sm:text-xs font-bold text-muted-foreground bg-muted/50 px-2.5 py-1 border border-border">
+                                            {new Set(groups.filter((g) => chosenIds.includes(g.id_to_hoc)).map((g) => g.ma_mon)).size} Môn học
+                                        </span>
+                                    </div>
                                 </div>
 
-                                <div className="flex items-center gap-2">
-                                    <Button variant={"outline"} onClick={clearAll} size={"icon"} className="cursor-pointer rounded-none" title="Xóa tất cả">
-                                        <Trash />
+                                <div className="flex items-center gap-1.5 sm:gap-2 self-end sm:self-auto">
+                                    <Button
+                                        variant={"outline"}
+                                        onClick={clearAll}
+                                        size={"icon"}
+                                        className="h-9 w-9 sm:h-10 sm:w-10 hover:bg-destructive/5 hover:text-destructive transition-colors cursor-pointer rounded-none border-border/60"
+                                        title="Xóa tất cả"
+                                    >
+                                        <Trash className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </Button>
-                                    <Button variant={"outline"} onClick={handleCapture} size={"icon"} className="cursor-pointer rounded-none" title="Chụp ảnh">
-                                        <Camera />
+                                    <div className="h-6 w-[1px] bg-border/40 mx-1 hidden sm:block" />
+                                    <Button
+                                        variant={"outline"}
+                                        onClick={handleCapture}
+                                        size={"icon"}
+                                        className="h-9 w-9 sm:h-10 sm:w-10 hover:bg-primary/5 hover:text-primary transition-colors cursor-pointer rounded-none border-border/60"
+                                        title="Chụp ảnh"
+                                    >
+                                        <Camera className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </Button>
-                                    <Button variant={"outline"} onClick={() => fileInputRef.current?.click()} size={"icon"} className="cursor-pointer rounded-none" title="Tải lên TKB">
-                                        <Upload />
+                                    <Button
+                                        variant={"outline"}
+                                        onClick={() => fileInputRef.current?.click()}
+                                        size={"icon"}
+                                        className="h-9 w-9 sm:h-10 sm:w-10 hover:bg-primary/5 hover:text-primary transition-colors cursor-pointer rounded-none border-border/60"
+                                        title="Tải lên TKB"
+                                    >
+                                        <Upload className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </Button>
-                                    <Button variant={"outline"} onClick={handleDownloadJson} size={"icon"} className="cursor-pointer rounded-none" title="Tải xuống TKB">
-                                        <Download />
+                                    <Button
+                                        variant={"outline"}
+                                        onClick={handleDownloadJson}
+                                        size={"icon"}
+                                        className="h-9 w-9 sm:h-10 sm:w-10 hover:bg-primary/5 hover:text-primary transition-colors cursor-pointer rounded-none border-border/60"
+                                        title="Tải xuống TKB"
+                                    >
+                                        <Download className="h-4 w-4 sm:h-5 sm:w-5" />
                                     </Button>
                                 </div>
                             </div>
@@ -402,26 +429,24 @@ export default function Timetable() {
                             <TimetableGrid events={events} />
                         </div>
 
-                        <div className="px-6 py-4 border border-border mt-4 bg-card">
-                            <CourseGroupSelected groups={groups} chosenIds={chosenIds} onRemove={handleRemoveGroup} />
-                        </div>
+                        <CourseGroupSelected groups={groups} chosenIds={chosenIds} onRemove={handleRemoveGroup} />
                     </div>
                 )}
 
                 {events.length === 0 && (
                     <div className="bg-card border border-border overflow-hidden shadow-sm">
-                        <div className="px-6 py-12 text-center">
+                        <div className="px-4 py-10 sm:py-12 text-center">
                             <div className="max-w-md mx-auto space-y-4">
                                 <div className="flex items-center justify-center text-muted-foreground">
-                                    <Calendar size={64} strokeWidth={1.5} />
+                                    <Calendar size={48} className="sm:size={64}" strokeWidth={1.5} />
                                 </div>
-                                <div className="space-y-2">
-                                    <h3 className="text-lg font-bold text-foreground">Chưa có môn học nào</h3>
-                                    <p className="text-sm text-muted-foreground">Tìm kiếm và chọn các môn học bạn muốn đăng ký ở trên, hoặc tải lên file JSON để khôi phục thời khóa biểu</p>
+                                <div className="space-y-1 sm:space-y-2">
+                                    <h3 className="text-base sm:text-lg font-bold text-foreground">Chưa có môn học nào</h3>
+                                    <p className="text-xs sm:text-sm text-muted-foreground px-4">Tìm kiếm và chọn các môn học bạn muốn đăng ký ở trên, hoặc tải lên file JSON để khôi phục thời khóa biểu</p>
                                 </div>
                                 <div className="flex items-center justify-center gap-3 pt-2">
-                                    <Button variant={"outline"} onClick={() => fileInputRef.current?.click()} className="rounded-none gap-2 cursor-pointer">
-                                        <Upload size={16} />
+                                    <Button variant={"outline"} onClick={() => fileInputRef.current?.click()} className="h-9 sm:h-10 text-xs sm:text-sm rounded-none gap-2 cursor-pointer">
+                                        <Upload size={14} className="sm:size={16}" />
                                         Tải lên TKB
                                     </Button>
                                 </div>

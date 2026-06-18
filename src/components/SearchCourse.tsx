@@ -37,58 +37,74 @@ export function SearchCourse({ subjects, value, onChange }: Props) {
     }, [subjects, search]);
 
     return (
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-col gap-2 w-full">
             {/* label */}
-            <span className="text-label font-bold text-muted-foreground min-w-[65px] uppercase tracking-wider font-mono">Môn học:</span>
+            <div className="flex items-center justify-between px-1">
+                <span className="text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider font-mono">Môn học:</span>
+                {value && <span className="text-[9px] font-mono text-primary bg-primary/5 px-2 py-0.5 border border-primary/10">{value.ma}</span>}
+            </div>
 
-            {/* combobox */}
-            <Popover open={open} onOpenChange={setOpen}>
-                <PopoverTrigger asChild>
-                    <Button variant="outline" role="combobox" className="w-[min(520px,90vw)] justify-between border-border bg-background hover:bg-accent text-left h-9 px-3 shadow-sm cursor-pointer rounded-none">
-                        <span className="truncate text-sm font-medium">{value ? value.ten : "Chọn môn học..."}</span>
-                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-40" />
-                    </Button>
-                </PopoverTrigger>
+            <div className="flex items-center gap-2 w-full lg:w-[520px]">
+                {/* combobox */}
+                <Popover open={open} onOpenChange={setOpen}>
+                    <PopoverTrigger asChild>
+                        <Button variant="outline" role="combobox" className="flex-1 min-w-0 justify-between border-border bg-background hover:bg-accent text-left h-10 sm:h-9 px-3 shadow-sm cursor-pointer rounded-none">
+                            <span className="truncate text-xs sm:text-sm font-medium">{value ? value.ten : "Chọn môn học..."}</span>
+                            <ChevronsUpDown className="ml-1 sm:ml-2 h-4 w-4 shrink-0 opacity-40" />
+                        </Button>
+                    </PopoverTrigger>
 
-                <PopoverContent className="w-[min(520px,90vw)] p-0 shadow-xl border-border overflow-hidden rounded-none" align="start" sideOffset={4}>
-                    <div className="border-b bg-muted px-3 py-2.5 text-label font-bold text-muted-foreground uppercase tracking-wider font-mono">Danh sách môn học</div>
+                    <PopoverContent className="w-[var(--radix-popover-trigger-width)] min-w-[280px] sm:w-[520px] p-0 shadow-xl border-border overflow-hidden rounded-none" align="start" sideOffset={6}>
+                        <div className="border-b bg-muted px-3 py-2 text-[10px] sm:text-xs font-bold text-muted-foreground uppercase tracking-wider font-mono">Danh sách môn học</div>
 
-                    <Command>
-                        <div className="border-b px-3 pt-2.5 pb-2">
-                            <CommandInput placeholder="Tìm kiếm môn học, mã HP" value={search} onValueChange={setSearch} className="h-8 text-sm" />
-                            <p className="mt-1.5 text-label text-muted-foreground font-medium font-mono">Tìm thấy {filtered.length} môn học</p>
-                        </div>
+                        <Command className="rounded-none">
+                            <div className="border-b px-3 pt-3 pb-2.5">
+                                <CommandInput placeholder="Tìm kiếm..." value={search} onValueChange={setSearch} className="h-9 sm:h-8 text-sm" />
+                                <p className="mt-2 text-[9px] sm:text-[10px] text-muted-foreground font-medium font-mono">Tìm thấy {filtered.length} môn</p>
+                            </div>
 
-                        <CommandList>
-                            <CommandEmpty className="py-6 text-center text-sm text-muted-foreground">Không tìm thấy môn phù hợp</CommandEmpty>
-
-                            <ScrollArea className="max-h-72 font-mono">
+                            <CommandList className="max-h-[300px] sm:max-h-[400px]">
+                                <CommandEmpty className="py-8 text-center text-sm text-muted-foreground">Không tìm thấy môn phù hợp</CommandEmpty>
                                 <CommandGroup>
-                                    {filtered.map((item) => (
-                                        <CommandItem
-                                            key={item.ma}
-                                            value={`${item.ma} ${item.ten}`}
-                                            onSelect={() => {
-                                                onChange(item);
-                                                setOpen(false);
-                                            }}
-                                            className="flex flex-col items-start gap-1 px-3 py-2.5 cursor-pointer hover:bg-accent"
-                                        >
-                                            <span className="text-sm font-semibold text-foreground font-sans">{item.ten}</span>
-                                            <span className="text-label text-muted-foreground font-medium">Mã: {item.ma}</span>
-                                        </CommandItem>
-                                    ))}
+                                    <ScrollArea className="h-full">
+                                        <div className="max-h-[250px] sm:max-h-[350px]">
+                                            {filtered.map((item) => (
+                                                <CommandItem
+                                                    key={item.ma}
+                                                    value={`${item.ma} ${item.ten}`}
+                                                    onSelect={() => {
+                                                        onChange(item);
+                                                        setOpen(false);
+                                                        setSearch("");
+                                                    }}
+                                                    className="flex flex-col items-start gap-1 px-3 py-3 sm:py-2.5 cursor-pointer hover:bg-accent aria-selected:bg-accent border-b border-border/50 last:border-0"
+                                                >
+                                                    <span className="text-sm font-semibold text-foreground font-sans line-clamp-1">{item.ten}</span>
+                                                    <span className="text-[10px] sm:text-xs text-muted-foreground font-medium">Mã: {item.ma}</span>
+                                                </CommandItem>
+                                            ))}
+                                        </div>
+                                    </ScrollArea>
                                 </CommandGroup>
-                            </ScrollArea>
-                        </CommandList>
-                    </Command>
-                </PopoverContent>
-            </Popover>
+                            </CommandList>
+                        </Command>
+                    </PopoverContent>
+                </Popover>
 
-            {/* nút reset 1 môn */}
-            <Button size="icon" variant="outline" className="h-9 w-9 hover:bg-accent shadow-sm cursor-pointer rounded-none" onClick={() => onChange(null)} title="Làm mới lựa chọn">
-                <RotateCcw className="h-4 w-4 text-muted-foreground" />
-            </Button>
+                {/* nút reset 1 môn */}
+                <Button
+                    size="icon"
+                    variant="outline"
+                    className="h-10 w-10 sm:h-9 sm:w-9 shrink-0 hover:bg-accent shadow-sm cursor-pointer rounded-none"
+                    onClick={() => {
+                        onChange(null);
+                        setSearch("");
+                    }}
+                    title="Làm mới lựa chọn"
+                >
+                    <RotateCcw className="h-4 w-4 text-muted-foreground" />
+                </Button>
+            </div>
         </div>
     );
 }

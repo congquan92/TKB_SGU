@@ -25,33 +25,33 @@ export function CourseGroupTable({ groups, selectedSubject, chosenIds, onToggle 
     const rows: ClassItem[] = selectedSubject ? groups.filter((c) => c.ma_mon === selectedSubject.ma) : [];
 
     return (
-        <div className="space-y-3 bg-card">
-            <h3 className="text-sm font-bold text-foreground uppercase tracking-wide">Danh sách nhóm tổ</h3>
+        <div className="space-y-2 sm:space-y-3 bg-card">
+            <h3 className="text-[10px] sm:text-sm font-bold text-foreground uppercase tracking-wide px-1">Danh sách nhóm tổ</h3>
 
-            <div className="overflow-x-auto border-2 border-border bg-card">
-                <table className="min-w-full text-sm cursor-pointer">
+            <div className="overflow-x-auto border border-border bg-card no-scrollbar">
+                <table className="min-w-[1200px] w-full text-[11px] sm:text-sm cursor-pointer table-fixed border-collapse">
                     <thead className="bg-muted text-foreground">
-                        <tr className="border-b border-border">
-                            <th className="w-10 px-3 py-3 text-left border-r border-border">
+                        <tr className="border-b-2 border-border">
+                            <th className="w-10 px-2 py-2 sm:py-3 text-left border-r border-border">
                                 <input type="checkbox" disabled className="opacity-0" />
                             </th>
-                            <th className="px-3 py-2.5 text-left font-bold text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Mã</th>
-                            <th className="px-3 py-2.5 text-left font-bold text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Tên môn</th>
-                            <th className="px-3 py-2.5 text-center font-bold text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">TC</th>
-                            <th className="px-3 py-2.5 text-center font-bold text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Nhóm</th>
-                            <th className="px-3 py-2.5 text-center font-bold text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Số lượng</th>
-                            <th className="px-3 py-2.5 text-left font-bold text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Giảng viên</th>
-                            <th className="px-3 py-2.5 text-center font-bold text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Thứ</th>
-                            <th className="px-3 py-2.5 text-center font-bold text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Tiết BD</th>
-                            <th className="px-3 py-2.5 text-center font-bold text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Số tiết</th>
-                            <th className="px-3 py-2.5 text-left font-bold text-[10px] uppercase tracking-wider text-muted-foreground">Phòng</th>
+                            <th className="w-24 px-2 py-2 sm:py-2.5 text-left font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Mã môn</th>
+                            <th className="w-80 px-2 py-2 sm:py-2.5 text-left font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Tên môn học</th>
+                            <th className="w-12 px-1 py-2 sm:py-2.5 text-center font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">TC</th>
+                            <th className="w-16 px-1 py-2 sm:py-2.5 text-center font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Nhóm</th>
+                            <th className="w-20 px-1 py-2 sm:py-2.5 text-center font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Số lượng</th>
+                            <th className="w-40 px-2 py-2 sm:py-2.5 text-left font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Giảng viên</th>
+                            <th className="w-16 px-1 py-2 sm:py-2.5 text-center font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Thứ</th>
+                            <th className="w-20 px-1 py-2 sm:py-2.5 text-center font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Tiết BD</th>
+                            <th className="w-20 px-1 py-2 sm:py-2.5 text-center font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground border-r border-border">Số tiết</th>
+                            <th className="w-24 px-2 py-2 sm:py-2.5 text-left font-bold text-[9px] sm:text-[10px] uppercase tracking-wider text-muted-foreground">Phòng</th>
                         </tr>
                     </thead>
 
                     <tbody>
                         {rows.length === 0 && (
                             <tr>
-                                <td colSpan={11} className="px-4 py-10 text-center text-muted-foreground">
+                                <td colSpan={11} className="px-4 py-8 sm:py-10 text-center text-muted-foreground">
                                     Chưa chọn môn học
                                 </td>
                             </tr>
@@ -84,34 +84,34 @@ export function CourseGroupTable({ groups, selectedSubject, chosenIds, onToggle 
                                                 {idx === 0 && (
                                                     <>
                                                         {/* checkbox */}
-                                                        <td rowSpan={rowSpan} className="px-3 py-3 align-top border-r border-border">
+                                                        <td rowSpan={rowSpan} className="px-2 py-2 sm:py-3 align-top border-r border-border text-center">
                                                             <input type="checkbox" className="h-4 w-4 rounded border-border text-primary cursor-pointer" checked={checked} onChange={(e) => onToggle(item, e.target.checked)} />
                                                         </td>
 
-                                                        <td rowSpan={rowSpan} className="px-3 py-2.5 font-mono font-bold text-foreground align-top border-r border-border">
+                                                        <td rowSpan={rowSpan} className="px-2 py-2 sm:py-2.5 font-mono font-bold text-foreground align-top border-r border-border">
                                                             {item.ma_mon}
                                                         </td>
-                                                        <td rowSpan={rowSpan} className="px-3 py-2.5 font-medium text-foreground text-sm align-top border-r border-border">
+                                                        <td rowSpan={rowSpan} className="px-2 py-2 sm:py-2.5 font-medium text-foreground text-[11px] sm:text-sm align-top border-r border-border whitespace-normal break-words" title={item.ten_mon}>
                                                             {item.ten_mon}
                                                         </td>
-                                                        <td rowSpan={rowSpan} className="px-3 py-2.5 text-center text-foreground align-top border-r border-border">
+                                                        <td rowSpan={rowSpan} className="px-1 py-2 sm:py-2.5 text-center text-foreground align-top border-r border-border">
                                                             {item.so_tc}
                                                         </td>
-                                                        <td rowSpan={rowSpan} className="px-3 py-2.5 text-center text-foreground align-top border-r border-border">
+                                                        <td rowSpan={rowSpan} className="px-1 py-2 sm:py-2.5 text-center text-foreground align-top border-r border-border">
                                                             {item.nhom_to || "--"}
                                                         </td>
-                                                        <td rowSpan={rowSpan} className="px-3 py-3 text-center align-top border-r border-border">
-                                                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.sl_cl === 0 ? "text-destructive" : "text-foreground"}`}>{`${item.sl_cp - item.sl_cl}/${item.sl_cp}`}</span>
+                                                        <td rowSpan={rowSpan} className="px-1 py-2 sm:py-3 text-center align-top border-r border-border">
+                                                            <span className={`px-1.5 py-0.5 rounded-full text-[9px] sm:text-xs font-medium ${item.sl_cl === 0 ? "text-destructive" : "text-foreground"}`}>{`${item.sl_cp - item.sl_cl}/${item.sl_cp}`}</span>
                                                         </td>
                                                     </>
                                                 )}
 
                                                 {/* phần thay đổi mỗi dòng */}
-                                                <td className="px-3 py-3 whitespace-nowrap text-muted-foreground border-r border-border">{tkb.giang_vien || "--"}</td>
-                                                <td className="px-3 py-3 text-center text-muted-foreground border-r border-border">{tkb.thu || "--"}</td>
-                                                <td className="px-3 py-3 text-center font-mono text-xs border-r border-border">{tietBd}</td>
-                                                <td className="px-3 py-3 text-center font-mono text-xs border-r border-border">{soTiet}</td>
-                                                <td className="px-3 py-3 whitespace-nowrap text-muted-foreground">{tkb.phong || "--"}</td>
+                                                <td className="px-2 py-2 sm:py-3 whitespace-nowrap text-muted-foreground border-r border-border truncate" title={tkb.giang_vien || ""}>{tkb.giang_vien || "--"}</td>
+                                                <td className="px-1 py-2 sm:py-3 text-center text-muted-foreground border-r border-border">{tkb.thu || "--"}</td>
+                                                <td className="px-1 py-2 sm:py-3 text-center font-mono text-[10px] sm:text-xs border-r border-border">{tietBd}</td>
+                                                <td className="px-1 py-2 sm:py-3 text-center font-mono text-[10px] sm:text-xs border-r border-border">{soTiet}</td>
+                                                <td className="px-2 py-2 sm:py-3 whitespace-nowrap text-muted-foreground truncate" title={tkb.phong || ""}>{tkb.phong || "--"}</td>
                                             </tr>
                                         );
                                     })}

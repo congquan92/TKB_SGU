@@ -26,49 +26,65 @@ export default function CourseGroupSelected({ groups, chosenIds, onRemove }: Pro
     const totalTC = data.reduce((sum, item) => sum + (Number(item.so_tc) || 0), 0);
 
     return (
-        <div className="w-full bg-card">
-            <div className="uppercase text-base tracking-wide font-bold m-5 text-foreground">Danh sách nhóm tổ đã chọn</div>
-
-            {/* Header */}
-            <div className="grid grid-cols-[120px_1fr_100px_120px_100px_80px] font-bold text-sm border border-border bg-muted">
-                <div className="px-6 py-3 border-r border-border text-foreground uppercase text-xs tracking-wider">Mã</div>
-                <div className="px-6 py-3 border-r border-border text-foreground uppercase text-xs tracking-wider">Tên môn</div>
-                <div className="px-6 py-3 border-r border-border text-center text-foreground uppercase text-xs tracking-wider">Nhóm</div>
-                <div className="px-6 py-3 border-r border-border text-center text-foreground uppercase text-xs tracking-wider">Số lượng</div>
-                <div className="px-6 py-3 border-r border-border text-center text-foreground uppercase text-xs tracking-wider">Số TC</div>
-                <div className="px-6 py-3 text-center text-foreground uppercase text-xs tracking-wider">Xóa</div>
+        <div className="w-full bg-card border border-border shadow-sm">
+            <div className="uppercase text-xs sm:text-base tracking-widest sm:tracking-wide font-extrabold px-4 sm:px-6 py-4 text-foreground border-b border-border bg-muted/30">
+                Danh sách môn học đã chọn
             </div>
 
-            {/* Rows */}
-            {data.length === 0 ? (
-                <div className="px-6 py-10 text-center text-muted-foreground">Chưa có nhóm tổ nào được chọn</div>
-            ) : (
-                data.map((item) => (
-                    <div key={item.id_to_hoc} className="grid grid-cols-[120px_1fr_100px_120px_100px_80px] text-sm border border-t-0 border-border hover:bg-muted/50 transition">
-                        <div className="px-6 py-3 border-r border-border font-medium text-xs text-foreground">{item.ma_mon}</div>
-                        <div className="px-6 py-3 border-r border-border font-medium text-foreground">{item.ten_mon}</div>
-                        <div className="px-6 py-3 border-r border-border text-center font-medium text-foreground">{item.nhom_to || "--"}</div>
-                        <div className="px-6 py-3 border-r border-border text-center">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.sl_cl === 0 ? "text-destructive" : "text-foreground"}`}>{`${item.sl_cp - item.sl_cl}/${item.sl_cp}`}</span>
-                        </div>
-                        <div className="px-6 py-3 border-r border-border text-center font-bold text-foreground">{item.so_tc}</div>
-                        <div className="px-6 py-3 flex justify-center">
-                            <Button variant="outline" className="text-destructive hover:text-destructive transition cursor-pointer rounded-none" title="Xóa nhóm tổ" onClick={() => onRemove(item.id_to_hoc)}>
-                                <Trash2 size={18} />
-                            </Button>
-                        </div>
+            {/* Content Area with Horizontal Scroll */}
+            <div className="overflow-x-auto no-scrollbar border-t border-border/10">
+                <div className="min-w-[1000px] w-full">
+                    {/* Header */}
+                    <div className="grid grid-cols-[110px_1fr_100px_130px_100px_100px] font-bold text-[10px] sm:text-xs border-b border-border bg-muted/50 text-muted-foreground uppercase tracking-wider">
+                        <div className="px-4 py-3 border-r border-border">Mã môn</div>
+                        <div className="px-4 py-3 border-r border-border">Tên môn học</div>
+                        <div className="px-4 py-3 border-r border-border text-center">Nhóm</div>
+                        <div className="px-4 py-3 border-r border-border text-center">Sĩ số</div>
+                        <div className="px-4 py-3 border-r border-border text-center">Số TC</div>
+                        <div className="px-4 py-3 text-center">Hành động</div>
                     </div>
-                ))
-            )}
 
-            {/* Footer */}
-            {data.length > 0 && (
-                <div className="grid grid-cols-[120px_1fr_100px_120px_100px_80px] font-semibold border border-t-0 bg-muted border-border ">
-                    <div className="col-span-4 px-6 py-3 border-r border-border text-foreground">Tổng số tín chỉ</div>
-                    <div className="px-6 py-3 border-r border-border text-center font-bold text-foreground">{totalTC}</div>
-                    <div className="px-6 py-3"></div>
+                    {/* Rows */}
+                    {data.length === 0 ? (
+                        <div className="px-6 py-12 text-center text-sm text-muted-foreground bg-background/50">
+                            Chưa có môn học nào được chọn trong phiên bản này.
+                        </div>
+                    ) : (
+                        data.map((item) => (
+                            <div key={item.id_to_hoc} className="grid grid-cols-[110px_1fr_100px_130px_100px_100px] text-xs sm:text-sm border-b border-border hover:bg-accent/5 transition-colors items-center">
+                                <div className="px-4 py-3 border-r border-border font-mono font-bold text-primary/80">{item.ma_mon}</div>
+                                <div className="px-4 py-3 border-r border-border font-semibold text-foreground whitespace-normal break-words" title={item.ten_mon}>{item.ten_mon}</div>
+                                <div className="px-4 py-3 border-r border-border text-center font-medium">{item.nhom_to || "--"}</div>
+                                <div className="px-4 py-3 border-r border-border text-center">
+                                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${item.sl_cl === 0 ? "bg-destructive/10 text-destructive" : "bg-primary/10 text-primary"}`}>
+                                        {`${item.sl_cp - item.sl_cl}/${item.sl_cp}`}
+                                    </span>
+                                </div>
+                                <div className="px-4 py-3 border-r border-border text-center font-bold text-foreground">{item.so_tc}</div>
+                                <div className="px-4 py-3 flex justify-center">
+                                    <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all cursor-pointer rounded-none"
+                                        onClick={() => onRemove(item.id_to_hoc)}
+                                    >
+                                        <Trash2 size={16} />
+                                    </Button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+
+                    {/* Footer */}
+                    {data.length > 0 && (
+                        <div className="grid grid-cols-[110px_1fr_100px_130px_100px_100px] font-bold bg-muted/30 text-foreground border-b border-border">
+                            <div className="col-span-4 px-4 py-3 border-r border-border text-right uppercase tracking-wider text-[10px] sm:text-xs text-muted-foreground">Tổng số tín chỉ tích lũy:</div>
+                            <div className="px-4 py-3 border-r border-border text-center text-sm sm:text-base text-primary">{totalTC}</div>
+                            <div className="px-4 py-3"></div>
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
