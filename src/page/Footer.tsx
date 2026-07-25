@@ -44,7 +44,7 @@ export default function Footer() {
                     <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-label text-muted-foreground border-t pt-4 font-mono uppercase tracking-wider">
                         <div className="flex items-center gap-1.5">
                             <span>Mọi thắc mắc xin hãy liên hệ qua nhà phát triển </span>
-                            <a href="https://www.facebook.com/cucngau.quan/" target="_blank" rel="noopener noreferrer" className="font-medium text-foreground hover:text-primary transition-colors decoration-primary/50 underline underline-offset-4">
+                            <a href="https://nguyencongquan.id.vn/en" target="_blank" rel="noopener noreferrer" className="font-medium text-foreground hover:text-primary transition-colors decoration-primary/50 underline underline-offset-4">
                                 Quan
                             </a>
                             <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
