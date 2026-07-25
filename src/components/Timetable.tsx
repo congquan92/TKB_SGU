@@ -27,7 +27,11 @@ import TimetableTabs, { type TimetableVersion } from "@/components/TimetableTabs
 
 const rawData = raw as SguTimetableJson;
 const groups: ClassItem[] = rawData.data.ds_nhom_to;
-const subjects: MonHocItem[] = rawData.data.ds_mon_hoc;
+
+// Set chỉ lấy 1 cái mã môn học
+const validSubjectIds = new Set(groups.map((g) => g.ma_mon));
+const subjects: MonHocItem[] = rawData.data.ds_mon_hoc.filter((s) => validSubjectIds.has(s.ma));
+
 const hocKy = rawData.hoc_ky_dang_ky;
 
 // map "Thứ 2" -> 1, ...
@@ -353,7 +357,12 @@ export default function Timetable() {
                     <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-4 border-b border-border">
                         <div>
                             <h2 className="text-xl font-bold text-foreground">Thời Khóa Biểu</h2>
-                            {hocKy && <p className="text-xs text-muted-foreground mt-1">{hocKy}</p>}
+                            <div className="flex items-center gap-1">
+                                {hocKy && <p className="text-xs text-muted-foreground">{hocKy} : </p>}
+                                <span className="text-xs font-medium text-muted-foreground">
+                                    {rawData.sl_monhoc}/{rawData.data.ds_mon_hoc.length} môn
+                                </span>
+                            </div>
                         </div>
                     </div>
 

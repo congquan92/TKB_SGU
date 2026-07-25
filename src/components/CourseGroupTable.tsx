@@ -49,13 +49,21 @@ export function CourseGroupTable({ groups, selectedSubject, chosenIds, onToggle 
                     </thead>
 
                     <tbody>
-                        {rows.length === 0 && (
+                        {/* {!selectedSubject && (
                             <tr>
                                 <td colSpan={11} className="px-4 py-10 text-center text-muted-foreground">
                                     Chưa chọn môn học
                                 </td>
                             </tr>
                         )}
+
+                        {selectedSubject && rows.length === 0 && (
+                            <tr>
+                                <td colSpan={11} className="px-4 py-10 text-center text-muted-foreground">
+                                    Không có nhóm tổ nào cho môn học này
+                                </td>
+                            </tr>
+                        )} */}
 
                         {rows.map((item) => {
                             const checked = chosenIds.includes(item.id_to_hoc);

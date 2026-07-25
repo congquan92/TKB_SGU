@@ -58,4 +58,6 @@ export interface SguTimetableJson {
         ds_mon_hoc: DsMonHocItem[];
     };
     time: string;
+    sl_monhoc: number;
+    total_items: number;
 }
