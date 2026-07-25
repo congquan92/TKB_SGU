@@ -15,6 +15,8 @@ import Donate from "@/components/feature/Donate";
 import { GraduationCap, Sparkles } from "lucide-react";
 import { time } from "@/data/dsCustom.json";
 import { ModeToggle } from "@/components/theme/mode-toggle";
+import Notify from "@/components/feature/Notify";
+
 export default function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
@@ -35,6 +37,7 @@ export default function Header() {
 
                 <div className="flex items-center gap-3 text-sm text-muted-foreground">
                     <Donate />
+                    <Notify />
                     <ModeToggle />
                 </div>
             </div>

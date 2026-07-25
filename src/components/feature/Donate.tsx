@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function Donate() {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
 
     // VietQR parameters
     const bankCode = "970415";
