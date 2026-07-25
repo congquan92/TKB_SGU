@@ -44,7 +44,7 @@ export default function Notify() {
                             <p>
                                 Website hiện tại vẫn là <strong>Học kỳ 3 - Năm học 2025 - 2026</strong>, mọi người có thể xem trước Thời khóa biểu của <strong>Học kỳ 1 - Năm học 2026 - 2027 </strong>
                                 <a
-                                    href="https://daotao.sgu.edu.vn/images/pdf/sotaydkmh/261/TKB_monchung.pdf"
+                                    href="https://daotao.sgu.edu.vn/index.php/thong-bao/so-tay-dang-ki-mon-hoc/so-tay-dang-ki-mon-hoc-hk1-nh-2026-2027"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="font-semibold text-rose-600 dark:text-rose-400 hover:text-rose-700 dark:hover:text-rose-300 underline decoration-rose-300 dark:decoration-rose-700 underline-offset-2 transition-colors"
