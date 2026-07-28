@@ -55,8 +55,16 @@ export default function Notify() {
                             <p className="bg-rose-100/50 dark:bg-rose-900/20 p-2 rounded text-xs text-rose-700 dark:text-rose-300 italic border-l-2 border-rose-400">Website sẽ sớm được cập nhật dữ liệu mới nhất. Xin cảm ơn mọi người 💖</p>
                         </div>
                     </div> */}
-                    <div>
-                        Đã cập nhật dữ liệu mới nhất cho <strong>Học kỳ 1 - Năm học 2026 - 2027</strong>. Mọi người có thể xem Thời khóa biểu mới nhất
+                    <div className="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/50 p-4 flex flex-col gap-3 rounded-lg shadow-sm">
+                        <div className="flex items-center gap-2 border-b border-rose-200/60 dark:border-rose-900/50 pb-2">
+                            <div className="p-1.5 bg-rose-200/50 dark:bg-rose-900/50 rounded-full shrink-0">
+                                <Info className="w-4 h-4 text-rose-600 dark:text-rose-400" />
+                            </div>
+                            <strong className="font-semibold text-rose-800 dark:text-rose-200 text-base">Thông báo cập nhật</strong>
+                        </div>
+                        <div className="text-sm text-rose-800 dark:text-rose-200 leading-relaxed space-y-3">
+                            <p className="bg-rose-100/50 dark:bg-rose-900/20 p-2 rounded text-xs text-rose-700 dark:text-rose-300 italic border-l-2 border-rose-400">Website đã được cập nhật dữ liệu mới nhất Học kỳ 1 - Năm học 2026 - 2027.</p>
+                        </div>
                     </div>
                 </div>
 
