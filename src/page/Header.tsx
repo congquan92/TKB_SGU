@@ -20,22 +20,25 @@ import Notify from "@/components/feature/Notify";
 export default function Header() {
     return (
         <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-            <div className="mx-auto max-w-7xl px-4 py-4 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-10 h-10 rounded-md">
-                        <GraduationCap size={50} />
+            <div className="mx-auto max-w-7xl px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2 flex-wrap">
+                <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-md">
+                        <GraduationCap size={36} className="sm:hidden" />
+                        <GraduationCap size={50} className="hidden sm:block" />
                     </div>
                     <div>
                         <h1 className="text-h1 flex items-center gap-2">
                             Thời Khóa Biểu SGU
                             <Sparkles className="w-4 h-4 text-primary" />
                         </h1>
-                        <p className="text-label text-muted-foreground uppercase tracking-wider">Sắp xếp thời khóa biểu thông minh</p>
+                        {/* Ẩn tagline trên mobile để tiết kiệm không gian */}
+                        <p className="hidden sm:block text-label text-muted-foreground uppercase tracking-wider">Sắp xếp thời khóa biểu thông minh</p>
                     </div>
-                    <div className="px-3 py-1.5 bg-card border border-border hover:bg-muted transition-colors cursor-pointer font-mono text-xs">{time}</div>
+                    {/* Ẩn badge kỳ học trên mobile */}
+                    <div className="hidden sm:block px-3 py-1.5 bg-card border border-border hover:bg-muted transition-colors cursor-pointer font-mono text-xs">{time}</div>
                 </div>
 
-                <div className="flex items-center gap-3 text-sm text-muted-foreground">
+                <div className="flex items-center gap-2 sm:gap-3 text-sm text-muted-foreground">
                     <Donate />
                     <Notify />
                     <ModeToggle />

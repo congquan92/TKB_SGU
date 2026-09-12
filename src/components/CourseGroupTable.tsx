@@ -28,8 +28,11 @@ export function CourseGroupTable({ groups, selectedSubject, chosenIds, onToggle 
         <div className="space-y-3 bg-card">
             <h3 className="text-sm font-bold text-foreground uppercase tracking-wide">Danh sách nhóm tổ</h3>
 
-            <div className="overflow-x-auto border-2 border-border bg-card">
-                <table className="min-w-full text-sm cursor-pointer">
+            {/* Hint vuốt ngang chỉ hiện trên mobile */}
+            <p className="sm:hidden text-[10px] text-muted-foreground font-mono">← Vuốt ngang để xem đủ →</p>
+
+            <div className="overflow-x-auto border-2 border-border bg-card scrollbar-hide">
+                <table className="min-w-[700px] text-sm cursor-pointer">
                     <thead className="bg-muted text-foreground">
                         <tr className="border-b border-border">
                             <th className="w-10 px-3 py-3 text-left border-r border-border">

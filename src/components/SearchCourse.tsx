@@ -37,20 +37,20 @@ export function SearchCourse({ subjects, value, onChange }: Props) {
     }, [subjects, search]);
 
     return (
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2 sm:gap-2.5 w-full">
             {/* label */}
-            <span className="text-label font-bold text-muted-foreground min-w-[65px] uppercase tracking-wider font-mono">Môn học:</span>
+            <span className="text-label font-bold text-muted-foreground shrink-0 uppercase tracking-wider font-mono text-xs hidden sm:inline">Môn học:</span>
 
             {/* combobox */}
             <Popover open={open} onOpenChange={setOpen}>
                 <PopoverTrigger asChild>
-                    <Button variant="outline" role="combobox" className="w-[min(520px,90vw)] justify-between border-border bg-background hover:bg-accent text-left h-9 px-3 shadow-sm cursor-pointer rounded-none">
+                    <Button variant="outline" role="combobox" className="flex-1 min-w-0 max-w-xl justify-between border-border bg-background hover:bg-accent text-left h-9 px-3 shadow-sm cursor-pointer rounded-none">
                         <span className="truncate text-sm font-medium">{value ? value.ten : "Chọn môn học..."}</span>
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-40" />
                     </Button>
                 </PopoverTrigger>
 
-                <PopoverContent className="w-[min(520px,90vw)] p-0 shadow-xl border-border overflow-hidden rounded-none" align="start" sideOffset={4}>
+                <PopoverContent className="w-[min(520px,calc(100vw-2rem))] p-0 shadow-xl border-border overflow-hidden rounded-none" align="start" sideOffset={4}>
                     <div className="border-b bg-muted px-3 py-2.5 text-label font-bold text-muted-foreground uppercase tracking-wider font-mono">Danh sách môn học</div>
 
                     <Command>

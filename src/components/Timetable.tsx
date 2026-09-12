@@ -266,6 +266,8 @@ export default function Timetable() {
                 quality: 1,
                 pixelRatio: 3, // tăng độ phân giải
                 backgroundColor: "#ffffff",
+                width: gridElement.scrollWidth,
+                height: gridElement.scrollHeight,
             });
 
             // Download ảnh
@@ -350,11 +352,11 @@ export default function Timetable() {
             {/* Tabs phiên bản */}
             <TimetableTabs activeVersionId={activeVersionId} onVersionChange={handleVersionChange} onVersionsUpdate={handleVersionsUpdate} versions={versions} />
 
-            <div className="max-w-7xl mx-auto px-4 py-6 space-y-6">
+            <div className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 space-y-4 sm:space-y-6">
                 {/*  Search and Course Group Table */}
                 <div className="bg-card shadow-sm border border-border overflow-hidden">
                     {/* Header Section */}
-                    <div className="flex items-center justify-between flex-wrap gap-4 px-6 py-4 border-b border-border">
+                    <div className="flex items-center justify-between flex-wrap gap-4 px-3 sm:px-6 py-4 border-b border-border">
                         <div>
                             <h2 className="text-xl font-bold text-foreground">Thời Khóa Biểu</h2>
                             <div className="flex items-center gap-1">
@@ -367,14 +369,14 @@ export default function Timetable() {
                     </div>
 
                     {/* Search Section */}
-                    <div className="flex items-center gap-3 flex-wrap px-6 py-4">
-                        <div className="flex-1 min-w-[300px]">
+                    <div className="flex items-center gap-3 flex-wrap px-3 sm:px-6 py-4">
+                        <div className="flex-1 min-w-0 sm:min-w-[300px]">
                             <SearchCourse subjects={subjects} value={selectedSubject} onChange={handleCourseChange} />
                         </div>
                     </div>
 
                     {/* Course Group Table */}
-                    <div className="px-6 py-4">
+                    <div className="px-3 sm:px-6 py-4">
                         <CourseGroupTable groups={groups} selectedSubject={selectedSubject} chosenIds={chosenIds} onToggle={handleToggleGroup} />
                     </div>
                 </div>
@@ -382,9 +384,9 @@ export default function Timetable() {
                 {/* Timetable Grid */}
                 {events.length > 0 && (
                     <div className="flex flex-col gap-4">
-                        <div ref={timetableRef} className="bg-card border border-border px-6 py-4 shadow-sm ">
-                            <div className="flex justify-between">
-                                <div className="flex items-center gap-2 p-4">
+                        <div ref={timetableRef} className="bg-card border border-border px-3 sm:px-6 py-4 shadow-sm ">
+                            <div className="flex flex-wrap justify-between gap-2">
+                                <div className="flex items-center gap-2 py-2">
                                     <h2 className="text-xl font-bold text-foreground">Thời khóa biểu của bạn</h2>
                                     <span className="text-xs font-medium text-muted-foreground px-3 py-1 bg-muted border border-border">
                                         {groups.filter((g) => chosenIds.includes(g.id_to_hoc)).reduce((sum, g) => sum + Number(g.so_tc), 0)} tín chỉ
@@ -392,7 +394,7 @@ export default function Timetable() {
                                     <span className="text-xs font-medium text-muted-foreground px-3 py-1 bg-muted border border-border">{new Set(groups.filter((g) => chosenIds.includes(g.id_to_hoc)).map((g) => g.ma_mon)).size} môn</span>
                                 </div>
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1 sm:gap-2">
                                     <Button variant={"outline"} onClick={clearAll} size={"icon"} className="cursor-pointer rounded-none" title="Xóa tất cả">
                                         <Trash />
                                     </Button>
@@ -411,7 +413,7 @@ export default function Timetable() {
                             <TimetableGrid events={events} />
                         </div>
 
-                        <div className="px-6 py-4 border border-border mt-4 bg-card">
+                        <div className="px-3 sm:px-6 py-4 border border-border mt-4 bg-card">
                             <CourseGroupSelected groups={groups} chosenIds={chosenIds} onRemove={handleRemoveGroup} />
                         </div>
                     </div>

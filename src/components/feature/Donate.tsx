@@ -50,11 +50,11 @@ export default function Donate() {
 
                     {/* QR Code */}
                     <div className="flex justify-center py-2">
-                        <div className="bg-white p-4 border-2 border-border inline-block rounded-lg">
+                        <div className="bg-white p-2 sm:p-4 border-2 border-border inline-block rounded-lg max-w-full">
                             <img
                                 src={qrUrl}
                                 alt="VietQR Code"
-                                className="w-80 h-80 object-contain"
+                                className="w-56 h-56 sm:w-80 sm:h-80 max-w-full object-contain mx-auto"
                                 onError={(e) => {
                                     e.currentTarget.src = "/qr.png";
                                 }}

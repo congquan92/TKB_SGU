@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Copyright (C) 2026  Nguyen Cong Quan
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ export default function BackToTop() {
                     onClick={() => scrollToTop()}
                     size="icon"
                     className="fixed bottom-5 right-5 z-50 rounded-none shadow-lg hover:shadow-xl transition-all duration-300 border border-black cursor-pointer dark:border-white/30"
-                    aria-label="Vá» Ä‘áº§u trang"
+                    aria-label="Về đầu trang"
                 >
                     <ArrowUp className="w-5 h-5" />
                 </Button>

@@ -92,7 +92,7 @@ export default function TimetableTabs({ activeVersionId, onVersionChange, onVers
     return (
         <div className="bg-background border-b border-border">
             <div className="max-w-7xl mx-auto px-4">
-                <div className="flex items-center gap-2 overflow-x-auto py-2">
+                <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto scrollbar-hide py-2">
                     {versions.map((version) => {
                         const isActive = version.id === activeVersionId;
                         const courseCount = version.chosenIds.length;

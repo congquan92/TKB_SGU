@@ -29,46 +29,54 @@ export default function CourseGroupSelected({ groups, chosenIds, onRemove }: Pro
         <div className="w-full bg-card">
             <div className="uppercase text-base tracking-wide font-bold m-5 text-foreground">Danh sách nhóm tổ đã chọn</div>
 
-            {/* Header */}
-            <div className="grid grid-cols-[120px_1fr_100px_120px_100px_80px] font-bold text-sm border border-border bg-muted">
-                <div className="px-6 py-3 border-r border-border text-foreground uppercase text-xs tracking-wider">Mã</div>
-                <div className="px-6 py-3 border-r border-border text-foreground uppercase text-xs tracking-wider">Tên môn</div>
-                <div className="px-6 py-3 border-r border-border text-center text-foreground uppercase text-xs tracking-wider">Nhóm</div>
-                <div className="px-6 py-3 border-r border-border text-center text-foreground uppercase text-xs tracking-wider">Số lượng</div>
-                <div className="px-6 py-3 border-r border-border text-center text-foreground uppercase text-xs tracking-wider">Số TC</div>
-                <div className="px-6 py-3 text-center text-foreground uppercase text-xs tracking-wider">Xóa</div>
-            </div>
+            {/* Hint vuốt ngang chỉ hiện trên mobile */}
+            <p className="sm:hidden text-[10px] text-muted-foreground font-mono mx-5 mb-2">← Vuốt ngang để xem đủ →</p>
 
-            {/* Rows */}
-            {data.length === 0 ? (
-                <div className="px-6 py-10 text-center text-muted-foreground">Chưa có nhóm tổ nào được chọn</div>
-            ) : (
-                data.map((item) => (
-                    <div key={item.id_to_hoc} className="grid grid-cols-[120px_1fr_100px_120px_100px_80px] text-sm border border-t-0 border-border hover:bg-muted/50 transition">
-                        <div className="px-6 py-3 border-r border-border font-medium text-xs text-foreground">{item.ma_mon}</div>
-                        <div className="px-6 py-3 border-r border-border font-medium text-foreground">{item.ten_mon}</div>
-                        <div className="px-6 py-3 border-r border-border text-center font-medium text-foreground">{item.nhom_to || "--"}</div>
-                        <div className="px-6 py-3 border-r border-border text-center">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.sl_cl === 0 ? "text-destructive" : "text-foreground"}`}>{`${item.sl_cp - item.sl_cl}/${item.sl_cp}`}</span>
-                        </div>
-                        <div className="px-6 py-3 border-r border-border text-center font-bold text-foreground">{item.so_tc}</div>
-                        <div className="px-6 py-3 flex justify-center">
-                            <Button variant="outline" className="text-destructive hover:text-destructive transition cursor-pointer rounded-none" title="Xóa nhóm tổ" onClick={() => onRemove(item.id_to_hoc)}>
-                                <Trash2 size={18} />
-                            </Button>
-                        </div>
+            {/* Scroll container */}
+            <div className="overflow-x-auto scrollbar-hide">
+                <div className="min-w-[600px]">
+                    {/* Header */}
+                    <div className="grid grid-cols-[120px_1fr_100px_120px_100px_80px] font-bold text-sm border border-border bg-muted">
+                        <div className="px-6 py-3 border-r border-border text-foreground uppercase text-xs tracking-wider">Mã</div>
+                        <div className="px-6 py-3 border-r border-border text-foreground uppercase text-xs tracking-wider">Tên môn</div>
+                        <div className="px-6 py-3 border-r border-border text-center text-foreground uppercase text-xs tracking-wider">Nhóm</div>
+                        <div className="px-6 py-3 border-r border-border text-center text-foreground uppercase text-xs tracking-wider">Số lượng</div>
+                        <div className="px-6 py-3 border-r border-border text-center text-foreground uppercase text-xs tracking-wider">Số TC</div>
+                        <div className="px-6 py-3 text-center text-foreground uppercase text-xs tracking-wider">Xóa</div>
                     </div>
-                ))
-            )}
 
-            {/* Footer */}
-            {data.length > 0 && (
-                <div className="grid grid-cols-[120px_1fr_100px_120px_100px_80px] font-semibold border border-t-0 bg-muted border-border ">
-                    <div className="col-span-4 px-6 py-3 border-r border-border text-foreground">Tổng số tín chỉ</div>
-                    <div className="px-6 py-3 border-r border-border text-center font-bold text-foreground">{totalTC}</div>
-                    <div className="px-6 py-3"></div>
+                    {/* Rows */}
+                    {data.length === 0 ? (
+                        <div className="px-6 py-10 text-center text-muted-foreground">Chưa có nhóm tổ nào được chọn</div>
+                    ) : (
+                        data.map((item) => (
+                            <div key={item.id_to_hoc} className="grid grid-cols-[120px_1fr_100px_120px_100px_80px] text-sm border border-t-0 border-border hover:bg-muted/50 transition">
+                                <div className="px-6 py-3 border-r border-border font-medium text-xs text-foreground">{item.ma_mon}</div>
+                                <div className="px-6 py-3 border-r border-border font-medium text-foreground">{item.ten_mon}</div>
+                                <div className="px-6 py-3 border-r border-border text-center font-medium text-foreground">{item.nhom_to || "--"}</div>
+                                <div className="px-6 py-3 border-r border-border text-center">
+                                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${item.sl_cl === 0 ? "text-destructive" : "text-foreground"}`}>{`${item.sl_cp - item.sl_cl}/${item.sl_cp}`}</span>
+                                </div>
+                                <div className="px-6 py-3 border-r border-border text-center font-bold text-foreground">{item.so_tc}</div>
+                                <div className="px-6 py-3 flex justify-center">
+                                    <Button variant="outline" className="text-destructive hover:text-destructive transition cursor-pointer rounded-none" title="Xóa nhóm tổ" onClick={() => onRemove(item.id_to_hoc)}>
+                                        <Trash2 size={18} />
+                                    </Button>
+                                </div>
+                            </div>
+                        ))
+                    )}
+
+                    {/* Footer */}
+                    {data.length > 0 && (
+                        <div className="grid grid-cols-[120px_1fr_100px_120px_100px_80px] font-semibold border border-t-0 bg-muted border-border ">
+                            <div className="col-span-4 px-6 py-3 border-r border-border text-foreground">Tổng số tín chỉ</div>
+                            <div className="px-6 py-3 border-r border-border text-center font-bold text-foreground">{totalTC}</div>
+                            <div className="px-6 py-3"></div>
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
     );
 }
