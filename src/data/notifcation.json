@@ -1,0 +1,95 @@
+[
+  {
+    "id": "notif-005",
+    "title": "Cập nhật dữ liệu Thời khóa biểu Học kỳ 1 (2026 - 2027)",
+    "content": "Hệ thống TKB SGU đã đồng bộ dữ liệu môn học, nhóm tổ và phòng học mới nhất cho Học kỳ 1 - Năm học 2026 - 2027.\n\nCác bạn sinh viên có thể bắt đầu tra cứu mã môn, sắp xếp lịch học thử và kiểm tra xung đột lịch ngay bây giờ. Chúc các bạn đăng ký môn học thuận lợi!",
+    "tags": [
+      "#HK1_2026_2027",
+      "#CậpNhậtTKB",
+      "#SGU"
+    ],
+    "link": {
+      "label": "Xem Sổ tay Đăng ký Môn học (Phòng Đào tạo SGU)",
+      "url": "https://daotao.sgu.edu.vn/index.php/thong-bao/so-tay-dang-ki-mon-hoc/so-tay-dang-ki-mon-hoc-hk1-nh-2026-2027"
+    },
+    "timestamp": "2026-09-13T13:41:42+07:00",
+    "pinned": true,
+    "sender": {
+      "name": "Nguyễn Công Quân",
+      "role": "Admin",
+      "avatar": "https://i.pinimg.com/1200x/0b/8f/27/0b8f27e38d1cdce79fec49d465e9be1d.jpg"
+    }
+  },
+  {
+    "id": "notif-004",
+    "title": "Tối ưu hóa toàn diện giao diện cho thiết bị Di động",
+    "content": "Đã nâng cấp trải nghiệm giao diện trên điện thoại: Tối ưu bảng chọn nhóm tổ, bảng xem lưới thời khóa biểu và các thao tác cuộn mượt mà trên màn hình nhỏ.",
+    "tags": [
+      "#MobileUI",
+      "#TốiƯuTrảiNghiệm",
+      "#PWA"
+    ],
+    "link": null,
+    "timestamp": "2026-09-13T02:35:13+07:00",
+    "pinned": false,
+    "sender": {
+      "name": "Nguyễn Công Quân",
+      "role": "Admin",
+      "avatar": "https://i.pinimg.com/1200x/0b/8f/27/0b8f27e38d1cdce79fec49d465e9be1d.jpg"
+    }
+  },
+  {
+    "id": "notif-003",
+    "title": "Đồng bộ số lượng chỗ còn lại của các nhóm tổ",
+    "content": "Đã cập nhật lại chính xác số lượng sinh viên còn lại (chỗ trống) và sức chứa phòng học của từng nhóm tổ trong cơ sở dữ liệu để các bạn tiện theo dõi tình trạng lớp học.",
+    "tags": [
+      "#SĩSốLớp",
+      "#CậpNhậtDữLiệu",
+      "#dsCustom"
+    ],
+    "link": null,
+    "timestamp": "2026-08-01T14:22:11+07:00",
+    "pinned": false,
+    "sender": {
+      "name": "Nguyễn Công Quân",
+      "role": "Admin",
+      "avatar": "https://i.pinimg.com/1200x/0b/8f/27/0b8f27e38d1cdce79fec49d465e9be1d.jpg"
+    }
+  },
+  {
+    "id": "notif-002",
+    "title": "Bổ sung chế độ Sáng / Tối (Dark Mode) với hiệu ứng vòng tròn",
+    "content": "Website đã hỗ trợ chế độ Giao diện Tối (Dark Mode) với hiệu ứng chuyển đổi mượt mà (Circular View Transition), giúp bảo vệ mắt khi bạn xếp lịch vào ban đêm.",
+    "tags": [
+      "#DarkMode",
+      "#LightMode",
+      "#GiaoDiện"
+    ],
+    "link": null,
+    "timestamp": "2026-07-29T01:00:15+07:00",
+    "pinned": false,
+    "sender": {
+      "name": "Nguyễn Công Quân",
+      "role": "Admin",
+      "avatar": "https://i.pinimg.com/1200x/0b/8f/27/0b8f27e38d1cdce79fec49d465e9be1d.jpg"
+    }
+  },
+  {
+    "id": "notif-001",
+    "title": "Ra mắt Kênh Thông Báo & Cập Nhật TKB SGU",
+    "content": "Chào mừng các bạn sinh viên SGU! Kênh thông báo chính thức được tích hợp trên website để gửi các thông tin quan trọng về lịch đăng ký môn học và các tính năng mới.",
+    "tags": [
+      "#ThôngBáoMới",
+      "#HệThốngTKB",
+      "#SGU"
+    ],
+    "link": null,
+    "timestamp": "2026-07-25T14:55:32+07:00",
+    "pinned": false,
+    "sender": {
+      "name": "Nguyễn Công Quân",
+      "role": "Admin",
+      "avatar": "https://i.pinimg.com/1200x/0b/8f/27/0b8f27e38d1cdce79fec49d465e9be1d.jpg"
+    }
+  }
+]
