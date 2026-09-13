@@ -16,16 +16,16 @@ import VictorCounter from "@/components/feature/VictorCounter";
 
 export default function Footer() {
     return (
-        <footer className="w-full border-t border-border/40 bg-muted/20 backdrop-blur-sm mt-12">
-            <div className="mx-auto max-w-7xl px-6 py-8">
-                <div className="flex flex-col items-center gap-6 text-sm">
+        <footer className="w-full border-t border-border/40 bg-muted/20 backdrop-blur-sm mt-12 pb-24 sm:pb-8">
+            <div className="mx-auto max-w-7xl px-4 sm:px-6 py-6 sm:py-8">
+                <div className="flex flex-col items-center gap-5 sm:gap-6 text-sm">
                     {/*Giới thiệu */}
                     <div className="text-center space-y-2">
-                        <p className="text-muted-foreground max-w-lg leading-relaxed">Công cụ hỗ trợ sinh viên sắp xếp thời khóa biểu thông minh, tránh xung đột lịch học của sinh viên</p>
+                        <p className="text-muted-foreground max-w-lg leading-relaxed text-xs sm:text-sm">Công cụ hỗ trợ sinh viên sắp xếp thời khóa biểu thông minh, tránh xung đột lịch học của sinh viên</p>
                     </div>
 
                     {/* (Copyright, Version, Counter) */}
-                    <div className="flex flex-col sm:flex-row items-center justify-between w-full max-w-2xl gap-4 text-label text-muted-foreground mt-2 pt-4 border-t font-mono">
+                    <div className="flex flex-col sm:flex-row items-center justify-between w-full max-w-2xl gap-3 sm:gap-4 text-label text-muted-foreground mt-2 pt-4 border-t font-mono text-xs">
                         <span>© 2025 SVSGU - K23 </span>
 
                         <div className="opacity-80 scale-90">
@@ -40,14 +40,14 @@ export default function Footer() {
                         </div>
                     </div>
 
-                    {/* Auhtor */}
-                    <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-label text-muted-foreground border-t pt-4 font-mono uppercase tracking-wider">
-                        <div className="flex items-center gap-1.5">
+                    {/* Author */}
+                    <div className="flex flex-wrap items-center justify-center gap-x-2 sm:gap-x-6 gap-y-2 text-label text-muted-foreground border-t pt-4 font-mono uppercase tracking-wider text-xs text-center">
+                        <div className="flex items-center gap-1.5 flex-wrap justify-center">
                             <span>Mọi thắc mắc xin hãy liên hệ qua nhà phát triển </span>
-                            <a href="https://nguyencongquan.id.vn/en" target="_blank" rel="noopener noreferrer" className="font-medium text-foreground hover:text-primary transition-colors decoration-primary/50 underline underline-offset-4">
+                            <a href="https://nguyencongquan.id.vn/en" target="_blank" rel="noopener noreferrer" className="font-medium text-foreground hover:text-primary transition-colors decoration-primary/50 underline underline-offset-4 inline-flex items-center gap-1">
                                 Quan
+                                <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 inline" />
                             </a>
-                            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
                         </div>
                     </div>
                 </div>

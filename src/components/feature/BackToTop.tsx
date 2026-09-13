@@ -46,10 +46,10 @@ export default function BackToTop() {
                     variant="secondary"
                     onClick={() => scrollToTop()}
                     size="icon"
-                    className="fixed bottom-5 right-5 z-50 rounded-none shadow-lg hover:shadow-xl transition-all duration-300 border border-black cursor-pointer dark:border-white/30"
+                    className="fixed bottom-[calc(1.25rem+env(safe-area-inset-bottom,0px))] right-4 sm:right-6 z-40 rounded-none shadow-lg hover:shadow-xl transition-all duration-300 border border-black cursor-pointer dark:border-white/30 active:scale-95"
                     aria-label="Về đầu trang"
                 >
-                    <ArrowUp className="w-5 h-5" />
+                    <ArrowUp className="w-4 h-4 sm:w-5 sm:h-5" />
                 </Button>
             )}
         </>

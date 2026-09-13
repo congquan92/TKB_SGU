@@ -20,7 +20,7 @@ export function useIsMobile(breakpoint = 768) {
         const check = () => {
             const byWidth = window.innerWidth < breakpoint;
 
-            const ua = navigator.userAgent || navigator.vendor || (window as any).opera;
+            const ua = navigator.userAgent || navigator.vendor || (window as unknown as { opera?: string }).opera || "";
             const byUA = /android|iphone|ipad|ipod|mobile/i.test(ua);
 
             setIsMobile(byWidth || byUA);

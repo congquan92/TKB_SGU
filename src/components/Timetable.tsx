@@ -12,7 +12,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import { useState, useRef, useEffect } from "react";
-import { Calendar, Camera, Download, Trash, Upload } from "lucide-react";
+import { Calendar, Camera, Download, Trash, Upload, LayoutGrid, TableProperties } from "lucide-react";
 import { SearchCourse } from "@/components/SearchCourse";
 import TimetableGrid from "@/components/TimetableGrid";
 import { CourseGroupTable } from "@/components/CourseGroupTable";
@@ -24,6 +24,7 @@ import { Button } from "@/components/ui/button";
 import CourseGroupSelected from "@/components/CourseGroupSelected";
 import { toPng } from "html-to-image";
 import TimetableTabs, { type TimetableVersion } from "@/components/TimetableTabs";
+import { useIsMobile } from "@/hook/useIsMobile";
 
 const rawData = raw as SguTimetableJson;
 const groups: ClassItem[] = rawData.data.ds_nhom_to;
@@ -172,6 +173,17 @@ export default function Timetable() {
     const chosenIds = activeVersion?.chosenIds || [];
     const events = loadEventsFromIds(chosenIds);
 
+    const isMobile = useIsMobile();
+    const [gridMode, setGridMode] = useState<"grid" | "card">("grid");
+
+    useEffect(() => {
+        if (isMobile) {
+            setGridMode("card");
+        } else {
+            setGridMode("grid");
+        }
+    }, [isMobile]);
+
     const timetableRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -255,8 +267,12 @@ export default function Timetable() {
         if (!timetableRef.current) return;
 
         try {
-            // Tìm element TimetableGrid bên trong timetableRef
-            const gridElement = timetableRef.current.querySelector(".w-full.bg-background.overflow-hidden.border") as HTMLElement;
+            // Tìm element TimetableGrid (grid hoặc agenda card) bên trong timetableRef
+            const gridElement = (
+                timetableRef.current.querySelector(".timetable-capture-target") ||
+                timetableRef.current.querySelector(".w-full.bg-background.overflow-hidden.border") ||
+                timetableRef.current
+            ) as HTMLElement;
             if (!gridElement) {
                 toast.error("Không tìm thấy thời khóa biểu");
                 return;
@@ -394,23 +410,47 @@ export default function Timetable() {
                                     <span className="text-xs font-medium text-muted-foreground px-3 py-1 bg-muted border border-border">{new Set(groups.filter((g) => chosenIds.includes(g.id_to_hoc)).map((g) => g.ma_mon)).size} môn</span>
                                 </div>
 
-                                <div className="flex items-center gap-1 sm:gap-2">
-                                    <Button variant={"outline"} onClick={clearAll} size={"icon"} className="cursor-pointer rounded-none" title="Xóa tất cả">
-                                        <Trash />
+                                <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                                    {/* Toggle Thẻ / Lưới */}
+                                    <div className="flex items-center border border-border p-0.5 bg-muted/40">
+                                        <Button
+                                            type="button"
+                                            variant={gridMode === "card" ? "secondary" : "ghost"}
+                                            size="sm"
+                                            className="h-8 px-2 sm:px-2.5 text-xs font-mono rounded-none cursor-pointer"
+                                            onClick={() => setGridMode("card")}
+                                        >
+                                            <LayoutGrid className="w-3.5 h-3.5 mr-1" />
+                                            Thẻ
+                                        </Button>
+                                        <Button
+                                            type="button"
+                                            variant={gridMode === "grid" ? "secondary" : "ghost"}
+                                            size="sm"
+                                            className="h-8 px-2 sm:px-2.5 text-xs font-mono rounded-none cursor-pointer"
+                                            onClick={() => setGridMode("grid")}
+                                        >
+                                            <TableProperties className="w-3.5 h-3.5 mr-1" />
+                                            Lưới
+                                        </Button>
+                                    </div>
+
+                                    <Button variant={"outline"} onClick={clearAll} size={"icon"} className="h-8 w-8 cursor-pointer rounded-none" title="Xóa tất cả">
+                                        <Trash className="w-4 h-4" />
                                     </Button>
-                                    <Button variant={"outline"} onClick={handleCapture} size={"icon"} className="cursor-pointer rounded-none" title="Chụp ảnh">
-                                        <Camera />
+                                    <Button variant={"outline"} onClick={handleCapture} size={"icon"} className="h-8 w-8 cursor-pointer rounded-none" title="Chụp ảnh">
+                                        <Camera className="w-4 h-4" />
                                     </Button>
-                                    <Button variant={"outline"} onClick={() => fileInputRef.current?.click()} size={"icon"} className="cursor-pointer rounded-none" title="Tải lên TKB">
-                                        <Upload />
+                                    <Button variant={"outline"} onClick={() => fileInputRef.current?.click()} size={"icon"} className="h-8 w-8 cursor-pointer rounded-none" title="Tải lên TKB">
+                                        <Upload className="w-4 h-4" />
                                     </Button>
-                                    <Button variant={"outline"} onClick={handleDownloadJson} size={"icon"} className="cursor-pointer rounded-none" title="Tải xuống TKB">
-                                        <Download />
+                                    <Button variant={"outline"} onClick={handleDownloadJson} size={"icon"} className="h-8 w-8 cursor-pointer rounded-none" title="Tải xuống TKB">
+                                        <Download className="w-4 h-4" />
                                     </Button>
                                 </div>
                             </div>
 
-                            <TimetableGrid events={events} />
+                            <TimetableGrid events={events} viewMode={gridMode} />
                         </div>
 
                         <div className="px-3 sm:px-6 py-4 border border-border mt-4 bg-card">

@@ -11,8 +11,10 @@
  * * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import type { TimetableEvent } from "@/helper/type";
+import { Clock, MapPin, User, CalendarDays } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const DAYS = [
     { label: "Thứ 2", short: "T2", value: 1 },
@@ -21,7 +23,7 @@ const DAYS = [
     { label: "Thứ 5", short: "T5", value: 4 },
     { label: "Thứ 6", short: "T6", value: 5 },
     { label: "Thứ 7", short: "T7", value: 6 },
-    { label: "CN", short: "CN", value: 0 },
+    { label: "Chủ nhật", short: "CN", value: 0 },
 ];
 
 const PERIOD_TIMES = ["07:00-07:50", "07:50-08:40", "09:00-09:50", "09:50-10:40", "10:40-11:30", "13:00-13:50", "13:50-14:40", "15:00-15:50", "15:50-16:40", "16:40-17:30", "17:40-18:30", "18:30-19:20", "19:20-20:10"];
@@ -50,9 +52,12 @@ const COLORS = [
 
 type Props = {
     events: TimetableEvent[];
+    viewMode?: "grid" | "card";
 };
 
-export default function TimetableGrid({ events }: Props) {
+export default function TimetableGrid({ events, viewMode = "grid" }: Props) {
+    const [selectedDayFilter, setSelectedDayFilter] = useState<number | null>(null);
+
     // màu cho từng môn học để đảm bảo không trùng lặp (trong giới hạn số lượng màu)
     const colorMap = useMemo(() => {
         const uniqueSubjects = Array.from(new Set(events.map((e) => e.ma_mon))).sort();
@@ -65,6 +70,150 @@ export default function TimetableGrid({ events }: Props) {
         return map;
     }, [events]);
 
+    // Danh sách ngày có thứ tự: T2 -> T7 -> CN
+    const orderedDays = useMemo(() => {
+        const sorted = [...DAYS];
+        return sorted.sort((a, b) => {
+            const valA = a.value === 0 ? 7 : a.value;
+            const valB = b.value === 0 ? 7 : b.value;
+            return valA - valB;
+        });
+    }, []);
+
+    // Danh sách ngày cần hiển thị trong Agenda View
+    const displayDays = useMemo(() => {
+        if (selectedDayFilter !== null) {
+            return orderedDays.filter((d) => d.value === selectedDayFilter);
+        }
+        return orderedDays.filter((d) => events.some((e) => e.dayOfWeek === d.value));
+    }, [orderedDays, events, selectedDayFilter]);
+
+    if (viewMode === "card") {
+        return (
+            <div className="w-full space-y-4">
+                {/* Filter nhanh theo thứ */}
+                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+                    <Button
+                        type="button"
+                        variant={selectedDayFilter === null ? "secondary" : "outline"}
+                        size="sm"
+                        className="h-7 px-2.5 text-xs font-mono rounded-none shrink-0 cursor-pointer"
+                        onClick={() => setSelectedDayFilter(null)}
+                    >
+                        Tất cả ({orderedDays.filter((d) => events.some((e) => e.dayOfWeek === d.value)).length} ngày)
+                    </Button>
+                    {orderedDays.map((d) => {
+                        const count = events.filter((e) => e.dayOfWeek === d.value).length;
+                        if (count === 0) return null;
+                        const isSelected = selectedDayFilter === d.value;
+
+                        return (
+                            <Button
+                                key={d.value}
+                                type="button"
+                                variant={isSelected ? "secondary" : "outline"}
+                                size="sm"
+                                className="h-7 px-2.5 text-xs font-mono rounded-none shrink-0 cursor-pointer"
+                                onClick={() => setSelectedDayFilter(isSelected ? null : d.value)}
+                            >
+                                {d.label} ({count})
+                            </Button>
+                        );
+                    })}
+                </div>
+
+                {/* Container chụp ảnh / xuất màn hình */}
+                <div className="timetable-capture-target w-full bg-background overflow-hidden border border-border p-3 sm:p-5 space-y-5">
+                    {displayDays.length === 0 ? (
+                        <div className="py-12 text-center text-sm text-muted-foreground font-mono">
+                            <CalendarDays className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                            Không có lịch học nào
+                        </div>
+                    ) : (
+                        displayDays.map((day) => {
+                            const dayEvents = events
+                                .filter((e) => e.dayOfWeek === day.value)
+                                .sort((a, b) => a.periodStart - b.periodStart);
+
+                            const totalPeriods = dayEvents.reduce(
+                                (sum, e) => sum + (e.periodEnd - e.periodStart + 1),
+                                0
+                            );
+
+                            return (
+                                <div key={day.value} className="space-y-2.5">
+                                    {/* Tiêu đề ngày */}
+                                    <div className="flex items-center justify-between border-b border-border/80 pb-2">
+                                        <div className="flex items-center gap-2">
+                                            <span className="font-bold text-base text-foreground font-sans">
+                                                {day.label}
+                                            </span>
+                                            <span className="text-xs font-mono text-muted-foreground bg-muted px-2 py-0.5 border border-border">
+                                                {dayEvents.length} môn • {totalPeriods} tiết
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Danh sách thẻ môn học */}
+                                    <div className="space-y-2.5">
+                                        {dayEvents.map((ev) => {
+                                            const colorClass = colorMap[ev.ma_mon] || COLORS[0];
+                                            const startTime = PERIOD_TIMES[ev.periodStart - 1]?.split("-")[0] || "--";
+                                            const endTime = PERIOD_TIMES[ev.periodEnd - 1]?.split("-")[1] || "--";
+
+                                            return (
+                                                <div
+                                                    key={`${ev.id}-${ev.periodStart}-${ev.periodEnd}`}
+                                                    className={`border-l-4 p-3.5 sm:p-4 rounded-r-md transition shadow-2xs ${colorClass}`}
+                                                >
+                                                    <div className="flex items-start justify-between gap-2 flex-wrap">
+                                                        <div className="flex-1 min-w-0">
+                                                            <h4 className="text-base font-bold text-foreground leading-snug">
+                                                                {ev.courseName}
+                                                            </h4>
+                                                            <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                                                                <span className="text-xs font-mono font-medium px-2 py-0.5 rounded bg-background/80 border border-border/50 text-foreground">
+                                                                    Mã: {ev.ma_mon}
+                                                                </span>
+                                                                {ev.room && (
+                                                                    <span className="text-xs font-medium px-2 py-0.5 rounded bg-background/80 border border-border/50 text-foreground inline-flex items-center gap-1">
+                                                                        <MapPin className="w-3 h-3 text-muted-foreground" />
+                                                                        {ev.room}
+                                                                    </span>
+                                                                )}
+                                                                {ev.giang_vien && (
+                                                                    <span className="text-xs font-medium px-2 py-0.5 rounded bg-background/80 border border-border/50 text-foreground inline-flex items-center gap-1">
+                                                                        <User className="w-3 h-3 text-muted-foreground" />
+                                                                        {ev.giang_vien}
+                                                                    </span>
+                                                                )}
+                                                            </div>
+                                                        </div>
+
+                                                        <div className="text-right shrink-0">
+                                                            <div className="inline-flex items-center gap-1 text-xs font-bold font-mono px-2 py-1 rounded bg-background/90 border border-border text-foreground shadow-2xs">
+                                                                <Clock className="w-3.5 h-3.5 text-primary" />
+                                                                Tiết {ev.periodStart}–{ev.periodEnd}
+                                                            </div>
+                                                            <div className="text-[11px] font-mono text-muted-foreground mt-1">
+                                                                {startTime} - {endTime} ({ev.periodEnd - ev.periodStart + 1} tiết)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            );
+                        })
+                    )}
+                </div>
+            </div>
+        );
+    }
+
+    // Grid View (mặc định)
     return (
         <div className="w-full">
             {/* Hint vuốt ngang chỉ hiện trên mobile */}
@@ -72,8 +221,8 @@ export default function TimetableGrid({ events }: Props) {
 
             {/* Scroll container — giữ min-width để grid không bị ép */}
             <div className="overflow-x-auto scrollbar-hide overscroll-x-contain">
-                <div className="min-w-[700px]">
-                    <div className="w-full bg-background overflow-hidden border border-b-0 border-r-0 dark:border-b dark:border-r">
+                <div className="w-full min-w-[700px]">
+                    <div className="timetable-capture-target w-full bg-background overflow-hidden border border-b-0 border-r-0 dark:border-b dark:border-r">
                         {/* header: Tiết / Giờ / Thứ */}
                         <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] ">
                             <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted">Tiết</div>
