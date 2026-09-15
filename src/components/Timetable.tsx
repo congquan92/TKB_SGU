@@ -400,14 +400,17 @@ export default function Timetable() {
                 {/* Timetable Grid */}
                 {events.length > 0 && (
                     <div className="flex flex-col gap-4">
-                        <div ref={timetableRef} className="bg-card border border-border px-3 sm:px-6 py-4 shadow-sm ">
-                            <div className="flex flex-wrap justify-between gap-2">
-                                <div className="flex items-center gap-2 py-2">
+                        <div ref={timetableRef} className="bg-card shadow-sm border border-border overflow-hidden">
+                            {/* Header Section */}
+                            <div className="flex items-center justify-between flex-wrap gap-3 px-3 sm:px-6 py-4 border-b border-border">
+                                <div className="flex items-center gap-2 flex-wrap">
                                     <h2 className="text-xl font-bold text-foreground">Thời khóa biểu của bạn</h2>
-                                    <span className="text-xs font-medium text-muted-foreground px-3 py-1 bg-muted border border-border">
+                                    <span className="text-xs font-mono font-medium text-muted-foreground px-2.5 py-1 bg-muted border border-border">
                                         {groups.filter((g) => chosenIds.includes(g.id_to_hoc)).reduce((sum, g) => sum + Number(g.so_tc), 0)} tín chỉ
                                     </span>
-                                    <span className="text-xs font-medium text-muted-foreground px-3 py-1 bg-muted border border-border">{new Set(groups.filter((g) => chosenIds.includes(g.id_to_hoc)).map((g) => g.ma_mon)).size} môn</span>
+                                    <span className="text-xs font-mono font-medium text-muted-foreground px-2.5 py-1 bg-muted border border-border">
+                                        {new Set(groups.filter((g) => chosenIds.includes(g.id_to_hoc)).map((g) => g.ma_mon)).size} môn
+                                    </span>
                                 </div>
 
                                 <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
@@ -417,7 +420,7 @@ export default function Timetable() {
                                             type="button"
                                             variant={gridMode === "card" ? "secondary" : "ghost"}
                                             size="sm"
-                                            className="h-8 px-2 sm:px-2.5 text-xs font-mono rounded-none cursor-pointer"
+                                            className="h-8 px-2.5 text-xs font-mono rounded-none cursor-pointer"
                                             onClick={() => setGridMode("card")}
                                         >
                                             <LayoutGrid className="w-3.5 h-3.5 mr-1" />
@@ -427,7 +430,7 @@ export default function Timetable() {
                                             type="button"
                                             variant={gridMode === "grid" ? "secondary" : "ghost"}
                                             size="sm"
-                                            className="h-8 px-2 sm:px-2.5 text-xs font-mono rounded-none cursor-pointer"
+                                            className="h-8 px-2.5 text-xs font-mono rounded-none cursor-pointer"
                                             onClick={() => setGridMode("grid")}
                                         >
                                             <TableProperties className="w-3.5 h-3.5 mr-1" />
@@ -435,22 +438,25 @@ export default function Timetable() {
                                         </Button>
                                     </div>
 
-                                    <Button variant={"outline"} onClick={clearAll} size={"icon"} className="h-8 w-8 cursor-pointer rounded-none" title="Xóa tất cả">
+                                    <Button variant="outline" onClick={clearAll} size="icon" className="h-8 w-8 cursor-pointer rounded-none hover:text-destructive hover:bg-destructive/10" title="Xóa tất cả">
                                         <Trash className="w-4 h-4" />
                                     </Button>
-                                    <Button variant={"outline"} onClick={handleCapture} size={"icon"} className="h-8 w-8 cursor-pointer rounded-none" title="Chụp ảnh">
+                                    <Button variant="outline" onClick={handleCapture} size="icon" className="h-8 w-8 cursor-pointer rounded-none" title="Chụp ảnh">
                                         <Camera className="w-4 h-4" />
                                     </Button>
-                                    <Button variant={"outline"} onClick={() => fileInputRef.current?.click()} size={"icon"} className="h-8 w-8 cursor-pointer rounded-none" title="Tải lên TKB">
+                                    <Button variant="outline" onClick={() => fileInputRef.current?.click()} size="icon" className="h-8 w-8 cursor-pointer rounded-none" title="Tải lên TKB">
                                         <Upload className="w-4 h-4" />
                                     </Button>
-                                    <Button variant={"outline"} onClick={handleDownloadJson} size={"icon"} className="h-8 w-8 cursor-pointer rounded-none" title="Tải xuống TKB">
+                                    <Button variant="outline" onClick={handleDownloadJson} size="icon" className="h-8 w-8 cursor-pointer rounded-none" title="Tải xuống TKB">
                                         <Download className="w-4 h-4" />
                                     </Button>
                                 </div>
                             </div>
 
-                            <TimetableGrid events={events} viewMode={gridMode} />
+                            {/* Content Section */}
+                            <div className="px-3 sm:px-6 py-4">
+                                <TimetableGrid events={events} viewMode={gridMode} />
+                            </div>
                         </div>
 
                         <div className="px-3 sm:px-6 py-4 border border-border mt-4 bg-card">

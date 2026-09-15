@@ -94,18 +94,24 @@ export default function TimetableGrid({ events, viewMode = "grid" }: Props) {
     }, [orderedDays, events, selectedDayFilter]);
 
     if (viewMode === "card") {
+        const totalActiveDays = orderedDays.filter((d) => events.some((e) => e.dayOfWeek === d.value)).length;
+
         return (
-            <div className="w-full space-y-3.5">
+            <div className="w-full space-y-4">
                 {/* Filter nhanh theo thứ */}
-                <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+                <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto pb-1 scrollbar-hide">
                     <Button
                         type="button"
-                        variant={selectedDayFilter === null ? "secondary" : "outline"}
+                        variant={selectedDayFilter === null ? "default" : "outline"}
                         size="sm"
-                        className="h-7 px-2.5 text-xs font-mono rounded-none shrink-0 cursor-pointer"
+                        className={`h-8 px-3 text-xs font-mono rounded-none shrink-0 cursor-pointer transition-colors ${
+                            selectedDayFilter === null
+                                ? "bg-primary text-primary-foreground font-bold"
+                                : "text-muted-foreground hover:text-foreground"
+                        }`}
                         onClick={() => setSelectedDayFilter(null)}
                     >
-                        Tất cả ({orderedDays.filter((d) => events.some((e) => e.dayOfWeek === d.value)).length} ngày)
+                        Tất cả ({totalActiveDays} ngày)
                     </Button>
                     {orderedDays.map((d) => {
                         const count = events.filter((e) => e.dayOfWeek === d.value).length;
@@ -116,9 +122,13 @@ export default function TimetableGrid({ events, viewMode = "grid" }: Props) {
                             <Button
                                 key={d.value}
                                 type="button"
-                                variant={isSelected ? "secondary" : "outline"}
+                                variant={isSelected ? "default" : "outline"}
                                 size="sm"
-                                className="h-7 px-2.5 text-xs font-mono rounded-none shrink-0 cursor-pointer"
+                                className={`h-8 px-3 text-xs font-mono rounded-none shrink-0 cursor-pointer transition-colors ${
+                                    isSelected
+                                        ? "bg-primary text-primary-foreground font-bold"
+                                        : "text-muted-foreground hover:text-foreground"
+                                }`}
                                 onClick={() => setSelectedDayFilter(isSelected ? null : d.value)}
                             >
                                 {d.label} ({count})
@@ -230,33 +240,40 @@ export default function TimetableGrid({ events, viewMode = "grid" }: Props) {
 
     // Grid View (mặc định)
     return (
-        <div className="w-full">
+        <div className="w-full space-y-2">
             {/* Hint vuốt ngang chỉ hiện trên mobile */}
-            <p className="sm:hidden text-[10px] text-muted-foreground text-center py-1 font-mono">← Vuốt ngang để xem đủ →</p>
+            <div className="md:hidden flex items-center justify-between py-1 px-1 text-xs text-muted-foreground font-mono">
+                <span className="flex items-center gap-1">
+                    <span>←</span> Vuốt ngang để xem đủ 7 ngày <span>→</span>
+                </span>
+                <span className="text-[10px] px-1.5 py-0.5 bg-muted border border-border">
+                    Lưới TKB
+                </span>
+            </div>
 
-            {/* Scroll container — giữ min-width để grid không bị ép */}
-            <div className="overflow-x-auto scrollbar-hide overscroll-x-contain">
-                <div className="w-full min-w-[700px]">
+            {/* Scroll container: Mobile scroll ngang để đủ rộng, Desktop (md+) fit 100% full width không scroll */}
+            <div className="overflow-x-auto md:overflow-x-visible overscroll-x-contain">
+                <div className="w-full min-w-[1100px] md:min-w-0">
                     <div className="timetable-capture-target w-full bg-background overflow-hidden border border-b-0 border-r-0 dark:border-b dark:border-r">
                         {/* header: Tiết / Giờ / Thứ */}
-                        <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] ">
-                            <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted">Tiết</div>
-                            <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-bold uppercase tracking-wider text-muted-foreground bg-muted">Giờ</div>
+                        <div className="grid grid-cols-[42px_80px_repeat(7,minmax(140px,1fr))] md:grid-cols-[48px_82px_repeat(7,1fr)] lg:grid-cols-[56px_96px_repeat(7,1fr)]">
+                            <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground bg-muted">Tiết</div>
+                            <div className="flex items-center justify-center border-r border-b border-border py-3 text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground bg-muted">Giờ</div>
 
                             {/* Các thứ */}
                             {DAYS.map((d) => (
-                                <div key={d.value} className="flex flex-col items-center justify-center py-3 border-r border-b bg-muted">
+                                <div key={d.value} className="flex flex-col items-center justify-center py-3 border-r border-b border-border bg-muted">
                                     <span className="text-sm font-bold text-foreground">{d.label}</span>
                                 </div>
                             ))}
                         </div>
 
                         {/* body */}
-                        <div className="grid grid-cols-[70px_110px_repeat(7,1fr)] text-xs bg-background relative">
+                        <div className="grid grid-cols-[42px_80px_repeat(7,minmax(140px,1fr))] md:grid-cols-[48px_82px_repeat(7,1fr)] lg:grid-cols-[56px_96px_repeat(7,1fr)] text-xs bg-background relative">
                             {/* Cột Tiết bên trái */}
-                            <div className="border-r bg-background">
+                            <div className="border-r border-border bg-background">
                                 {PERIODS.map((p) => (
-                                    <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-[11px] font-semibold text-muted-foreground">
+                                    <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-xs font-mono font-semibold text-muted-foreground">
                                         {p}
                                     </div>
                                 ))}
@@ -264,11 +281,22 @@ export default function TimetableGrid({ events, viewMode = "grid" }: Props) {
 
                             {/* Cột Giờ bên trái */}
                             <div className="border-r border-border bg-background">
-                                {PERIODS.map((p, idx) => (
-                                    <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border flex items-center justify-center text-[12px] text-muted-foreground font-medium">
-                                        {PERIOD_TIMES[idx] || "--"}
-                                    </div>
-                                ))}
+                                {PERIODS.map((p, idx) => {
+                                    const timeRange = PERIOD_TIMES[idx] || "--";
+                                    const [start, end] = timeRange.includes("-") ? timeRange.split("-") : [timeRange, ""];
+
+                                    return (
+                                        <div
+                                            key={p}
+                                            style={{ height: ROW_HEIGHT }}
+                                            className="border-b border-border flex flex-col items-center justify-center text-[10px] sm:text-[11px] font-mono text-muted-foreground leading-tight px-1"
+                                        >
+                                            <span className="font-medium text-foreground/80">{start}</span>
+                                            <span className="text-[9px] text-muted-foreground/40 font-sans">↓</span>
+                                            <span className="text-muted-foreground/80">{end}</span>
+                                        </div>
+                                    );
+                                })}
                             </div>
 
                             {/* 7 cột ngày */}
@@ -276,31 +304,30 @@ export default function TimetableGrid({ events, viewMode = "grid" }: Props) {
                                 const dayEvents = events.filter((e) => e.dayOfWeek === d.value);
 
                                 return (
-                                    <div key={d.value} className="relative border-r bg-background" style={{ minHeight: PERIODS.length * ROW_HEIGHT }}>
+                                    <div key={d.value} className="relative border-r border-border bg-background" style={{ minHeight: PERIODS.length * ROW_HEIGHT }}>
                                         {/* grid lines nền */}
                                         {PERIODS.map((p) => (
-                                            <div key={p} style={{ height: ROW_HEIGHT }} className="border-b" />
+                                            <div key={p} style={{ height: ROW_HEIGHT }} className="border-b border-border" />
                                         ))}
 
                                         {/* block môn học */}
                                         {dayEvents.map((ev) => {
-                                            const top = (ev.periodStart - 1) * ROW_HEIGHT + 4;
-                                            const height = (ev.periodEnd - ev.periodStart + 1) * ROW_HEIGHT - 8;
+                                            const top = (ev.periodStart - 1) * ROW_HEIGHT + 3;
+                                            const height = (ev.periodEnd - ev.periodStart + 1) * ROW_HEIGHT - 6;
                                             const theme = themeMap[ev.ma_mon] || SUBJECT_THEMES[0];
-                                            const width = `calc((100% - 14px))`;
 
                                             return (
                                                 <div
                                                     key={`${ev.id}-${ev.periodStart}-${ev.periodEnd}`}
-                                                    className={`absolute mx-[7px] shadow-sm cursor-pointer overflow-hidden ${theme.gridClass} px-2.5 py-2 rounded-md`}
-                                                    style={{ top, height, width }}
+                                                    className={`absolute inset-x-1 sm:inset-x-1.5 shadow-sm cursor-pointer overflow-hidden ${theme.gridClass} px-1.5 sm:px-2.5 py-1.5 sm:py-2 rounded-md transition-transform hover:scale-[1.01] hover:z-10`}
+                                                    style={{ top, height }}
                                                     title={`${ev.courseName}\n${ev.giang_vien || ""}\nTiết ${ev.periodStart}–${ev.periodEnd}\n${ev.room || ""}`}
                                                 >
-                                                    <div className="text-[13px] font-bold text-sky-900 dark:text-sky-100 leading-snug line-clamp-2 text-center mb-1">{ev.courseName}</div>
-                                                    <div className="text-[11px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Mã môn: {ev.ma_mon}</div>
-                                                    {ev.room && <div className="text-[11px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Phòng: {ev.room}</div>}
-                                                    {ev.giang_vien && <div className="text-[11px] font-medium leading-tight text-slate-600 dark:text-slate-400 text-center mt-0.5">{ev.giang_vien}</div>}
-                                                    <div className="text-[11px] font-medium leading-tight text-slate-500 dark:text-slate-400 text-center mt-0.5">
+                                                    <div className="text-xs sm:text-[13px] font-bold text-sky-900 dark:text-sky-100 leading-snug line-clamp-2 text-center mb-0.5 sm:mb-1">{ev.courseName}</div>
+                                                    <div className="text-[10px] sm:text-[11px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Mã môn: {ev.ma_mon}</div>
+                                                    {ev.room && <div className="text-[10px] sm:text-[11px] font-medium leading-tight text-slate-700 dark:text-slate-300 text-center">Phòng: {ev.room}</div>}
+                                                    {ev.giang_vien && <div className="text-[10px] sm:text-[11px] font-medium leading-tight text-slate-600 dark:text-slate-400 text-center mt-0.5 line-clamp-2">{ev.giang_vien}</div>}
+                                                    <div className="text-[10px] sm:text-[11px] font-medium leading-tight text-slate-500 dark:text-slate-400 text-center mt-0.5">
                                                         Tiết {ev.periodStart}–{ev.periodEnd}
                                                     </div>
                                                 </div>
