@@ -27,7 +27,6 @@ export default function Donate() {
 
     // VietQR URL
     const qrUrl = `https://img.vietqr.io/image/${bankCode}-${accountNumber}-compact.png?amount=&addInfo=${encodeURIComponent(description)}&accountName=${encodeURIComponent(accountName)}`;
-
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>

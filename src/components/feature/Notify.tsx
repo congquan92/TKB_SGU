@@ -10,7 +10,10 @@ import {
     ExternalLink,
     Sparkles,
     Users,
-    X
+    X,
+    ChevronLeft,
+    ChevronRight,
+    CheckCheck
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -96,6 +99,8 @@ function formatDateHeader(dateString: string): string {
     }
 }
 
+const notifications = (rawNotifications as NotificationItem[]) || [];
+
 export default function Notify() {
     const isMobile = useIsMobile();
     const [open, setOpen] = useState(false);
@@ -109,11 +114,9 @@ export default function Notify() {
     });
 
     const [showPinnedBanner, setShowPinnedBanner] = useState(true);
+    const [currentPinnedIndex, setCurrentPinnedIndex] = useState(0);
     const [highlightedId, setHighlightedId] = useState<string | null>(null);
     const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
-    // Lấy dữ liệu thuần túy từ file notifcation.json
-    const notifications = (rawNotifications as NotificationItem[]) || [];
 
     useEffect(() => {
         try {
@@ -151,6 +154,15 @@ export default function Notify() {
         }
     };
 
+    const markAllAsRead = () => {
+        const allIds = notifications.map((item) => item.id);
+        setReadIds(allIds);
+    };
+
+    const unreadCount = useMemo(() => {
+        return notifications.filter((item) => !readIds.includes(item.id)).length;
+    }, [notifications, readIds]);
+
     // Sắp xếp theo trình tự thời gian tăng dần (cũ ở trên, mới ở dưới như đoạn chat)
     const sortedNotifications = useMemo(() => {
         return [...notifications].sort(
@@ -158,10 +170,14 @@ export default function Notify() {
         );
     }, [notifications]);
 
-    // Tin nhắn ghim từ file JSON
-    const pinnedItem = useMemo(() => {
-        return notifications.find((n) => n.pinned);
+    // Danh sách các tin nhắn đã ghim từ file JSON
+    const pinnedItems = useMemo(() => {
+        return notifications.filter((n) => n.pinned);
     }, [notifications]);
+
+    const activePinnedIndex =
+        pinnedItems.length > 0 ? currentPinnedIndex % pinnedItems.length : 0;
+    const currentPinnedItem = pinnedItems[activePinnedIndex];
 
     // Nội dung toàn bộ cửa sổ chat nhóm
     const ChatContent = (
@@ -204,41 +220,104 @@ export default function Notify() {
                     </div>
                 </div>
 
-                {/* Nút đóng trên Mobile */}
-                {isMobile && (
-                    <button
-                        onClick={() => setOpen(false)}
-                        className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
-                        title="Đóng thông báo"
-                    >
-                        <X className="w-5 h-5" />
-                    </button>
-                )}
+                {/* Actions trên Header: Đánh dấu đã đọc tất cả & Nút đóng trên Mobile */}
+                <div className="flex items-center gap-1.5 shrink-0">
+                    {unreadCount > 0 && (
+                        <button
+                            onClick={markAllAsRead}
+                            className="flex items-center gap-1 px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-semibold text-rose-600 dark:text-rose-400 hover:bg-rose-500/10 rounded-md border border-rose-500/20 transition-colors cursor-pointer shadow-xs"
+                            title="Đánh dấu tất cả là đã đọc"
+                        >
+                            <CheckCheck className="w-3.5 h-3.5" />
+                            <span className="hidden sm:inline">Đã đọc tất cả</span>
+                        </button>
+                    )}
+
+                    {/* Nút đóng trên Mobile */}
+                    {isMobile && (
+                        <button
+                            onClick={() => setOpen(false)}
+                            className="p-2 rounded-full hover:bg-muted text-muted-foreground hover:text-foreground transition-colors cursor-pointer shrink-0"
+                            title="Đóng thông báo"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    )}
+                </div>
             </div>
 
-            {/* Banner Tin Nhắn Đã Ghim (Click để tự scroll đến tin nhắn đó) */}
-            {pinnedItem && showPinnedBanner && (
-                <div className="bg-rose-500/10 dark:bg-rose-950/40 px-4 py-2 sm:px-6 sm:py-2.5 border-b border-rose-500/20 flex items-center justify-between gap-2.5 text-xs sm:text-sm shrink-0">
+            {/* Banner Tin Nhắn Đã Ghim (Hỗ trợ duyệt nhiều tin ghim) */}
+            {pinnedItems.length > 0 && currentPinnedItem && showPinnedBanner && (
+                <div className="bg-rose-500/10 dark:bg-rose-950/40 px-3 py-2 sm:px-5 sm:py-2.5 border-b border-rose-500/20 flex items-center justify-between gap-2 text-xs sm:text-sm shrink-0 transition-colors">
+                    {/* Phần nội dung có thể click để cuộn tới tin nhắn và chuyển tiếp tin ghim */}
                     <div
-                        onClick={() => scrollToMessage(pinnedItem.id)}
+                        onClick={() => {
+                            scrollToMessage(currentPinnedItem.id);
+                            if (pinnedItems.length > 1) {
+                                setCurrentPinnedIndex((prev) => (prev + 1) % pinnedItems.length);
+                            }
+                        }}
                         className="flex-1 flex items-center gap-2 min-w-0 cursor-pointer hover:opacity-85 transition-opacity group"
-                        title="Nhấn để cuộn đến tin nhắn đã ghim"
+                        title={
+                            pinnedItems.length > 1
+                                ? "Nhấn để cuộn đến tin này và chuyển sang tin ghim tiếp theo"
+                                : "Nhấn để cuộn đến tin nhắn đã ghim"
+                        }
                     >
                         <Pin className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-500 shrink-0 fill-rose-500/40 group-hover:scale-110 transition-transform" />
-                        <div className="truncate">
-                            <span className="font-semibold text-rose-600 dark:text-rose-400 mr-1.5">Tin đã ghim:</span>
-                            <span className="text-foreground/90 group-hover:underline decoration-rose-500/50 underline-offset-2">
-                                {pinnedItem.title}
+                        <div className="truncate flex items-center gap-1.5 min-w-0">
+                            <span className="font-semibold text-rose-600 dark:text-rose-400 shrink-0 whitespace-nowrap">
+                                {pinnedItems.length > 1
+                                    ? `Tin đã ghim (${activePinnedIndex + 1}/${pinnedItems.length}):`
+                                    : "Tin đã ghim:"}
+                            </span>
+                            <span className="text-foreground/90 group-hover:underline decoration-rose-500/50 underline-offset-2 truncate">
+                                {currentPinnedItem.title}
                             </span>
                         </div>
                     </div>
-                    <button
-                        onClick={() => setShowPinnedBanner(false)}
-                        className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-rose-500/10 cursor-pointer shrink-0"
-                        title="Ẩn ghim"
-                    >
-                        <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                    </button>
+
+                    {/* Điều hướng chuyển tin ghim & Nút ẩn ghim */}
+                    <div className="flex items-center gap-1 shrink-0">
+                        {pinnedItems.length > 1 && (
+                            <div className="flex items-center gap-0.5 mr-0.5 bg-rose-500/15 dark:bg-rose-900/40 rounded-md p-0.5 border border-rose-500/20">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        const prev = (activePinnedIndex - 1 + pinnedItems.length) % pinnedItems.length;
+                                        setCurrentPinnedIndex(prev);
+                                        scrollToMessage(pinnedItems[prev].id);
+                                    }}
+                                    className="p-1 rounded hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 transition-colors cursor-pointer"
+                                    title="Tin ghim trước"
+                                >
+                                    <ChevronLeft className="w-3.5 h-3.5" />
+                                </button>
+                                <span className="text-[10px] font-mono font-bold text-rose-600 dark:text-rose-400 px-1 select-none">
+                                    {activePinnedIndex + 1}/{pinnedItems.length}
+                                </span>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        const next = (activePinnedIndex + 1) % pinnedItems.length;
+                                        setCurrentPinnedIndex(next);
+                                        scrollToMessage(pinnedItems[next].id);
+                                    }}
+                                    className="p-1 rounded hover:bg-rose-500/20 text-rose-600 dark:text-rose-400 transition-colors cursor-pointer"
+                                    title="Tin ghim tiếp theo"
+                                >
+                                    <ChevronRight className="w-3.5 h-3.5" />
+                                </button>
+                            </div>
+                        )}
+                        <button
+                            onClick={() => setShowPinnedBanner(false)}
+                            className="text-muted-foreground hover:text-foreground p-1 rounded-md hover:bg-rose-500/10 cursor-pointer shrink-0 transition-colors"
+                            title="Ẩn ghim"
+                        >
+                            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                        </button>
+                    </div>
                 </div>
             )}
 
@@ -416,10 +495,27 @@ export default function Notify() {
             border-rose-200 bg-white text-rose-500
             hover:bg-rose-50 hover:text-rose-600 hover:border-rose-300
             dark:bg-zinc-950 dark:border-rose-900/40 dark:text-rose-400
-            dark:hover:bg-rose-950/30 dark:hover:border-rose-700 dark:hover:text-rose-300 cursor-pointer"
-            title="Đoạn chat thông báo TKB SGU"
+            dark:hover:bg-rose-950/30 dark:hover:border-rose-700 dark:hover:text-rose-300 cursor-pointer group"
+            title={
+                unreadCount > 0
+                    ? `Thông báo TKB SGU (${unreadCount} tin nhắn chưa đọc)`
+                    : "Thông báo & Cập nhật TKB SGU"
+            }
         >
-            <Bell className="h-[1.2rem] w-[1.2rem]" />
+            <Bell className="h-[1.2rem] w-[1.2rem] transition-transform duration-200 group-hover:scale-110" />
+
+            {/* Huy hiệu hiển thị tin nhắn chưa đọc */}
+            {unreadCount > 0 && (
+                <span className="absolute -top-1.5 -right-1.5 flex items-center justify-center">
+                    {/* Hiệu ứng xung nhịp viền */}
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-60 pointer-events-none" />
+
+                    {/* Badge số lượng tin chưa đọc */}
+                    <span className="relative inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 text-[10px] font-bold text-white bg-rose-500 rounded-full ring-2 ring-background shadow-xs pointer-events-none leading-none tabular-nums">
+                        {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                </span>
+            )}
         </Button>
     );
 
@@ -449,7 +545,7 @@ export default function Notify() {
             <PopoverContent
                 align="end"
                 sideOffset={8}
-                className="w-[720px] md:w-[780px] max-w-[820px] p-0 rounded-2xl shadow-2xl border border-border/80 bg-background/98 backdrop-blur-xl overflow-hidden z-50 animate-in fade-in-0 zoom-in-95 duration-200 flex flex-col h-[650px]"
+                className="w-[720px] md:w-[780px] max-w-[820px] p-0 rounded-2xl shadow-2xl border border-border/80 bg-background overflow-hidden z-50 duration-200 will-change-[transform,opacity] flex flex-col h-[650px]"
             >
                 {ChatContent}
             </PopoverContent>
