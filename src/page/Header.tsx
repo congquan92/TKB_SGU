@@ -12,7 +12,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import Donate from "@/components/feature/Donate";
-import { GraduationCap, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { time } from "@/data/dsCustom.json";
 import { ModeToggle } from "@/components/theme/mode-toggle";
 import Notify from "@/components/feature/Notify";
@@ -22,9 +22,15 @@ export default function Header() {
         <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
             <div className="mx-auto max-w-7xl px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2 flex-wrap">
                 <div className="flex items-center gap-2 sm:gap-3">
-                    <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-md">
-                        <GraduationCap size={36} className="sm:hidden" />
-                        <GraduationCap size={50} className="hidden sm:block" />
+                    <div className="flex items-center justify-center shrink-0">
+                        <img
+                            src="/logo.png"
+                            alt="Logo Thời Khóa Biểu SGU"
+                            className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl object-cover shadow-xs border border-border/50 hover:scale-105 active:scale-95 transition-transform duration-200"
+                            width={40}
+                            height={40}
+                            loading="eager"
+                        />
                     </div>
                     <div>
                         <h1 className="text-h1 flex items-center gap-2">
