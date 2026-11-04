@@ -1,5 +1,22 @@
 [
     {
+        "id": "notif-007",
+        "title": "🎉 Cập nhật Thời khóa biểu chính thức Học kỳ 2 (2026 - 2027)",
+        "content": "Hệ thống TKB SGU đã đồng bộ dữ liệu Thời khóa biểu mới nhất cho Học kỳ 2 - Năm học 2026 - 2027 từ cổng đào tạo nhà trường! 🚀\n\n📌 Thông tin cập nhật chi tiết:\n• 📚 Tổng số môn học: 668 môn\n• 👥 Tổng số nhóm tổ/lớp học phần: 1.662 nhóm tổ\n• 🏢 Đồng bộ đầy đủ thông tin giảng viên, phòng học, ca học và số lượng chỗ còn lại.\n\nCác bạn sinh viên có thể bắt đầu tra cứu môn học, xếp lịch học thử, kiểm tra trùng lịch và xuất lịch ngay từ bây giờ để chuẩn bị cho đợt ĐKMH sắp tới. Chúc các bạn săn trọn vẹn TKB như ý nhé! ✨",
+        "tags": ["#HK2_2026_2027", "#CậpNhậtTKB", "#SGU", "#HọcKỳ2"],
+        "link": {
+            "label": "🌐 Cổng thông tin đào tạo SGU",
+            "url": "https://thongtindaotao.sgu.edu.vn"
+        },
+        "timestamp": "2026-11-04T09:05:29+07:00",
+        "pinned": true,
+        "sender": {
+            "name": "Nguyễn Công Quân",
+            "role": "Admin",
+            "avatar": "https://i.pinimg.com/1200x/0b/8f/27/0b8f27e38d1cdce79fec49d465e9be1d.jpg"
+        }
+    },
+    {
         "id": "notif-006",
         "title": "🔥 Ra mắt SGU Extension Toolkit: Siêu phẩm trợ thủ GPA & TKB đỉnh chóp cho anh em SGU! 🚀",
         "content": "Hế lô toàn thể anh em SGU yêu dấu! 😎✨ Hôm nay Admin ngoi lên flex nhẹ với anh em một món \"vũ khí tối thượng\" siêu cấp xịn sò: SGU Extension Toolkit! 🚀🔥\n\nHọc ở SGU mà không có bộ công cụ này trong trình duyệt là quá sức thiệt thòi luôn á nha. Điểm danh sương sương vài tính năng bá cháy bọ chét nè:\n• 📊 Tính GPA & Xếp loại tự động: Đồng bộ điểm trong 1 nốt nhạc, tự tính chuẩn đét GPA hệ 4, thang 10 & tín chỉ tích lũy, dẹp ngay cảnh ngồi bấm máy tính cọc cạch! 🧮✨\n• 🎯 Dự đoán tốt nghiệp & Mục tiêu điểm: Mô phỏng xem cần cày thêm bao nhiêu môn A/B để ẵm trọn bằng Giỏi (3.2) hay Xuất sắc (3.6), lên chiến lược gánh team cực nét! 🏆🔥\n• 📅 Quản lý & Xuất TKB đa năng: Xem TKB theo tuần siêu mượt, tải ảnh PNG nét căng flex story, hoặc xuất file .ics đồng bộ thẳng tắp vào Google Calendar / Apple Calendar nhắc giờ học chuẩn từng phút! ⏰📱\n• 🤖 AI Cố Vấn Học Tập: Tự động gom dữ liệu học tập và build sẵn prompt xịn sò để anh em ném vô ChatGPT/Gemini/Claude tư vấn lộ trình kéo điểm cực bén! 💡🧠\n• ⚡ Auto đánh giá rèn luyện & khảo sát: Tiết kiệm hàng giờ click chuột mỏi tay, giải phóng sức lao động để chill! 🚀💤\n• 🔒 Local-First an toàn tuyệt đối: Toàn bộ token và điểm số lưu thẳng trên trình duyệt máy bạn, bảo mật 100%, không qua máy chủ trung gian nên anh em cứ yên tâm quẩy! 🛡️💯\n\nHỗ trợ mượt mà trên Chrome, Edge, Brave, Cốc Cốc và mọi trình duyệt Chromium. Yêu cả nhà nhiềuuu! 🥰💖✨",
